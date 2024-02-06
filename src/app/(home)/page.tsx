@@ -1,24 +1,18 @@
 import React from "react";
-import PcMenu from "@/components/menu";
-import Navbar from "@/components/navbar";
-import Welcome from "@/components/site/welcome";
-import ChatSection from "@/components/chatSection";
-import PluginHandler from "@/components/pluginHandler";
-import TTSSetting from "@/components/tts";
+import SideMenus from "@/components/modules/sideMenus";
+import HeaderMenus from "@/components/modules/headerMenus";
+import ChatSection from "@/components/modules/chatSection";
+import InputSection from "@/components/modules/inputSection";
 
 export default function Home() {
   return (
-    <>
-      <div className="flex fixed inset-0">
-        <PcMenu />
-        <section className="h-full w-full md:w-[calc(100vw-17.5rem)] relative">
-          <Navbar />
-          <Welcome />
-          <ChatSection />
-        </section>
+    <div>
+      <SideMenus />
+      <div className="left-[280px] fixed inset-0 flex flex-col">
+        <HeaderMenus />
+        <ChatSection />
+        <InputSection />
       </div>
-      <PluginHandler />
-      <TTSSetting />
-    </>
+    </div>
   );
 }

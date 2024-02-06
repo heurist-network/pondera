@@ -1,7 +1,4 @@
-export const BASE_PRICE = 1000 * (1 / 0.002);
-
-// Backup & Sync size
-export const FREE_SYNC_SIZE = 50;
-export const PRO_SYNC_SIZE = 1024;
-
 export const BASE_PROMPT = "You are a helpful AI assistant.";
+
+export const GENERATE_CHAT_NAME_PROMPT =
+  "What would be a short and relevant title for this chat? You must strictly answer with only the title, no other text is allowed.\n\nAnswer in English.";

@@ -1,11 +1,7 @@
-/** @type {import('tailwindcss').Config} */
+import type { Config } from "tailwindcss";
+import { iconsPlugin, getIconCollections } from "@egoist/tailwindcss-icons";
 
-const {
-  iconsPlugin,
-  getIconCollections,
-} = require("@egoist/tailwindcss-icons");
-
-module.exports = {
+const config = {
   darkMode: ["class"],
   content: [
     "./pages/**/*.{ts,tsx}",
@@ -13,6 +9,7 @@ module.exports = {
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
   ],
+  prefix: "",
   theme: {
     container: {
       center: true,
@@ -57,9 +54,9 @@ module.exports = {
           foreground: "hsl(var(--card-foreground))",
         },
       },
-      backgroundImage: {
-        global: "url('/backgroundImage.svg')",
-        logo: "linear-gradient(to right,#FFEBCD,#E3518E,#FFCD9E,#A073FF,#EB73FF)",
+      backgroundColor: {
+        sideMenu: "#e1e2e3",
+        sideMenuItem: "#cccdcd",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -68,23 +65,17 @@ module.exports = {
       },
       keyframes: {
         "accordion-down": {
-          from: { height: 0 },
+          from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
           from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: 0 },
-        },
-        flow: {
-          "0%": { backgroundPosition: "0 50%" },
-          "50%": { backgroundPosition: "100% 50%" },
-          "100%": { backgroundPosition: "0 50%" },
+          to: { height: "0" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        flow: "flow 6s linear infinite",
       },
     },
   },
@@ -93,7 +84,14 @@ module.exports = {
     require("tailwindcss-animate"),
     iconsPlugin({
       // Select the icon collections you want to use
-      collections: getIconCollections(["mingcute", "ri", "lucide"]),
+      // You can also ignore this option to automatically discover all individual icon packages you have installed
+      // If you install @iconify/json, you should explicitly specify the collections you want to use, like this:
+      collections: getIconCollections(["f7", "mingcute", "ri"]),
+      // If you want to use all icons from @iconify/json, you can do this:
+      // collections: getIconCollections("all"),
+      // and the more recommended way is to use `dynamicIconsPlugin`, see below.
     }),
   ],
-};
+} satisfies Config;
+
+export default config;
