@@ -21,8 +21,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { useChatStore, LOADING_STATE } from "@/store/chat";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -32,12 +31,13 @@ export default function SideMenus() {
     state.activeId,
     state.list,
   ]);
-  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("");
 
   const addChat = useChatStore((state) => state.addChat);
   const deleteChat = useChatStore((state) => state.deleteChat);
   const clearChat = useChatStore((state) => state.clearChat);
   const toggleChatActive = useChatStore((state) => state.toggleChatActive);
+  const updateChatName = useChatStore((state) => state.updateChatName);
 
   return (
     <div className="left-0 top-0 bottom-0 w-[280px] fixed px-2.5 border-r bg-sideMenu">
@@ -106,27 +106,39 @@ export default function SideMenus() {
               <div className="flex items-center gap-2">
                 <Dialog>
                   <DialogTrigger asChild>
-                    <span className="i-ri-edit-line text-base" />
+                    <span
+                      className="i-ri-edit-line text-base"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setValue(item.chat_name);
+                      }}
+                    />
                   </DialogTrigger>
-                  <DialogContent>
+                  <DialogContent
+                    className="w-[700px]"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <DialogHeader>
                       <DialogTitle>Edit Chat Title</DialogTitle>
                     </DialogHeader>
-                    <div className="flex items-center space-x-2">
-                      <div className="grid flex-1 gap-2">
-                        <Label htmlFor="link" className="sr-only">
-                          Link
-                        </Label>
-                        <Input id="link" readOnly />
-                      </div>
-                    </div>
-                    <DialogFooter className="">
+                    <Textarea
+                      className="h-36 resize-none"
+                      value={value}
+                      onChange={(e) => setValue(e.target.value)}
+                    />
+                    <DialogFooter>
                       <div className="flex-1 flex justify-between">
-                        <DialogClose>
+                        <DialogClose asChild>
                           <Button variant="ghost">Cancel</Button>
                         </DialogClose>
-                        <DialogClose>
-                          <Button>Save</Button>
+                        <DialogClose asChild>
+                          <Button
+                            onClick={() => {
+                              updateChatName(item.chat_id, value);
+                            }}
+                          >
+                            Save
+                          </Button>
                         </DialogClose>
                       </div>
                     </DialogFooter>

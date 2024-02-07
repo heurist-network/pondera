@@ -41,14 +41,7 @@ export type ChatStore = {
   addChat: () => void;
   deleteChat: (chat_id: string) => void;
   clearChat: () => void;
-  deleteMessage: ({
-    chat_id,
-    message_id,
-  }: {
-    chat_id: string;
-    message_id: string;
-  }) => void;
-
+  updateChatName: (chat_id: string, chat_name: string) => void;
   addMessage: ({
     chat_id,
     message,
@@ -57,6 +50,13 @@ export type ChatStore = {
     chat_id: string;
     message: string;
     role: Message["role"];
+  }) => void;
+  deleteMessage: ({
+    chat_id,
+    message_id,
+  }: {
+    chat_id: string;
+    message_id: string;
   }) => void;
 
   // Chat Action

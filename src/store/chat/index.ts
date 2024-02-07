@@ -67,17 +67,13 @@ export const useChatStore = create<ChatStore>()(
           return { activeId, list: [initChatItem] };
         });
       },
-      deleteMessage: ({ chat_id, message_id }) => {
-        console.log(chat_id, "chat_id");
-        console.log(message_id, "message_id");
-
+      updateChatName: (chat_id, chat_name) => {
         set((state) => {
           const newList: ChatListItem[] = clone(state.list);
           const findChat = newList.find((chat) => chat.chat_id === chat_id);
           if (!findChat) return {};
-          findChat.chat_list = findChat.chat_list.filter(
-            (item) => item.id !== message_id
-          );
+          findChat.chat_name = chat_name;
+
           return { list: newList };
         });
       },
@@ -94,6 +90,20 @@ export const useChatStore = create<ChatStore>()(
             time: String(+new Date()),
           });
 
+          return { list: newList };
+        });
+      },
+      deleteMessage: ({ chat_id, message_id }) => {
+        console.log(chat_id, "chat_id");
+        console.log(message_id, "message_id");
+
+        set((state) => {
+          const newList: ChatListItem[] = clone(state.list);
+          const findChat = newList.find((chat) => chat.chat_id === chat_id);
+          if (!findChat) return {};
+          findChat.chat_list = findChat.chat_list.filter(
+            (item) => item.id !== message_id
+          );
           return { list: newList };
         });
       },
