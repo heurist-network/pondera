@@ -51,6 +51,8 @@ export default function ChatSection() {
     state.activeId,
     state.list,
   ]);
+  const regenerateChat = useChatStore((state) => state.regenerateChat);
+  const sendChat = useChatStore((state) => state.sendChat);
   const deleteMessage = useChatStore((state) => state.deleteMessage);
 
   const activeChat = list.find((item) => item.chat_id === activeId);
@@ -129,7 +131,14 @@ export default function ChatSection() {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-            <div className="flex justify-center items-center p-1.5 rounded-md cursor-pointer hover:bg-[#f2f2f2] transition-colors">
+            <div
+              className="flex justify-center items-center p-1.5 rounded-md cursor-pointer hover:bg-[#f2f2f2] transition-colors"
+              onClick={() => {
+                if (activeChat?.chat_state !== LOADING_STATE.NONE) return;
+                regenerateChat({ chat_id: activeId, message_id: m.id });
+                sendChat({ chat_id: activeId });
+              }}
+            >
               <span className="i-mingcute-refresh-3-line w-[18px] h-[18px] text-[#757574]" />
             </div>
           </div>

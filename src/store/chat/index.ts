@@ -67,6 +67,34 @@ export const useChatStore = create<ChatStore>()(
           return { activeId, list: [initChatItem] };
         });
       },
+      regenerateChat: ({ chat_id, message_id }) => {
+        set((state) => {
+          const newList: ChatListItem[] = clone(state.list);
+          const findChat = newList.find((chat) => chat.chat_id === chat_id);
+          if (!findChat) return {};
+
+          const findMessage = findChat.chat_list.find(
+            (item) => item.id === message_id
+          );
+          const findMessageIndex = findChat.chat_list.findIndex(
+            (item) => item.id === message_id
+          );
+
+          if (!findMessage) return {};
+
+          let arr: Message[] = [];
+
+          if (findMessage.role === "assistant") {
+            arr = findChat.chat_list.slice(0, findMessageIndex);
+          } else if (findMessage.role === "user") {
+            arr = findChat.chat_list.slice(0, findMessageIndex + 1);
+          }
+
+          findChat.chat_list = arr;
+
+          return { list: newList };
+        });
+      },
       updateChatName: (chat_id, chat_name) => {
         set((state) => {
           const newList: ChatListItem[] = clone(state.list);
@@ -121,12 +149,13 @@ export const useChatStore = create<ChatStore>()(
       },
 
       // Chat Action
-      sendChat: async ({ chat_id }) => {
+      sendChat: ({ chat_id }) => {
         let findChat: ChatListItem | undefined;
 
         set((state) => {
           const newList: ChatListItem[] = clone(state.list);
           findChat = newList.find((chat) => chat.chat_id === chat_id);
+
           if (!findChat) return {};
           findChat.chat_state = LOADING_STATE.CONNECTING;
 

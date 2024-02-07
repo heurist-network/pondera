@@ -41,6 +41,13 @@ export type ChatStore = {
   addChat: () => void;
   deleteChat: (chat_id: string) => void;
   clearChat: () => void;
+  regenerateChat: ({
+    chat_id,
+    message_id,
+  }: {
+    chat_id: string;
+    message_id: string;
+  }) => void;
   updateChatName: (chat_id: string, chat_name: string) => void;
   addMessage: ({
     chat_id,
