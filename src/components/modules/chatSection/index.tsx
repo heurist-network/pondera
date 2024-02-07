@@ -18,6 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import Edit from "./edit";
 
 function CopyContent({ content }: { content: string }) {
   const { isCopied, copy } = useClipboard();
@@ -101,9 +102,7 @@ export default function ChatSection() {
             )}
           >
             <CopyContent content={m.content} />
-            <div className="flex justify-center items-center p-1.5 rounded-md cursor-pointer hover:bg-[#f2f2f2] transition-colors">
-              <span className="i-ri-edit-line w-[18px] h-[18px] text-[#757574]" />
-            </div>
+            <Edit chat_id={activeId} message_id={m.id} content={m.content} />
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <div className="flex justify-center items-center p-1.5 rounded-md cursor-pointer hover:bg-[#f2f2f2] transition-colors">

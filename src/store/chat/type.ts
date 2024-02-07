@@ -58,6 +58,15 @@ export type ChatStore = {
     chat_id: string;
     message_id: string;
   }) => void;
+  updateMessage: ({
+    chat_id,
+    message_id,
+    content,
+  }: {
+    chat_id: string;
+    message_id: string;
+    content: string;
+  }) => void;
 
   // Chat Action
   sendChat: ({ chat_id }: { chat_id: string }) => void;

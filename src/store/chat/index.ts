@@ -94,9 +94,6 @@ export const useChatStore = create<ChatStore>()(
         });
       },
       deleteMessage: ({ chat_id, message_id }) => {
-        console.log(chat_id, "chat_id");
-        console.log(message_id, "message_id");
-
         set((state) => {
           const newList: ChatListItem[] = clone(state.list);
           const findChat = newList.find((chat) => chat.chat_id === chat_id);
@@ -104,6 +101,21 @@ export const useChatStore = create<ChatStore>()(
           findChat.chat_list = findChat.chat_list.filter(
             (item) => item.id !== message_id
           );
+          return { list: newList };
+        });
+      },
+      updateMessage: ({ chat_id, message_id, content }) => {
+        set((state) => {
+          const newList: ChatListItem[] = clone(state.list);
+          const findChat = newList.find((chat) => chat.chat_id === chat_id);
+          if (!findChat) return {};
+          const findMessage = findChat.chat_list.find(
+            (item) => item.id === message_id
+          );
+          if (!findMessage) return {};
+
+          findMessage.content = content;
+
           return { list: newList };
         });
       },
