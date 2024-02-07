@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useClipboard } from "@/hooks/useClipboard";
 import { useChatStore, Message, LOADING_STATE } from "@/store/chat";
 import { ChatContent } from "../chatContent";
@@ -75,10 +74,13 @@ export default function ChatSection() {
         <div key={m.id} className="group">
           <div className="flex gap-2">
             {m.role === "user" ? (
-              <Avatar>
-                <AvatarImage src="https://github.com/Peek-A-Booo.png" />
-                <AvatarFallback>Avatar</AvatarFallback>
-              </Avatar>
+              <Image
+                className="flex-shrink-0 w-10 h-10 rounded-full"
+                src="https://github.com/Peek-A-Booo.png"
+                alt="avatar"
+                width={40}
+                height={40}
+              />
             ) : (
               <div className="w-10 h-10 bg-zinc-200 flex justify-center items-center rounded-full flex-shrink-0">
                 <Image src="/meta.svg" alt="llama" width={26} height={26} />
