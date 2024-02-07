@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import { useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,6 +12,17 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useChatStore, LOADING_STATE } from "@/store/chat";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -21,6 +32,7 @@ export default function SideMenus() {
     state.activeId,
     state.list,
   ]);
+  const [open, setOpen] = useState(false);
 
   const addChat = useChatStore((state) => state.addChat);
   const deleteChat = useChatStore((state) => state.deleteChat);
@@ -92,7 +104,34 @@ export default function SideMenus() {
             <div className="truncate">{item.chat_name || "Untitled"}</div>
             <div className="absolute right-3 opacity-0 group-hover:opacity-100">
               <div className="flex items-center gap-2">
-                <span className="i-ri-edit-line text-base" />
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <span className="i-ri-edit-line text-base" />
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Edit Chat Title</DialogTitle>
+                    </DialogHeader>
+                    <div className="flex items-center space-x-2">
+                      <div className="grid flex-1 gap-2">
+                        <Label htmlFor="link" className="sr-only">
+                          Link
+                        </Label>
+                        <Input id="link" readOnly />
+                      </div>
+                    </div>
+                    <DialogFooter className="">
+                      <div className="flex-1 flex justify-between">
+                        <DialogClose>
+                          <Button variant="ghost">Cancel</Button>
+                        </DialogClose>
+                        <DialogClose>
+                          <Button>Save</Button>
+                        </DialogClose>
+                      </div>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <span
