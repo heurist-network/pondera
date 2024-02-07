@@ -83,7 +83,13 @@ export default function ChatSection() {
               />
             ) : (
               <div className="w-10 h-10 bg-zinc-200 flex justify-center items-center rounded-full flex-shrink-0">
-                <Image src="/meta.svg" alt="llama" width={26} height={26} />
+                <Image
+                  className="w-[26px] h-[26px]"
+                  src="/meta.svg"
+                  alt="llama"
+                  width={26}
+                  height={26}
+                />
               </div>
             )}
             <div

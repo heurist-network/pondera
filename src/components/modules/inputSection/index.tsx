@@ -68,6 +68,21 @@ export default function InputSection() {
     textareaRef.current?.focus();
   }, [activeId]);
 
+  useEffect(() => {
+    const keydownHandler = (e: any) => {
+      if (e.key === "/") {
+        e.preventDefault();
+        textareaRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("keydown", keydownHandler);
+
+    return () => {
+      document.removeEventListener("keydown", keydownHandler);
+    };
+  }, []);
+
   return (
     <div className="px-6 py-3 flex gap-2 border-t border-zinc-100">
       <Textarea
