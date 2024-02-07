@@ -68,7 +68,7 @@ export default function InputSection() {
     <div className="px-6 py-3 flex gap-2 border-t border-zinc-100">
       <Textarea
         ref={textareaRef}
-        className="min-h-min max-h-56 resize-none rounded-xl bg-transparent"
+        className="min-h-min max-h-56 resize-none rounded-xl bg-transparent transition-all"
         rows={1}
         placeholder={`Press "/" to focus input`}
         value={input}
