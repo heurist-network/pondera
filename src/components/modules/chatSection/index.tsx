@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useClipboard } from "@/hooks/useClipboard";
-import { useChatStore, Message } from "@/store/chat";
+import { useChatStore, Message, LOADING_STATE } from "@/store/chat";
 import { ChatContent } from "../chatContent";
 import { cn } from "@/lib/utils";
 import {
@@ -52,6 +52,8 @@ export default function ChatSection() {
   ]);
   const deleteMessage = useChatStore((state) => state.deleteMessage);
 
+  const activeChat = list.find((item) => item.chat_id === activeId);
+
   useEffect(() => {
     const findChat = list.find((item) => item.chat_id === activeId);
     setMessages(findChat?.chat_list || []);
@@ -66,7 +68,7 @@ export default function ChatSection() {
       className="grow overflow-y-auto flex flex-col pl-5 pr-10 gap-4 py-10"
       ref={scrollRef}
     >
-      {messages.map((m) => (
+      {messages.map((m, index) => (
         <div key={m.id} className="group">
           <div className="flex gap-2">
             {m.role === "user" ? (
@@ -88,7 +90,16 @@ export default function ChatSection() {
               <ChatContent content={m.content} />
             </div>
           </div>
-          <div className="pl-12 opacity-0 group-hover:opacity-100 flex gap-2 mt-1">
+          <div
+            className={cn(
+              "pl-12 opacity-0 transition-opacity flex gap-2 mt-1",
+              m.role !== "user" &&
+                index === messages.length - 1 &&
+                activeChat?.chat_state !== LOADING_STATE.NONE
+                ? "pointer-events-none"
+                : "group-hover:opacity-100"
+            )}
+          >
             <CopyContent content={m.content} />
             <div className="flex justify-center items-center p-1.5 rounded-md cursor-pointer hover:bg-[#f2f2f2] transition-colors">
               <span className="i-ri-edit-line w-[18px] h-[18px] text-[#757574]" />
@@ -125,6 +136,16 @@ export default function ChatSection() {
           </div>
         </div>
       ))}
+      {activeChat?.chat_state !== LOADING_STATE.NONE && (
+        <div className="pl-12 -mt-4 text-muted-foreground flex items-center gap-2">
+          <span className="i-mingcute-loading-line animate-spin w-5 h-5" />
+          Assistant is{" "}
+          {activeChat?.chat_state === LOADING_STATE.CONNECTING
+            ? "thinking"
+            : "typing"}
+          ...
+        </div>
+      )}
     </div>
   );
 }

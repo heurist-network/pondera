@@ -186,6 +186,8 @@ export const useChatStore = create<ChatStore>()(
                 );
                 if (!findChat) return {};
 
+                findChat.chat_state = LOADING_STATE.RESPONDING;
+
                 const lastItem = findChat.chat_list.at(-1);
                 if (!lastItem) return {};
 

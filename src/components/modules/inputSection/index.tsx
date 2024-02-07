@@ -80,7 +80,11 @@ export default function InputSection() {
         onInput={onResize}
         onKeyDown={onKeyDown}
       />
-      <Button onClick={onSubmit} disabled={isLoading} className="gap-2">
+      <Button
+        onClick={onSubmit}
+        disabled={isLoading}
+        className="gap-2 rounded-xl"
+      >
         {isLoading ? (
           <span className="i-mingcute-loading-line text-base animate-spin" />
         ) : (

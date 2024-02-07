@@ -35,12 +35,13 @@ export default function SideMenus() {
       <div className="flex gap-2">
         <Button
           size="sm"
-          className="mb-2 flex-1"
+          className="mb-2 flex-1 gap-2.5"
           onClick={() => {
             addChat();
           }}
         >
-          Add
+          <span className="i-mingcute-chat-2-fill w-4 h-4" />
+          New Chat
         </Button>
         <AlertDialog>
           <AlertDialogTrigger asChild>
