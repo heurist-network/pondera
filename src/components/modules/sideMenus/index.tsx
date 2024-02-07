@@ -23,6 +23,8 @@ export default function SideMenus() {
   ]);
 
   const addChat = useChatStore((state) => state.addChat);
+  const deleteChat = useChatStore((state) => state.deleteChat);
+  const clearChat = useChatStore((state) => state.clearChat);
   const toggleChatActive = useChatStore((state) => state.toggleChatActive);
 
   return (
@@ -30,15 +32,37 @@ export default function SideMenus() {
       <h4 className="scroll-m-20 text-xl font-semibold tracking-tight h-12 flex justify-center items-center">
         Pondera
       </h4>
-      <div>
+      <div className="flex gap-2">
         <Button
-          className="w-full mb-2"
+          size="sm"
+          className="mb-2 flex-1"
           onClick={() => {
             addChat();
           }}
         >
           Add
         </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button size="sm" variant="ghost" className="hover:bg-[#c8c9ca]">
+              <span className="i-f7-trash w-[18px] h-[18px]" />
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to clear the chat?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction variant="destructive" onClick={clearChat}>
+                Confirm
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
       <div className="flex flex-col gap-1">
         {list.map((item) => (
@@ -77,18 +101,19 @@ export default function SideMenus() {
                   </AlertDialogTrigger>
                   <AlertDialogContent onClick={(e) => e.stopPropagation()}>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        Are you absolutely sure?
-                      </AlertDialogTitle>
+                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        This action cannot be undone. This will permanently
-                        delete your account and remove your data from our
-                        servers.
+                        Are you sure you want to delete the chat?
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction>Continue</AlertDialogAction>
+                      <AlertDialogAction
+                        variant="destructive"
+                        onClick={() => deleteChat(item.chat_id)}
+                      >
+                        Confirm
+                      </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>

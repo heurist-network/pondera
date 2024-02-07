@@ -43,7 +43,45 @@ export const useChatStore = create<ChatStore>()(
           activeId: chat_id,
         }));
       },
-      addChatItem: ({ chat_id, message, role }) => {
+      deleteChat: (chat_id) => {
+        console.log(chat_id, "chat_id");
+
+        set((state) => {
+          if (state.list.length <= 1) {
+            const activeId = initChatItem.chat_id;
+            return { activeId, list: [initChatItem] };
+          } else {
+            const list = state.list.filter((item) => item.chat_id !== chat_id);
+
+            if (chat_id === state.activeId) {
+              return { activeId: list[0].chat_id, list };
+            }
+
+            return { list };
+          }
+        });
+      },
+      clearChat: () => {
+        set(() => {
+          const activeId = initChatItem.chat_id;
+          return { activeId, list: [initChatItem] };
+        });
+      },
+      deleteMessage: ({ chat_id, message_id }) => {
+        console.log(chat_id, "chat_id");
+        console.log(message_id, "message_id");
+
+        set((state) => {
+          const newList: ChatListItem[] = clone(state.list);
+          const findChat = newList.find((chat) => chat.chat_id === chat_id);
+          if (!findChat) return {};
+          findChat.chat_list = findChat.chat_list.filter(
+            (item) => item.id !== message_id
+          );
+          return { list: newList };
+        });
+      },
+      addMessage: ({ chat_id, message, role }) => {
         set((state) => {
           const newList: ChatListItem[] = clone(state.list);
           const findChat = newList.find((chat) => chat.chat_id === chat_id);

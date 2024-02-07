@@ -39,7 +39,17 @@ export type ChatStore = {
 
   toggleChatActive: (chat_id: string) => void;
   addChat: () => void;
-  addChatItem: ({
+  deleteChat: (chat_id: string) => void;
+  clearChat: () => void;
+  deleteMessage: ({
+    chat_id,
+    message_id,
+  }: {
+    chat_id: string;
+    message_id: string;
+  }) => void;
+
+  addMessage: ({
     chat_id,
     message,
     role,

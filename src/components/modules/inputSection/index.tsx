@@ -12,7 +12,7 @@ export default function InputSection() {
     state.activeId,
     state.list,
   ]);
-  const addChatItem = useChatStore((state) => state.addChatItem);
+  const addMessage = useChatStore((state) => state.addMessage);
   const sendChat = useChatStore((state) => state.sendChat);
 
   const activeList = list.find((item) => item.chat_id === activeId);
@@ -56,13 +56,17 @@ export default function InputSection() {
       return textareaRef.current?.focus();
     }
     setInput("");
-    addChatItem({ chat_id: activeId, role: "user", message: input });
+    addMessage({ chat_id: activeId, role: "user", message: input });
     sendChat({ chat_id: activeId });
   };
 
   useEffect(() => {
     onResize();
   }, [input]);
+
+  useEffect(() => {
+    textareaRef.current?.focus();
+  }, [activeId]);
 
   return (
     <div className="px-6 py-3 flex gap-2 border-t border-zinc-100">
