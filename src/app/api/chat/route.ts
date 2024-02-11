@@ -6,7 +6,7 @@ export const runtime = "edge";
 
 export async function POST(req: Request) {
   try {
-    const { messages } = await req.json();
+    const { messages, modelId, temperature, stream: useStream } = await req.json();
 
     console.log("---------------------------------");
     console.log("\n\n");
@@ -15,16 +15,18 @@ export async function POST(req: Request) {
     console.log("---------------------------------");
 
     const response = await fetch(
-      "https://openai-proxy.replicate.com/v1/chat/completions",
+      "https://llm-gateway.heurist.xyz/v1/chat/completions",
       {
         headers: {
-          Authorization: `Bearer ${env.MISTRAL_API_KEY}`,
+          Authorization: `Bearer ${env.HEURIST_AUTH_KEY}`,
         },
         method: "POST",
         body: JSON.stringify({
-          model: "meta/llama-2-70b-chat",
-          stream: true,
+          model: modelId,
+          stream: useStream || false,
           messages,
+          temperature: temperature || 0.75,
+          max_tokens: 4000
         }),
       }
     );

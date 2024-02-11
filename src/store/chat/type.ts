@@ -6,14 +6,10 @@ export type ChatModel = {
 };
 
 export enum LOADING_STATE {
-  NONE,
-  CONNECTING,
-  RESPONDING,
+  NONE, // Not loading
+  CONNECTING, // Requesting to server
+  RESPONDING, // Responding from server
 }
-
-// 0 没有 loading
-// 1 正在请求
-// 2 正在响应中
 
 export type Message = {
   id: string;

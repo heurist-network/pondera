@@ -33,18 +33,9 @@ export default function InputSection() {
   };
 
   const onKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    const platform = getPlatform();
-
-    if (platform === "mac") {
-      if (event.keyCode === 13 && !event.shiftKey) {
-        event.preventDefault();
-        onSubmit();
-      }
-    } else if (platform === "windows") {
-      if ((event.keyCode === 13 || event.keyCode === 10) && !event.shiftKey) {
-        event.preventDefault();
-        onSubmit();
-      }
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      onSubmit();
     }
   };
 

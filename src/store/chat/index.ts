@@ -16,7 +16,7 @@ export const initChatItem: ChatListItem = {
   chat_name: "",
   chat_model: {
     type: "mistralai",
-    name: "Mixtral-8x7B-v0.1",
+    name: "mixtral-8x7b-instruct-v0.1",
   },
   chat_prompt: BASE_PROMPT,
   chat_state: LOADING_STATE.NONE,
@@ -175,8 +175,9 @@ export const useChatStore = create<ChatStore>()(
           method: "POST",
           signal: controller.signal,
           openWhenHidden: true,
-          body: JSON.stringify({ messages }),
+          body: JSON.stringify({ messages, modelId: `${findChat.chat_model.type}/${findChat.chat_model.name}`, stream: true }),
           onopen: async (res) => {
+            console.log("onopen")
             const isError = !res.ok || res.status !== 200 || !res.body;
             if (isError) {
               set((state) => {
@@ -195,8 +196,8 @@ export const useChatStore = create<ChatStore>()(
             }
           },
           onmessage: (res) => {
+            console.log("onmessage")
             const data = JSON.parse(res.data).choices[0];
-            // response over
             if (data.finish_reason === "stop") {
               set((state) => {
                 const newList: ChatListItem[] = clone(state.list);
@@ -227,7 +228,7 @@ export const useChatStore = create<ChatStore>()(
             }
 
             try {
-              const content = data.delta;
+              const content = data.delta.content;
               if (!content) return;
 
               set((state) => {
@@ -258,6 +259,32 @@ export const useChatStore = create<ChatStore>()(
             } catch (error) {}
           },
           onerror: () => {
+            console.log("stop streaming");
+            // FIXME: This is a hack to stop the SSE stream in onerror. The gateway server is probably not closing the stream properly.
+            set((state) => {
+              const newList: ChatListItem[] = clone(state.list);
+              const findChat = newList.find(
+                (chat) => chat.chat_id === chat_id
+              );
+              if (!findChat) return {};
+              findChat.chat_state = LOADING_STATE.NONE;
+
+              // If no title, generate one.
+              if (!findChat.chat_name) {
+                state.generateChatName({
+                  chat_id,
+                  messages: [
+                    ...messages,
+                    {
+                      role: "user",
+                      content: GENERATE_CHAT_NAME_PROMPT,
+                    },
+                  ],
+                });
+              }
+
+              return { list: newList };
+            });
             throw null;
           },
           onclose: () => {
@@ -266,40 +293,39 @@ export const useChatStore = create<ChatStore>()(
         });
       },
       generateChatName: ({ chat_id, messages }) => {
+        // avoid rate limit using setTimeout
         setTimeout(() => {
-          fetchEventSource("/api/chat", {
+          fetch("/api/chat", {
             method: "POST",
-            openWhenHidden: true,
-            body: JSON.stringify({ messages }),
-            onmessage: (res) => {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ messages, modelId: "mistralai/mixtral-8x7b-instruct-v0.1", stream: false, temperature: 0.01 }),
+          })
+            .then(async (response) => {
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
               try {
-                const data = JSON.parse(res.data).choices[0];
-                if (data.finish_reason === "stop") return;
-
-                const content = data.delta;
-                if (!content) return;
-
+                const data = await response.json();
                 set((state) => {
                   const newList: ChatListItem[] = clone(state.list);
                   const findChat = newList.find(
                     (item) => item.chat_id === chat_id
                   );
                   if (!findChat) return {};
-
-                  findChat.chat_name += content;
-
+          
+                  findChat.chat_name = data.choices[0].message.content;
+          
                   return { list: newList };
                 });
-              } catch {}
-            },
-            onerror: (error) => {
-              console.log(error, "generateChatName error");
-              throw null;
-            },
-            onclose: () => {
-              console.log("generateChatName error");
-            },
-          });
+              } catch (error) {
+                console.error('[generateChatName] Error parsing /api/chat response:', error);
+              }
+            })
+            .catch((error) => {
+              console.error('[generateChatName] Error during fetch /api/chat:', error);
+            });
         }, 1000);
       },
 
