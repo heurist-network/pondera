@@ -7,8 +7,8 @@ import { Provider } from "./providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Pondera",
-  description: "Pondera",
+  title: "Pondera | Open-source AI Chat",
+  description: "Pondera is an open-source conversation assistant that makes the best language models available to everyone. Powered by Heurist",
   // icons: {
   //   icon: [
   //     {
