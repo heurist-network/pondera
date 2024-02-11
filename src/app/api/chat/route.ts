@@ -6,7 +6,7 @@ export const runtime = "edge";
 
 export async function POST(req: Request) {
   try {
-    const { messages, modelId, temperature, stream: useStream } = await req.json();
+    const { messages, modelId, temperature, maxTokens, stream: useStream } = await req.json();
 
     console.log("---------------------------------");
     console.log("\n\n");
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
           stream: useStream || false,
           messages,
           temperature: temperature || 0.75,
-          max_tokens: 4000
+          max_tokens: maxTokens || 4000
         }),
       }
     );

@@ -300,7 +300,7 @@ export const useChatStore = create<ChatStore>()(
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ messages, modelId: "mistralai/mixtral-8x7b-instruct-v0.1", stream: false, temperature: 0.01 }),
+            body: JSON.stringify({ messages, modelId: "mistralai/mixtral-8x7b-instruct-v0.1", stream: false, temperature: 0.01, maxTokens: 10 }),
           })
             .then(async (response) => {
               if (!response.ok) {
@@ -315,7 +315,7 @@ export const useChatStore = create<ChatStore>()(
                   );
                   if (!findChat) return {};
           
-                  findChat.chat_name = data.choices[0].message.content;
+                  findChat.chat_name = data.choices[0].message.content.replace(/['"\n\\]/g, '').trim();
           
                   return { list: newList };
                 });
