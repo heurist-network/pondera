@@ -76,7 +76,7 @@ export default function ChatSection() {
             {m.role === "user" ? (
               <Image
                 className="flex-shrink-0 w-10 h-10 rounded-full"
-                src="https://github.com/Peek-A-Booo.png"
+                src="/user.svg"
                 alt="avatar"
                 width={40}
                 height={40}
