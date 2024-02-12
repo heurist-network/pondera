@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Pondera | Open-source AI Chat",
-  description: "Pondera is an open-source conversation assistant that makes the best language models available to everyone. Powered by Heurist",
+  description: "Pondera is an open-source conversational AI assistant that makes the best language models available to everyone. Powered by Heurist.",
   // icons: {
   //   icon: [
   //     {
