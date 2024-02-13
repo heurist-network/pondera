@@ -260,7 +260,7 @@ export const useChatStore = create<ChatStore>()(
           },
           onerror: () => {
             console.log("stop streaming");
-            // FIXME: This is a hack to stop the SSE stream in onerror. The gateway server is probably not closing the stream properly.
+            // FIXME: This is a hack to stop the SSE stream in onerror. The SSE client is probably not closing the stream properly.
             set((state) => {
               const newList: ChatListItem[] = clone(state.list);
               const findChat = newList.find(
@@ -326,7 +326,7 @@ export const useChatStore = create<ChatStore>()(
             .catch((error) => {
               console.error('[generateChatName] Error during fetch /api/chat:', error);
             });
-        }, 1000);
+        }, 500);
       },
 
       // Hydration
