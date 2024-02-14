@@ -74,17 +74,13 @@ export default function ChatSection() {
         <div key={m.id} className="group">
           <div className="flex gap-2">
             {m.role === "user" ? (
-              <Image
-                className="flex-shrink-0 w-10 h-10 rounded-full"
-                src="/user.svg"
-                alt="avatar"
-                width={40}
-                height={40}
-              />
+              <div className="w-10 h-10 bg-zinc-200 flex justify-center items-center rounded-full flex-shrink-0">
+                <span className="i-mingcute-user-2-fill w-6 h-6" />
+              </div>
             ) : (
               <div className="w-10 h-10 bg-zinc-200 flex justify-center items-center rounded-full flex-shrink-0">
                 <Image
-                  className="w-[26px] h-[26px]"
+                  className="w-5 h-5"
                   src="/mistral.svg"
                   alt="mistral"
                   width={26}
@@ -94,7 +90,7 @@ export default function ChatSection() {
             )}
             <div
               className={cn(
-                "self-start px-4 py-2 rounded-xl",
+                "self-start px-4 py-2 rounded-xl max-w-[125ch]",
                 m.role === "user" ? "bg-blue-200/70" : "bg-neutral-100"
               )}
             >
@@ -153,7 +149,7 @@ export default function ChatSection() {
         </div>
       ))}
       {activeChat?.chat_state !== LOADING_STATE.NONE && (
-        <div className="pl-12 -mt-4 text-muted-foreground flex items-center gap-2">
+        <div className="pl-12 -mt-4 text-muted-foreground text-sm flex items-center gap-2">
           <span className="i-mingcute-loading-line animate-spin w-5 h-5" />
           Assistant is{" "}
           {activeChat?.chat_state === LOADING_STATE.CONNECTING
