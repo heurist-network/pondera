@@ -23,8 +23,8 @@ function CopyToClipboard({ content }: { content: string }) {
     >
       <span
         className={cn("h-4 w-4", {
-          "i-lucide-copy": !isCopied,
-          "i-lucide-check": isCopied,
+          "i-mingcute-copy-2-line": !isCopied,
+          "i-mingcute-check-line": isCopied,
         })}
       />
     </div>

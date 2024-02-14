@@ -9,7 +9,7 @@ import { MemoizedReactMarkdown } from "./reactMarkdown";
 export function ChatContent({ content }: { content: string }) {
   return (
     <MemoizedReactMarkdown
-      className="prose dark:prose-invert"
+      className="prose dark:prose-invert md:max-w-[calc(100vw-416px)] max-w-[calc(100vw-136px)]"
       remarkPlugins={[RemarkGfm, RemarkMath, RemarkBreaks]}
       rehypePlugins={[RehypeKatex]}
       components={{
