@@ -27,7 +27,7 @@ import { useChatStore, LOADING_STATE } from "@/store/chat";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export default function SideMenus() {
+export default function SideMenus({ className }: { className?: string }) {
   const [activeId, list] = useChatStore((state) => [
     state.activeId,
     state.list,
@@ -41,7 +41,12 @@ export default function SideMenus() {
   const updateChatName = useChatStore((state) => state.updateChatName);
 
   return (
-    <div className="left-0 top-0 bottom-0 w-[280px] fixed px-2.5 border-r bg-sideMenu flex flex-col">
+    <div
+      className={cn(
+        "left-0 top-0 bottom-0 w-[280px] fixed px-2.5 border-r bg-sideMenu flex flex-col",
+        className
+      )}
+    >
       <div className="text-xl font-semibold tracking-tight h-20 flex justify-center items-center">
         <Image src="/logo.svg" alt="logo" width={259} height={640} />
       </div>

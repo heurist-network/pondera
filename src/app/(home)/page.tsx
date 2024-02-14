@@ -7,8 +7,8 @@ import InputSection from "@/components/modules/inputSection";
 export default function Home() {
   return (
     <div>
-      <SideMenus />
-      <div className="left-[280px] fixed inset-0 flex flex-col">
+      <SideMenus className="hidden md:flex" />
+      <div className="left-0 md:left-[280px] fixed inset-0 flex flex-col">
         <HeaderMenus />
         <ChatSection />
         <InputSection />

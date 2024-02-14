@@ -33,7 +33,7 @@ export default function InputSection() {
   };
 
   const onKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       onSubmit();
     }
@@ -75,7 +75,7 @@ export default function InputSection() {
   }, []);
 
   return (
-    <div className="px-6 py-3 flex gap-2 border-t border-zinc-100">
+    <div className="px-5 py-3 flex gap-2 border-t border-zinc-100">
       <Textarea
         ref={textareaRef}
         className="min-h-min max-h-56 resize-none rounded-xl bg-transparent transition-all"
@@ -96,7 +96,7 @@ export default function InputSection() {
         ) : (
           <span className="i-ri-send-plane-fill text-base" />
         )}
-        Send
+        <span className="hidden md:block">Send</span>
       </Button>
     </div>
   );
