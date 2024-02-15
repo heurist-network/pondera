@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -43,14 +44,14 @@ export default function SideMenus({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "left-0 top-0 bottom-0 w-[280px] fixed px-2.5 border-r bg-sideMenu flex flex-col",
+        "left-0 top-0 bottom-0 w-[280px] fixed border-r bg-sideMenu flex flex-col",
         className
       )}
     >
-      <div className="text-xl font-semibold tracking-tight h-20 flex justify-center items-center">
+      <div className="h-20 flex justify-center items-center">
         <Image src="/logo.svg" alt="logo" width={259} height={640} />
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 px-2.5">
         <Button
           size="sm"
           className="mb-2 flex-1 gap-2.5"
@@ -83,7 +84,7 @@ export default function SideMenus({ className }: { className?: string }) {
           </AlertDialogContent>
         </AlertDialog>
       </div>
-      <div className="flex-1 flex flex-col gap-1 overflow-y-auto mb-2">
+      <div className="flex-1 flex flex-col gap-1 overflow-y-auto px-2.5 pb-5">
         {list.map((item) => (
           <div
             className={cn(
@@ -179,6 +180,29 @@ export default function SideMenus({ className }: { className?: string }) {
             </div>
           </div>
         ))}
+      </div>
+      <div className="border-t border-t-zinc-300 h-12 flex items-center justify-center gap-2">
+        <Link
+          className="w-9 h-9 flex justify-center items-center rounded-lg hover:bg-sideMenuItem cursor-pointer transition-colors"
+          href="https://github.com/heurist-network"
+          target="_blank"
+        >
+          <span className="i-f7-logo-github" />
+        </Link>
+        <Link
+          className="w-9 h-9 flex justify-center items-center rounded-lg hover:bg-sideMenuItem cursor-pointer transition-colors"
+          href="https://twitter.com/heurist_ai"
+          target="_blank"
+        >
+          <span className="i-ri-twitter-x-fill" />
+        </Link>
+        <Link
+          className="w-9 h-9 flex justify-center items-center rounded-lg hover:bg-sideMenuItem cursor-pointer transition-colors"
+          href="https://discord.gg/Ch6Y7mYMdr"
+          target="_blank"
+        >
+          <span className="i-ri-discord-fill" />
+        </Link>
       </div>
     </div>
   );
