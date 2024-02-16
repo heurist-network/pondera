@@ -166,7 +166,7 @@ export const useChatStore = create<ChatStore>()(
 
         const controller = new AbortController();
 
-        const messages = findChat.chat_list.map((item) => ({
+        const messages = findChat.chat_list.slice(-8).map((item) => ({
           role: item.role,
           content: item.content,
         }));
@@ -175,9 +175,13 @@ export const useChatStore = create<ChatStore>()(
           method: "POST",
           signal: controller.signal,
           openWhenHidden: true,
-          body: JSON.stringify({ messages, modelId: `${findChat.chat_model.type}/${findChat.chat_model.name}`, stream: true }),
+          body: JSON.stringify({
+            messages,
+            modelId: `${findChat.chat_model.type}/${findChat.chat_model.name}`,
+            stream: true,
+          }),
           onopen: async (res) => {
-            console.log("onopen")
+            console.log("onopen");
             const isError = !res.ok || res.status !== 200 || !res.body;
             if (isError) {
               set((state) => {
@@ -196,7 +200,7 @@ export const useChatStore = create<ChatStore>()(
             }
           },
           onmessage: (res) => {
-            console.log("onmessage")
+            console.log("onmessage");
             const data = JSON.parse(res.data).choices[0];
             if (data.finish_reason === "stop") {
               set((state) => {
@@ -263,9 +267,7 @@ export const useChatStore = create<ChatStore>()(
             // FIXME: This is a hack to stop the SSE stream in onerror. The SSE client is probably not closing the stream properly.
             set((state) => {
               const newList: ChatListItem[] = clone(state.list);
-              const findChat = newList.find(
-                (chat) => chat.chat_id === chat_id
-              );
+              const findChat = newList.find((chat) => chat.chat_id === chat_id);
               if (!findChat) return {};
               findChat.chat_state = LOADING_STATE.NONE;
 
@@ -298,9 +300,15 @@ export const useChatStore = create<ChatStore>()(
           fetch("/api/chat", {
             method: "POST",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
-            body: JSON.stringify({ messages, modelId: "mistralai/mixtral-8x7b-instruct-v0.1", stream: false, temperature: 0.01, maxTokens: 10 }),
+            body: JSON.stringify({
+              messages,
+              modelId: "mistralai/mixtral-8x7b-instruct-v0.1",
+              stream: false,
+              temperature: 0.01,
+              maxTokens: 10,
+            }),
           })
             .then(async (response) => {
               if (!response.ok) {
@@ -314,17 +322,25 @@ export const useChatStore = create<ChatStore>()(
                     (item) => item.chat_id === chat_id
                   );
                   if (!findChat) return {};
-          
-                  findChat.chat_name = data.choices[0].message.content.replace(/['"\n\\]/g, '').trim();
-          
+
+                  findChat.chat_name = data.choices[0].message.content
+                    .replace(/['"\n\\]/g, "")
+                    .trim();
+
                   return { list: newList };
                 });
               } catch (error) {
-                console.error('[generateChatName] Error parsing /api/chat response:', error);
+                console.error(
+                  "[generateChatName] Error parsing /api/chat response:",
+                  error
+                );
               }
             })
             .catch((error) => {
-              console.error('[generateChatName] Error during fetch /api/chat:', error);
+              console.error(
+                "[generateChatName] Error during fetch /api/chat:",
+                error
+              );
             });
         }, 500);
       },
