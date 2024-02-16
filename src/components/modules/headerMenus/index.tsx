@@ -1,11 +1,23 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+} from "@/components/ui/dropdown-menu";
 import SideMenus from "../sideMenus";
+import { cn } from "@/lib/utils";
 
 export default function HeaderMenus() {
   const [open, setOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const [model, setModel] = useState("mixtral-8x7b");
 
   const resize = () => {
     if (window.innerWidth > 768) {
@@ -35,9 +47,53 @@ export default function HeaderMenus() {
           </SheetContent>
         </Sheet>
       </div>
-      <div className="hover:bg-[#f2f2f2] cursor-pointer px-3 py-1 rounded-lg select-none text-sm text-muted-foreground transition-colors">
-        mistralai/mixtral-8x7b-instruct-v0.1
-      </div>
+
+      <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+        <DropdownMenuTrigger asChild>
+          <div
+            className={cn(
+              "hover:bg-[#f2f2f2] cursor-pointer px-3 py-1.5 rounded-lg select-none text-sm text-muted-foreground transition-colors",
+              dropdownOpen && "bg-[#f2f2f2]"
+            )}
+          >
+            mistralai/mixtral-8x7b-instruct-v0.1
+          </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-80" align="start" sideOffset={7}>
+          <DropdownMenuRadioGroup value={model} onValueChange={setModel}>
+            <DropdownMenuRadioItem className="py-2" value="mixtral-8x7b">
+              <Image
+                className="mr-2 rounded-md"
+                src="/mistral.svg"
+                alt="mistral"
+                width={24}
+                height={24}
+              />
+              <span>mixtral-8x7b</span>
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem className="py-2" value="llama-70b">
+              <Image
+                className="mr-2 rounded-md"
+                src="/llama.jpeg"
+                alt="llama"
+                width={24}
+                height={24}
+              />
+              <span>llama-70b</span>
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem className="py-2" value="codellama-70b">
+              <Image
+                className="mr-2"
+                src="/codellama.png"
+                alt="codellama"
+                width={24}
+                height={24}
+              />
+              <span>codellama-70b</span>
+            </DropdownMenuRadioItem>
+          </DropdownMenuRadioGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }
