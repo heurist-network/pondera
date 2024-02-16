@@ -171,6 +171,10 @@ export const useChatStore = create<ChatStore>()(
           content: item.content,
         }));
 
+        set((state) => {
+          return { abort: { ...state.abort, [chat_id]: controller } };
+        });
+
         fetchEventSource("/api/chat", {
           method: "POST",
           signal: controller.signal,
@@ -344,6 +348,20 @@ export const useChatStore = create<ChatStore>()(
             });
         }, 500);
       },
+      cancelChat: (chat_id) => {
+        set((state) => {
+          if (!state.abort[chat_id]) return {};
+          state.abort[chat_id].abort();
+          delete state.abort[chat_id];
+
+          const newList: ChatListItem[] = clone(state.list);
+          const findChat = newList.find((item) => item.chat_id === chat_id);
+          if (!findChat) return {};
+          findChat.chat_state = LOADING_STATE.NONE;
+
+          return { list: newList };
+        });
+      },
 
       // Hydration
       _hasHydrated: false,
@@ -361,6 +379,7 @@ export const useChatStore = create<ChatStore>()(
       merge: (persistedState: any, currentState) => {
         // reset data
         if (persistedState) {
+          persistedState.abort = {};
           persistedState.list.forEach((item: any) => {
             item.chat_state = LOADING_STATE.NONE;
           });

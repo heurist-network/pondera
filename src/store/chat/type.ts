@@ -31,7 +31,7 @@ export type ChatListItem = {
 export type ChatStore = {
   activeId: string;
   list: ChatListItem[];
-  abort: {};
+  abort: Record<string, AbortController>;
 
   toggleChatActive: (chat_id: string) => void;
   addChat: () => void;
@@ -80,6 +80,7 @@ export type ChatStore = {
     chat_id: string;
     messages: { role: Message["role"]; content: string }[];
   }) => void;
+  cancelChat: (chat_id: string) => void;
 
   // Hydration
   _hasHydrated: boolean;
