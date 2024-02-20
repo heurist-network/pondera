@@ -48,7 +48,7 @@ export default function SideMenus({ className }: { className?: string }) {
         className
       )}
     >
-      <div className="h-20 flex justify-center items-center">
+      <div className="h-20 flex justify-center items-center select-none">
         <Image src="/logo.svg" alt="logo" width={259} height={640} />
       </div>
       <div className="flex gap-2 px-2.5">

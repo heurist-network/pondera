@@ -60,7 +60,12 @@ export default function HeaderMenus() {
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-80" align="start" sideOffset={7}>
-          <DropdownMenuRadioGroup value={model} onValueChange={setModel}>
+          <DropdownMenuRadioGroup
+            value={model}
+            onValueChange={(value) => {
+              // setModel(value);
+            }}
+          >
             <DropdownMenuRadioItem className="py-2" value="mixtral-8x7b">
               <Image
                 className="mr-2 rounded-md"
