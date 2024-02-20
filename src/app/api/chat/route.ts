@@ -6,10 +6,18 @@ export const runtime = "edge";
 
 export async function POST(req: Request) {
   try {
-    const { messages, modelId, temperature, maxTokens, stream: useStream } = await req.json();
+    const {
+      messages,
+      modelId,
+      temperature,
+      maxTokens,
+      stream: useStream,
+    } = await req.json();
 
     console.log("---------------------------------");
     console.log("\n\n");
+    console.log((req as any).ip, "vercel ip?");
+    console.log(req.headers.get("X-Forwarded-For"), "Self-hosting ip?");
     console.log(messages, "messages");
     console.log("\n\n");
     console.log("---------------------------------");
@@ -26,7 +34,7 @@ export async function POST(req: Request) {
           stream: useStream || false,
           messages,
           temperature: temperature || 0.75,
-          max_tokens: maxTokens || 4000
+          max_tokens: maxTokens || 4000,
         }),
       }
     );
