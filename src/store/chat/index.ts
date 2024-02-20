@@ -187,6 +187,7 @@ export const useChatStore = create<ChatStore>()(
           onopen: async (res) => {
             console.log("onopen");
             const isError = !res.ok || res.status !== 200 || !res.body;
+
             if (isError) {
               set((state) => {
                 const newList: ChatListItem[] = clone(state.list);
@@ -199,7 +200,13 @@ export const useChatStore = create<ChatStore>()(
                 return { list: newList };
               });
 
+              if (res.status === 429) {
+                toast.error("Too Many Requests");
+                return;
+              }
+
               const errRes = await res.json();
+
               toast.error(errRes.msg || "Error");
             }
           },

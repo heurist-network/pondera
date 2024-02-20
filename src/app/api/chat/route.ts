@@ -1,8 +1,17 @@
+import { Ratelimit } from "@upstash/ratelimit";
 import { env } from "@/env.mjs";
 import { ResError } from "@/lib/response";
 import { stream } from "@/lib/stream";
+import { redis } from "@/lib/redis";
 
 export const runtime = "edge";
+
+const ratelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(1, "30 s"),
+  // limiter: Ratelimit.slidingWindow(20, "1 h"),
+  analytics: true,
+});
 
 export async function POST(req: Request) {
   try {
@@ -14,13 +23,21 @@ export async function POST(req: Request) {
       stream: useStream,
     } = await req.json();
 
+    const identifier = (req as any).ip || req.headers.get("X-Forwarded-For");
+
     console.log("---------------------------------");
     console.log("\n\n");
-    console.log((req as any).ip, "vercel ip?");
-    console.log(req.headers.get("X-Forwarded-For"), "Self-hosting ip?");
     console.log(messages, "messages");
     console.log("\n\n");
     console.log("---------------------------------");
+
+    // ip rate limits
+    const { success } = await ratelimit.limit(identifier);
+    if (!success) {
+      return new Response("Too Many Requests", {
+        status: 429,
+      });
+    }
 
     const response = await fetch(
       "https://llm-gateway.heurist.xyz/v1/chat/completions",

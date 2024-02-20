@@ -6,6 +6,8 @@ export const env = createEnv({
     // DATABASE_URL: z.string().url(),
     // OPEN_AI_API_KEY: z.string().min(1),
     HEURIST_AUTH_KEY: z.string().min(1),
+    UPSTASH_REDIS_REST_URL: z.string().min(1),
+    UPSTASH_REDIS_REST_TOKEN: z.string().min(1),
   },
 
   /**
