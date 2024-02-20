@@ -8,8 +8,7 @@ export const runtime = "edge";
 
 const ratelimit = new Ratelimit({
   redis,
-  limiter: Ratelimit.slidingWindow(1, "30 s"),
-  // limiter: Ratelimit.slidingWindow(20, "1 h"),
+  limiter: Ratelimit.slidingWindow(20, "1 h"),
   analytics: true,
 });
 
