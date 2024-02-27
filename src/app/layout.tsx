@@ -1,6 +1,8 @@
 import { Inter } from 'next/font/google'
 import type { Metadata, Viewport } from 'next'
 
+import { env } from '@/env.mjs'
+
 import '@/styles/globals.css'
 
 import { Toaster } from 'react-hot-toast'
@@ -31,6 +33,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      {!!(env.UMAMI_URL && env.UMAMI_WEBSITE_ID) && (
+        <script
+          async
+          src={env.UMAMI_URL}
+          data-website-id={env.UMAMI_WEBSITE_ID}
+        />
+      )}
       <body className={inter.className}>
         <Provider>{children}</Provider>
         <Toaster />
