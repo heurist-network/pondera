@@ -1,5 +1,6 @@
-import { createEnv } from "@t3-oss/env-core";
-import { z } from "zod";
+import { z } from 'zod'
+
+import { createEnv } from '@t3-oss/env-core'
 
 export const env = createEnv({
   server: {
@@ -14,7 +15,7 @@ export const env = createEnv({
    * The prefix that client-side variables must have. This is enforced both at
    * a type-level and at runtime.
    */
-  clientPrefix: "PUBLIC_",
+  clientPrefix: 'PUBLIC_',
 
   client: {
     // PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
@@ -40,4 +41,4 @@ export const env = createEnv({
    * explicitly specify this option as true.
    */
   emptyStringAsUndefined: true,
-});
+})

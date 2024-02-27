@@ -1,8 +1,9 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { useState } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,42 +14,39 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
+  DialogClose,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter,
-  DialogClose,
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import { useChatStore, LOADING_STATE } from "@/store/chat";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/dialog'
+import { Textarea } from '@/components/ui/textarea'
+import { cn } from '@/lib/utils'
+import { LOADING_STATE, useChatStore } from '@/store/chat'
 
 export default function SideMenus({ className }: { className?: string }) {
-  const [activeId, list] = useChatStore((state) => [
-    state.activeId,
-    state.list,
-  ]);
-  const [value, setValue] = useState("");
+  const [activeId, list] = useChatStore((state) => [state.activeId, state.list])
+  const [value, setValue] = useState('')
 
-  const addChat = useChatStore((state) => state.addChat);
-  const deleteChat = useChatStore((state) => state.deleteChat);
-  const clearChat = useChatStore((state) => state.clearChat);
-  const toggleChatActive = useChatStore((state) => state.toggleChatActive);
-  const updateChatName = useChatStore((state) => state.updateChatName);
+  const addChat = useChatStore((state) => state.addChat)
+  const deleteChat = useChatStore((state) => state.deleteChat)
+  const clearChat = useChatStore((state) => state.clearChat)
+  const toggleChatActive = useChatStore((state) => state.toggleChatActive)
+  const updateChatName = useChatStore((state) => state.updateChatName)
 
   return (
     <div
       className={cn(
-        "left-0 top-0 bottom-0 w-[280px] fixed border-r bg-sideMenu flex flex-col",
-        className
+        'fixed bottom-0 left-0 top-0 flex w-[280px] flex-col border-r bg-sideMenu',
+        className,
       )}
     >
-      <div className="h-20 flex justify-center items-center select-none">
+      <div className="flex h-20 select-none items-center justify-center">
         <Image src="/logo.svg" alt="logo" width={259} height={640} />
       </div>
       <div className="flex gap-2 px-2.5">
@@ -56,16 +54,16 @@ export default function SideMenus({ className }: { className?: string }) {
           size="sm"
           className="mb-2 flex-1 gap-2.5"
           onClick={() => {
-            addChat();
+            addChat()
           }}
         >
-          <span className="i-mingcute-chat-2-fill w-4 h-4" />
+          <span className="i-mingcute-chat-2-fill h-4 w-4" />
           New Chat
         </Button>
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button size="sm" variant="ghost" className="hover:bg-[#c8c9ca]">
-              <span className="i-f7-trash w-[18px] h-[18px]" />
+              <span className="i-f7-trash h-[18px] w-[18px]" />
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
@@ -84,31 +82,31 @@ export default function SideMenus({ className }: { className?: string }) {
           </AlertDialogContent>
         </AlertDialog>
       </div>
-      <div className="flex-1 flex flex-col gap-1 overflow-y-auto px-2.5 pb-5">
+      <div className="flex flex-1 flex-col gap-1 overflow-y-auto px-2.5 pb-5">
         {list.map((item) => (
           <div
             className={cn(
-              "flex items-center gap-2 flex-shrink-0",
-              "group h-9 text-[#4b4c4c] rounded-md pl-3 text-sm font-medium cursor-pointer transition-colors select-none hover:bg-sideMenuItem relative",
-              "pr-3 hover:pr-14",
+              'flex flex-shrink-0 items-center gap-2',
+              'group relative h-9 cursor-pointer select-none rounded-md pl-3 text-sm font-medium text-[#4b4c4c] transition-colors hover:bg-sideMenuItem',
+              'pr-3 hover:pr-14',
               {
-                "bg-sideMenuItem": item.chat_id === activeId,
-              }
+                'bg-sideMenuItem': item.chat_id === activeId,
+              },
             )}
             key={item.chat_id}
             onClick={() => {
-              toggleChatActive(item.chat_id);
+              toggleChatActive(item.chat_id)
             }}
           >
             <span
               className={cn(
-                "text-base flex-shrink-0",
+                'flex-shrink-0 text-base',
                 item.chat_state !== LOADING_STATE.NONE
-                  ? "i-mingcute-loading-line animate-spin"
-                  : "i-mingcute-message-3-line"
+                  ? 'i-mingcute-loading-line animate-spin'
+                  : 'i-mingcute-message-3-line',
               )}
             />
-            <div className="truncate">{item.chat_name || "Untitled"}</div>
+            <div className="truncate">{item.chat_name || 'Untitled'}</div>
             <div className="absolute right-3 opacity-0 group-hover:opacity-100">
               <div className="flex items-center gap-2">
                 <Dialog>
@@ -116,8 +114,8 @@ export default function SideMenus({ className }: { className?: string }) {
                     <span
                       className="i-ri-edit-line text-base"
                       onClick={(e) => {
-                        e.stopPropagation();
-                        setValue(item.chat_name);
+                        e.stopPropagation()
+                        setValue(item.chat_name)
                       }}
                     />
                   </DialogTrigger>
@@ -134,14 +132,14 @@ export default function SideMenus({ className }: { className?: string }) {
                       onChange={(e) => setValue(e.target.value)}
                     />
                     <DialogFooter>
-                      <div className="flex-1 flex justify-between">
+                      <div className="flex flex-1 justify-between">
                         <DialogClose asChild>
                           <Button variant="ghost">Cancel</Button>
                         </DialogClose>
                         <DialogClose asChild>
                           <Button
                             onClick={() => {
-                              updateChatName(item.chat_id, value);
+                              updateChatName(item.chat_id, value)
                             }}
                           >
                             Save
@@ -181,23 +179,23 @@ export default function SideMenus({ className }: { className?: string }) {
           </div>
         ))}
       </div>
-      <div className="border-t border-t-zinc-300 h-12 flex items-center justify-center gap-2">
+      <div className="flex h-12 items-center justify-center gap-2 border-t border-t-zinc-300">
         <Link
-          className="w-9 h-9 flex justify-center items-center rounded-lg hover:bg-sideMenuItem cursor-pointer transition-colors"
+          className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-sideMenuItem"
           href="https://github.com/heurist-network"
           target="_blank"
         >
           <span className="i-f7-logo-github" />
         </Link>
         <Link
-          className="w-9 h-9 flex justify-center items-center rounded-lg hover:bg-sideMenuItem cursor-pointer transition-colors"
+          className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-sideMenuItem"
           href="https://twitter.com/heurist_ai"
           target="_blank"
         >
           <span className="i-ri-twitter-x-fill" />
         </Link>
         <Link
-          className="w-9 h-9 flex justify-center items-center rounded-lg hover:bg-sideMenuItem cursor-pointer transition-colors"
+          className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-sideMenuItem"
           href="https://discord.gg/Ch6Y7mYMdr"
           target="_blank"
         >
@@ -205,5 +203,5 @@ export default function SideMenus({ className }: { className?: string }) {
         </Link>
       </div>
     </div>
-  );
+  )
 }

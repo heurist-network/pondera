@@ -1,8 +1,9 @@
-"use client";
+'use client'
 
-import * as React from "react";
-import { ZunstandProvider } from "./zustand";
+import * as React from 'react'
+
+import { ZunstandProvider } from './zustand'
 
 export function Provider({ children }: { children: React.ReactNode }) {
-  return <ZunstandProvider>{children}</ZunstandProvider>;
+  return <ZunstandProvider>{children}</ZunstandProvider>
 }

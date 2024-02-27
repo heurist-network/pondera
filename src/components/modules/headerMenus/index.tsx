@@ -1,49 +1,51 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useEffect, useState } from 'react'
+import Image from 'next/image'
+
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuTrigger,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-} from "@/components/ui/dropdown-menu";
-import SideMenus from "../sideMenus";
-import { cn } from "@/lib/utils";
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { cn } from '@/lib/utils'
+
+import SideMenus from '../sideMenus'
 
 export default function HeaderMenus() {
-  const [open, setOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [open, setOpen] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
 
-  const [model, setModel] = useState("mixtral-8x7b");
+  const [model, setModel] = useState('mixtral-8x7b')
 
   const resize = () => {
     if (window.innerWidth > 768) {
-      setOpen(false);
+      setOpen(false)
     }
-  };
+  }
 
   useEffect(() => {
-    window.addEventListener("resize", resize);
+    window.addEventListener('resize', resize)
 
     return () => {
-      window.removeEventListener("resize", resize);
-    };
-  }, []);
+      window.removeEventListener('resize', resize)
+    }
+  }, [])
 
   return (
-    <div className="h-12 flex-shrink-0 border-b border-b-zinc-100 flex items-center px-3 gap-2">
+    <div className="flex h-12 flex-shrink-0 items-center gap-2 border-b border-b-zinc-100 px-3">
       <div className="md:hidden">
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
-            <div className="flex justify-center items-center rounded-lg px-1.5 py-1 hover:bg-[#f2f2f2] transition-colors cursor-pointer">
-              <span className="i-f7-sidebar-left w-5 h-5 text-[#767575]" />
+            <div className="flex cursor-pointer items-center justify-center rounded-lg px-1.5 py-1 transition-colors hover:bg-[#f2f2f2]">
+              <span className="i-f7-sidebar-left h-5 w-5 text-[#767575]" />
             </div>
           </SheetTrigger>
-          <SheetContent side="left" className="p-0 w-[75%] md:hidden">
-            <SideMenus className="w-full absolute" />
+          <SheetContent side="left" className="w-[75%] p-0 md:hidden">
+            <SideMenus className="absolute w-full" />
           </SheetContent>
         </Sheet>
       </div>
@@ -52,8 +54,8 @@ export default function HeaderMenus() {
         <DropdownMenuTrigger asChild>
           <div
             className={cn(
-              "hover:bg-[#f2f2f2] cursor-pointer px-3 py-1.5 rounded-lg select-none text-sm text-muted-foreground transition-colors",
-              dropdownOpen && "bg-[#f2f2f2]"
+              'cursor-pointer select-none rounded-lg px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-[#f2f2f2]',
+              dropdownOpen && 'bg-[#f2f2f2]',
             )}
           >
             mistralai/mixtral-8x7b-instruct-v0.1
@@ -100,5 +102,5 @@ export default function HeaderMenus() {
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-  );
+  )
 }

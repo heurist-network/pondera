@@ -1,11 +1,11 @@
-"use client";
+'use client'
 
-import { useChatStore } from "@/store/chat";
+import { useChatStore } from '@/store/chat'
 
 export function ZunstandProvider({ children }: { children: React.ReactNode }) {
-  const hasHydrated = useChatStore((state) => state._hasHydrated);
+  const hasHydrated = useChatStore((state) => state._hasHydrated)
 
-  if (!hasHydrated) return null;
+  if (!hasHydrated) return null
 
-  return children;
+  return children
 }
