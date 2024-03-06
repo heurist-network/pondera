@@ -1,7 +1,9 @@
+import { OpenAIStream } from 'ai-stream-sdk'
+
 import { env } from '@/env.mjs'
 import { redis } from '@/lib/redis'
 import { ResError } from '@/lib/response'
-import { stream } from '@/lib/stream'
+// import { stream } from '@/lib/stream'
 import { Ratelimit } from '@upstash/ratelimit'
 
 export const runtime = 'edge'
@@ -55,16 +57,20 @@ export async function POST(req: Request) {
       },
     )
 
-    const { readable, writable } = new TransformStream()
+    const stream = OpenAIStream(response)
 
-    stream(response.body as ReadableStream, writable)
+    return new Response(stream)
 
-    return new Response(readable, {
-      ...response,
-      headers: {
-        'Content-Type': 'text/event-stream',
-      },
-    })
+    // const { readable, writable } = new TransformStream()
+
+    // stream(response.body as ReadableStream, writable)
+
+    // return new Response(readable, {
+    //   ...response,
+    //   headers: {
+    //     'Content-Type': 'text/event-stream',
+    //   },
+    // })
   } catch (error) {
     console.log(error, 'api/chat error')
     return ResError({ msg: 'api/chat error', data: error })
