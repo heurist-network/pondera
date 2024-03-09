@@ -46,6 +46,7 @@ export type ChatStore = {
     message_id: string
   }) => void
   updateChatName: (chat_id: string, chat_name: string) => void
+  updateChatModel: (chat_id: string, chat_model: string) => void
   addMessage: ({
     chat_id,
     message,

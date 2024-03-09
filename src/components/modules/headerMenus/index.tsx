@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
 
 import {
@@ -12,14 +12,18 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { cn } from '@/lib/utils'
+import { useChatStore } from '@/store/chat'
 
 import SideMenus from '../sideMenus'
 
 export default function HeaderMenus() {
+  const [activeId, list] = useChatStore((state) => [state.activeId, state.list])
+  const updateChatModel = useChatStore((state) => state.updateChatModel)
+
+  const activeChat = list.find((item) => item.chat_id === activeId)
+
   const [open, setOpen] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
-
-  const [model, setModel] = useState('mixtral-8x7b')
 
   const resize = () => {
     if (window.innerWidth > 768) {
@@ -54,21 +58,23 @@ export default function HeaderMenus() {
         <DropdownMenuTrigger asChild>
           <div
             className={cn(
-              'cursor-pointer select-none rounded-lg px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-[#f2f2f2]',
+              'flex cursor-pointer select-none items-center gap-2 rounded-lg py-1.5 pl-3 pr-2 text-sm text-muted-foreground transition-colors hover:bg-[#f2f2f2]',
               dropdownOpen && 'bg-[#f2f2f2]',
             )}
           >
-            mistralai/mixtral-8x7b-instruct-v0.1
+            <span>{activeChat?.chat_model}</span>
+            <span className="i-mingcute-down-fill h-4 w-4 text-muted-foreground" />
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-80" align="start" sideOffset={7}>
           <DropdownMenuRadioGroup
-            value={model}
-            onValueChange={(value) => {
-              // setModel(value);
-            }}
+            value={activeChat?.chat_model}
+            onValueChange={(value) => updateChatModel(activeId, value)}
           >
-            <DropdownMenuRadioItem className="py-2" value="mixtral-8x7b">
+            <DropdownMenuRadioItem
+              className="py-2"
+              value="mistralai/mixtral-8x7b-instruct-v0.1"
+            >
               <Image
                 className="mr-2 rounded-md"
                 src="/mistral.svg"
@@ -76,9 +82,25 @@ export default function HeaderMenus() {
                 width={24}
                 height={24}
               />
-              <span>mixtral-8x7b</span>
+              <span>mistralai/mixtral-8x7b-instruct-v0.1</span>
             </DropdownMenuRadioItem>
-            <DropdownMenuRadioItem className="py-2" value="llama-70b">
+            <DropdownMenuRadioItem
+              className="py-2"
+              value="mistralai/mistral-7b-instruct-v0.2"
+            >
+              <Image
+                className="mr-2 rounded-md"
+                src="/mistral.svg"
+                alt="mistral"
+                width={24}
+                height={24}
+              />
+              <span>mistralai/mistral-7b-instruct-v0.2</span>
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem
+              className="py-2"
+              value="meta-llama/llama-2-70b-chat"
+            >
               <Image
                 className="mr-2 rounded-md"
                 src="/llama.jpeg"
@@ -86,9 +108,13 @@ export default function HeaderMenus() {
                 width={24}
                 height={24}
               />
-              <span>llama-70b</span>
+              <span>meta-llama/llama-2-70b-chat</span>
             </DropdownMenuRadioItem>
-            <DropdownMenuRadioItem className="py-2" value="codellama-70b">
+            <DropdownMenuRadioItem
+              className="py-2"
+              value="codellama-70b"
+              disabled
+            >
               <Image
                 className="mr-2"
                 src="/codellama.png"

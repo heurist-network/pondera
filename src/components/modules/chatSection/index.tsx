@@ -44,6 +44,16 @@ function CopyContent({ content }: { content: string }) {
   )
 }
 
+function getModelInfo(name?: string) {
+  if (name?.startsWith('mistralai')) {
+    return { path: '/mistral.svg', bg: 'bg-zinc-200' }
+  } else if (name?.startsWith('meta-llama')) {
+    return { path: '/llama.jpeg', bg: 'bg-[#1e4be7]' }
+  } else {
+    return { path: '', bg: 'bg-zinc-200' }
+  }
+}
+
 export default function ChatSection() {
   const scrollRef = useRef<HTMLDivElement>(null)
 
@@ -54,6 +64,8 @@ export default function ChatSection() {
   const deleteMessage = useChatStore((state) => state.deleteMessage)
 
   const activeChat = list.find((item) => item.chat_id === activeId)
+
+  const { path, bg } = getModelInfo(activeChat?.chat_model)
 
   useEffect(() => {
     const findChat = list.find((item) => item.chat_id === activeId)
@@ -77,11 +89,16 @@ export default function ChatSection() {
                 <span className="i-mingcute-user-2-fill h-6 w-6" />
               </div>
             ) : (
-              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-zinc-200">
+              <div
+                className={cn(
+                  'flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full',
+                  bg,
+                )}
+              >
                 <Image
                   className="h-5 w-5"
-                  src="/mistral.svg"
-                  alt="mistral"
+                  src={path}
+                  alt="model"
                   width={26}
                   height={26}
                 />

@@ -39,7 +39,7 @@ export const useChatStore = create<ChatStore>()(
       },
       addChat: () => {
         const chat_id = uuidv4()
-        const chatItem = { ...initChatItem, chat_id }
+        const chatItem = { ...clone(initChatItem), chat_id }
 
         set((state) => ({
           list: [...state.list, chatItem],
@@ -50,7 +50,7 @@ export const useChatStore = create<ChatStore>()(
         set((state) => {
           if (state.list.length <= 1) {
             const activeId = initChatItem.chat_id
-            return { activeId, list: [initChatItem] }
+            return { activeId, list: [clone(initChatItem)] }
           } else {
             const list = state.list.filter((item) => item.chat_id !== chat_id)
 
@@ -65,7 +65,7 @@ export const useChatStore = create<ChatStore>()(
       clearChat: () => {
         set(() => {
           const activeId = initChatItem.chat_id
-          return { activeId, list: [initChatItem] }
+          return { activeId, list: [clone(initChatItem)] }
         })
       },
       regenerateChat: ({ chat_id, message_id }) => {
@@ -102,6 +102,16 @@ export const useChatStore = create<ChatStore>()(
           const findChat = newList.find((chat) => chat.chat_id === chat_id)
           if (!findChat) return {}
           findChat.chat_name = chat_name
+
+          return { list: newList }
+        })
+      },
+      updateChatModel: (chat_id, chat_model) => {
+        set((state) => {
+          const newList: ChatListItem[] = clone(state.list)
+          const findChat = newList.find((chat) => chat.chat_id === chat_id)
+          if (!findChat) return {}
+          findChat.chat_model = chat_model
 
           return { list: newList }
         })
