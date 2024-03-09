@@ -16,10 +16,11 @@ export { LOADING_STATE } from './type'
 export const initChatItem: ChatListItem = {
   chat_id: uuidv4(),
   chat_name: '',
-  chat_model: {
-    type: 'mistralai',
-    name: 'mixtral-8x7b-instruct-v0.1',
-  },
+  chat_model: 'mistralai/mixtral-8x7b-instruct-v0.1',
+  // chat_model: {
+  //   type: 'mistralai',
+  //   name: 'mixtral-8x7b-instruct-v0.1',
+  // },
   chat_prompt: BASE_PROMPT,
   chat_state: LOADING_STATE.NONE,
   chat_context_length: 8,
@@ -46,8 +47,6 @@ export const useChatStore = create<ChatStore>()(
         }))
       },
       deleteChat: (chat_id) => {
-        console.log(chat_id, 'chat_id')
-
         set((state) => {
           if (state.list.length <= 1) {
             const activeId = initChatItem.chat_id
@@ -183,7 +182,8 @@ export const useChatStore = create<ChatStore>()(
           openWhenHidden: true,
           body: JSON.stringify({
             messages,
-            modelId: `${findChat.chat_model.type}/${findChat.chat_model.name}`,
+            // modelId: `${findChat.chat_model.type}/${findChat.chat_model.name}`,
+            modelId: findChat.chat_model,
             stream: true,
           }),
           onopen: async (res) => {
@@ -391,6 +391,9 @@ export const useChatStore = create<ChatStore>()(
           persistedState.abort = {}
           persistedState.list.forEach((item: any) => {
             item.chat_state = LOADING_STATE.NONE
+            if (typeof item.chat_model !== 'string') {
+              item.chat_model = 'mistralai/mixtral-8x7b-instruct-v0.1'
+            }
           })
         }
 

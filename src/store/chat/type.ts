@@ -21,7 +21,8 @@ export type Message = {
 export type ChatListItem = {
   chat_id: string
   chat_name: string
-  chat_model: ChatModel
+  chat_model: string
+  // chat_model: ChatModel
   chat_prompt: string
   chat_state: LOADING_STATE
   chat_context_length: number
