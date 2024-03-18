@@ -1,36 +1,10 @@
 import React from 'react'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import { Prism } from 'react-syntax-highlighter'
+import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import { GeistSans } from 'geist/font/sans'
 
-import { useClipboard } from '@/hooks/useClipboard'
+import { useCopy } from '@/hooks/useCopy'
 import { cn } from '@/lib/utils'
-
-function CopyToClipboard({ content }: { content: string }) {
-  const { isCopied, copy } = useClipboard()
-
-  const onCopy = () => {
-    if (isCopied) return
-    copy(content)
-  }
-
-  return (
-    <div
-      className={cn(
-        'opacity-0 transition-all group-hover/codeblock:opacity-100',
-        'absolute right-3 top-11 box-content flex h-4 w-4 cursor-pointer items-center justify-center rounded-md p-1.5',
-        'border border-white/10 bg-[#33424d] text-[rgb(156,163,175)] hover:text-[rgb(249,250,251)]',
-      )}
-      onClick={onCopy}
-    >
-      <span
-        className={cn('h-4 w-4', {
-          'i-mingcute-copy-2-line': !isCopied,
-          'i-mingcute-check-line': isCopied,
-        })}
-      />
-    </div>
-  )
-}
 
 export function CodeBlock({
   language,
@@ -39,24 +13,37 @@ export function CodeBlock({
   language: string
   value: string
 }) {
+  const [isCopied, copy] = useCopy()
+
   return (
-    <div className="codeblock group/codeblock relative">
-      <div className="bg-[#2d3c47] px-4 py-2 text-xs leading-[18px]">
+    <div
+      className={cn('codeblock group/codeblock relative', GeistSans.className)}
+    >
+      <div className="flex h-9 items-center justify-between border-b border-b-[#ebeaeb] bg-[#fafafa] px-4 text-xs leading-[18px] text-[#666666]">
         <div className="capitalize">{language}</div>
+        <div
+          className="flex cursor-pointer items-center rounded-sm p-1.5 transition-colors hover:bg-gray-200"
+          onClick={() => copy(value)}
+        >
+          {isCopied ? (
+            <span className="i-mingcute-check-line h-4 w-4 !bg-green-400" />
+          ) : (
+            <span className="i-mingcute-copy-2-line h-4 w-4 !bg-muted-foreground" />
+          )}
+        </div>
       </div>
-      <CopyToClipboard content={value} />
-      <SyntaxHighlighter
-        style={oneDark}
+      <Prism
+        style={oneLight}
         language={language}
-        PreTag="div"
         customStyle={{
+          background: '#fff',
           margin: 0,
           borderTopLeftRadius: 0,
           borderTopRightRadius: 0,
         }}
       >
         {value}
-      </SyntaxHighlighter>
+      </Prism>
     </div>
   )
 }

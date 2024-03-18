@@ -3,7 +3,6 @@ import { OpenAIStream } from 'ai-stream-sdk'
 import { env } from '@/env.mjs'
 import { redis } from '@/lib/redis'
 import { ResError } from '@/lib/response'
-import { stream } from '@/lib/stream'
 import { Ratelimit } from '@upstash/ratelimit'
 
 export const runtime = 'edge'
@@ -25,12 +24,6 @@ export async function POST(req: Request) {
     } = await req.json()
 
     const identifier = (req as any).ip || req.headers.get('X-Forwarded-For')
-
-    console.log('---------------------------------')
-    console.log('\n\n')
-    console.log(messages, 'messages')
-    console.log('\n\n')
-    console.log('---------------------------------')
 
     // ip rate limits
     const { success } = await ratelimit.limit(identifier)
@@ -57,20 +50,16 @@ export async function POST(req: Request) {
       },
     )
 
-    // const stream = OpenAIStream(response)
-
-    // return new Response(stream)
-
-    const { readable, writable } = new TransformStream()
-
-    stream(response.body as ReadableStream, writable)
-
-    return new Response(readable, {
-      ...response,
-      headers: {
-        'Content-Type': 'text/event-stream',
+    const stream = OpenAIStream(response, {
+      onStart: () => {
+        // console.log('start')
+      },
+      onCompletion: (data) => {
+        // console.log(data, 'data')
       },
     })
+
+    return new Response(stream)
   } catch (error) {
     console.log(error, 'api/chat error')
     return ResError({ msg: 'api/chat error', data: error })
