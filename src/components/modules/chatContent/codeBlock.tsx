@@ -1,4 +1,3 @@
-import React from 'react'
 import { Prism } from 'react-syntax-highlighter'
 import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { GeistSans } from 'geist/font/sans'

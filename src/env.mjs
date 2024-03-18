@@ -9,6 +9,7 @@ export const env = createEnv({
     HEURIST_AUTH_KEY: z.string().min(1),
     UPSTASH_REDIS_REST_URL: z.string().min(1),
     UPSTASH_REDIS_REST_TOKEN: z.string().min(1),
+    DATABASE_URL: z.string().min(1),
     UMAMI_URL: z.string().optional(),
     UMAMI_WEBSITE_ID: z.string().optional(),
   },

@@ -1,12 +1,13 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { toast } from 'react-hot-toast'
 import type { KeyboardEvent } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { LOADING_STATE, useChatStore } from '@/store/chat'
+
+import { Share } from './share'
 
 export default function InputSection() {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -87,16 +88,7 @@ export default function InputSection() {
             <span className="i-mingcute-stop-circle-fill text-[#ff5f57]" />
           </Button>
         )}
-        <Button
-          size="icon"
-          variant="ghost"
-          className="h-8 w-8"
-          onClick={() => {
-            toast.error('Not implemented yet', { id: 'not-implemented' })
-          }}
-        >
-          <span className="i-mingcute-share-2-fill" />
-        </Button>
+        <Share />
       </div>
       <div className="flex gap-2 pb-3">
         <Textarea
