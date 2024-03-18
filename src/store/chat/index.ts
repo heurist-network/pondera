@@ -17,10 +17,6 @@ export const initChatItem: ChatListItem = {
   chat_id: uuidv4(),
   chat_name: '',
   chat_model: 'mistralai/mixtral-8x7b-instruct-v0.1',
-  // chat_model: {
-  //   type: 'mistralai',
-  //   name: 'mixtral-8x7b-instruct-v0.1',
-  // },
   chat_prompt: BASE_PROMPT,
   chat_state: LOADING_STATE.NONE,
   chat_context_length: 8,
@@ -29,7 +25,7 @@ export const initChatItem: ChatListItem = {
 
 export const useChatStore = create<ChatStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       activeId: initChatItem.chat_id,
       list: [initChatItem],
       abort: {},
@@ -192,12 +188,10 @@ export const useChatStore = create<ChatStore>()(
           openWhenHidden: true,
           body: JSON.stringify({
             messages,
-            // modelId: `${findChat.chat_model.type}/${findChat.chat_model.name}`,
             modelId: findChat.chat_model,
             stream: true,
           }),
           onopen: async (res) => {
-            console.log('onopen')
             const isError = !res.ok || res.status !== 200 || !res.body
 
             if (isError) {
@@ -223,7 +217,6 @@ export const useChatStore = create<ChatStore>()(
             }
           },
           onmessage: (res) => {
-            console.log('onmessage')
             const data = JSON.parse(res.data).choices[0]
             if (data.finish_reason === 'stop') {
               set((state) => {
@@ -283,7 +276,7 @@ export const useChatStore = create<ChatStore>()(
 
                 return { list: newList }
               })
-            } catch (error) {}
+            } catch {}
           },
           onerror: () => {
             console.log('stop streaming')
@@ -317,55 +310,54 @@ export const useChatStore = create<ChatStore>()(
           },
         })
       },
-      generateChatName: ({ chat_id, messages }) => {
-        // avoid rate limit using setTimeout
-        setTimeout(() => {
-          fetch('/api/chat', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              messages,
-              modelId: 'mistralai/mixtral-8x7b-instruct-v0.1',
-              stream: false,
-              temperature: 0.01,
-              maxTokens: 10,
-            }),
-          })
-            .then(async (response) => {
-              if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`)
-              }
-              try {
-                const data = await response.json()
-                set((state) => {
-                  const newList: ChatListItem[] = clone(state.list)
-                  const findChat = newList.find(
-                    (item) => item.chat_id === chat_id,
-                  )
-                  if (!findChat) return {}
+      generateChatName: ({ chat_id }) => {
+        const findChat = get().list.find((item) => item.chat_id === chat_id)
+        if (!findChat) return
 
-                  findChat.chat_name = data.choices[0].message.content
-                    .replace(/['"\n\\]/g, '')
-                    .trim()
+        // last 10 messages
+        const messages = findChat.chat_list.slice(-10).map((item) => ({
+          role: item.role,
+          content: item.content,
+        }))
 
-                  return { list: newList }
-                })
-              } catch (error) {
-                console.error(
-                  '[generateChatName] Error parsing /api/chat response:',
-                  error,
+        fetchEventSource('/api/chat', {
+          method: 'POST',
+          openWhenHidden: true,
+          body: JSON.stringify({
+            messages: [
+              ...messages,
+              { role: 'user', content: GENERATE_CHAT_NAME_PROMPT },
+            ],
+            modelId: 'mistralai/mixtral-8x7b-instruct-v0.1',
+            stream: true,
+          }),
+          // Not set onopen will lead to content-type error: `Error: Expected content-type to be text/event-stream, Actual: null`
+          onopen: async () => {},
+          onmessage: (res) => {
+            const data = JSON.parse(res.data).choices[0]
+
+            try {
+              const content = data.delta.content
+              if (!content) return
+
+              set((state) => {
+                const newList: ChatListItem[] = clone(state.list)
+                const findChat = newList.find(
+                  (item) => item.chat_id === chat_id,
                 )
-              }
-            })
-            .catch((error) => {
-              console.error(
-                '[generateChatName] Error during fetch /api/chat:',
-                error,
-              )
-            })
-        }, 500)
+                if (!findChat) return {}
+
+                findChat.chat_name += content
+
+                return { list: newList }
+              })
+            } catch {}
+          },
+          onerror: (error) => {
+            console.log(error, 'generateChatName error')
+            throw null
+          },
+        })
       },
       cancelChat: (chat_id) => {
         set((state) => {
