@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 
 import {
@@ -15,6 +15,16 @@ import { cn } from '@/lib/utils'
 import { useChatStore } from '@/store/chat'
 
 import SideMenus from '../sideMenus'
+
+function getModelIcon(name?: string) {
+  if (name?.startsWith('mistralai') || name?.startsWith('openhermes')) {
+    return '/mistral.svg'
+  } else if (name?.startsWith('meta-llama')) {
+    return '/llama.jpeg'
+  } else {
+    return ''
+  }
+}
 
 export default function HeaderMenus() {
   const [activeId, list] = useChatStore((state) => [state.activeId, state.list])
@@ -62,6 +72,16 @@ export default function HeaderMenus() {
               dropdownOpen && 'bg-[#f2f2f2]',
             )}
           >
+            <Image
+              className={cn('h-5 w-5', {
+                'rounded-full':
+                  activeChat?.chat_model?.startsWith('meta-llama'),
+              })}
+              src={getModelIcon(activeChat?.chat_model)}
+              alt="model"
+              width={26}
+              height={26}
+            />
             <span>{activeChat?.chat_model}</span>
             <span className="i-mingcute-down-fill h-4 w-4 text-muted-foreground" />
           </div>

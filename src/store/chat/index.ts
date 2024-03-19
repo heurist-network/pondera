@@ -29,13 +29,18 @@ export const useChatStore = create<ChatStore>()(
       activeId: initChatItem.chat_id,
       list: [initChatItem],
       abort: {},
+      recentModel: 'mistralai/mixtral-8x7b-instruct-v0.1',
 
       toggleChatActive: (chat_id) => {
         set({ activeId: chat_id })
       },
       addChat: () => {
         const chat_id = uuidv4()
-        const chatItem = { ...clone(initChatItem), chat_id }
+        const chatItem = {
+          ...clone(initChatItem),
+          chat_id,
+          chat_model: get().recentModel,
+        }
 
         set((state) => ({
           list: [...state.list, chatItem],
@@ -61,7 +66,10 @@ export const useChatStore = create<ChatStore>()(
       clearChat: () => {
         set(() => {
           const activeId = initChatItem.chat_id
-          return { activeId, list: [clone(initChatItem)] }
+          return {
+            activeId,
+            list: [{ ...clone(initChatItem), chat_model: get().recentModel }],
+          }
         })
       },
       regenerateChat: ({ chat_id, message_id }) => {
@@ -108,6 +116,7 @@ export const useChatStore = create<ChatStore>()(
           const findChat = newList.find((chat) => chat.chat_id === chat_id)
           if (!findChat) return {}
           findChat.chat_model = chat_model
+          get().updateRecentModel(chat_model)
 
           return { list: newList }
         })
@@ -373,6 +382,9 @@ export const useChatStore = create<ChatStore>()(
           return { list: newList }
         })
       },
+
+      // Other
+      updateRecentModel: (recentModel) => set({ recentModel }),
 
       // Hydration
       _hasHydrated: false,

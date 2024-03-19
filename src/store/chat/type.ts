@@ -1,10 +1,5 @@
 import { Message as AIMessage } from 'ai/react'
 
-export type ChatModel = {
-  type: string
-  name: string
-}
-
 export enum LOADING_STATE {
   NONE, // Not loading
   CONNECTING, // Requesting to server
@@ -22,7 +17,6 @@ export type ChatListItem = {
   chat_id: string
   chat_name: string
   chat_model: string
-  // chat_model: ChatModel
   chat_prompt: string
   chat_state: LOADING_STATE
   chat_context_length: number
@@ -33,6 +27,7 @@ export type ChatStore = {
   activeId: string
   list: ChatListItem[]
   abort: Record<string, AbortController>
+  recentModel: string
 
   toggleChatActive: (chat_id: string) => void
   addChat: () => void
@@ -83,6 +78,9 @@ export type ChatStore = {
     messages: { role: Message['role']; content: string }[]
   }) => void
   cancelChat: (chat_id: string) => void
+
+  // Other
+  updateRecentModel: (model: string) => void
 
   // Hydration
   _hasHydrated: boolean
