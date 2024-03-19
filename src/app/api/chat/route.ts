@@ -23,7 +23,8 @@ export async function POST(req: Request) {
       stream: useStream,
     } = await req.json()
 
-    const identifier = (req as any).ip || req.headers.get('X-Forwarded-For')
+    const identifier =
+      ((req as any).ip || req.headers.get('X-Forwarded-For')) + '-chat'
 
     // ip rate limits
     const { success } = await ratelimit.limit(identifier)

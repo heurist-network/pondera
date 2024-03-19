@@ -72,12 +72,12 @@ export function Share() {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         <Button
-          size="icon"
           variant="ghost"
-          className="h-8 w-8"
+          className="h-8 gap-1 rounded-lg px-2.5"
           disabled={!activeList?.chat_list?.length}
         >
-          <span className="i-mingcute-share-2-fill" />
+          <span className="i-mingcute-share-2-fill h-4 w-4" />
+          Share
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
