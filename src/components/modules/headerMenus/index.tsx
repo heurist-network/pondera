@@ -99,6 +99,19 @@ export default function HeaderMenus() {
             </DropdownMenuRadioItem>
             <DropdownMenuRadioItem
               className="py-2"
+              value="openhermes-2.5-mistral-7b-gptq"
+            >
+              <Image
+                className="mr-2 rounded-md"
+                src="/mistral.svg"
+                alt="mistral"
+                width={24}
+                height={24}
+              />
+              <span>openhermes-2.5-mistral-7b-gptq</span>
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem
+              className="py-2"
               value="meta-llama/llama-2-70b-chat"
             >
               <Image
