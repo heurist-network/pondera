@@ -8,10 +8,27 @@ import RehypeKatex from 'rehype-katex'
 import RemarkBreaks from 'remark-breaks'
 import RemarkGfm from 'remark-gfm'
 import RemarkMath from 'remark-math'
+import type { Metadata } from 'next'
 
 import { Button } from '@/components/ui/button'
 import { db } from '@/db'
 import { cn } from '@/lib/utils'
+
+type Props = {
+  params: { slug: string }
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const res: any = await db.query.share.findFirst({
+    where: (share, { eq }) => eq(share.id, params.slug),
+  })
+
+  return {
+    title: res.name || 'Untitled',
+    description:
+      'Pondera is an open-source conversational AI assistant that makes the best language models available to everyone. Powered by Heurist.',
+  }
+}
 
 function CodeBlock({ language, value }: { language: string; value: string }) {
   return (
