@@ -10,6 +10,7 @@ import RemarkGfm from 'remark-gfm'
 import RemarkMath from 'remark-math'
 import type { Metadata } from 'next'
 
+import { CopyContent } from '@/components/modules/copy'
 import { Button } from '@/components/ui/button'
 import { db } from '@/db'
 import { cn } from '@/lib/utils'
@@ -37,6 +38,7 @@ function CodeBlock({ language, value }: { language: string; value: string }) {
     >
       <div className="flex h-9 items-center justify-between border-b border-b-[#ebeaeb] bg-[#fafafa] px-4 text-xs leading-[18px] text-[#666666]">
         <div className="capitalize">{language}</div>
+        <CopyContent value={value} />
       </div>
       <Prism
         style={oneLight}
