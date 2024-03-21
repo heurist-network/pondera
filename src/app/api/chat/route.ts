@@ -46,7 +46,7 @@ export async function POST(req: Request) {
           stream: useStream || false,
           messages,
           temperature: temperature || 0.75,
-          max_tokens: maxTokens || 4000,
+          max_tokens: maxTokens || 2048,
         }),
       },
     )
