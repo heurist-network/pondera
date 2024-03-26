@@ -163,6 +163,16 @@ export const useChatStore = create<ChatStore>()(
           return { list: newList }
         })
       },
+      clearMessage: (chat_id) => {
+        set((state) => {
+          const newList: ChatListItem[] = clone(state.list)
+          const findChat = newList.find((chat) => chat.chat_id === chat_id)
+          if (!findChat) return {}
+          findChat.chat_list = []
+
+          return { list: newList }
+        })
+      },
 
       // Chat Action
       sendChat: ({ chat_id }) => {
@@ -191,6 +201,11 @@ export const useChatStore = create<ChatStore>()(
           return { abort: { ...state.abort, [chat_id]: controller } }
         })
 
+        const timeout = setTimeout(() => {
+          get().cancelChat(chat_id)
+          toast.error('Request Timed out. Please try again.')
+        }, 20000)
+
         fetchEventSource('/api/chat', {
           method: 'POST',
           signal: controller.signal,
@@ -201,6 +216,7 @@ export const useChatStore = create<ChatStore>()(
             stream: true,
           }),
           onopen: async (res) => {
+            clearTimeout(timeout)
             const isError = !res.ok || res.status !== 200 || !res.body
 
             if (isError) {

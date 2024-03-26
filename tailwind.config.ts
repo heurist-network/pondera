@@ -89,6 +89,7 @@ const config = {
         'mingcute',
         'ri',
         'material-symbols',
+        'mdi',
       ]),
     }),
   ],

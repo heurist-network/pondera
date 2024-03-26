@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { KeyboardEvent } from 'react'
 
+import { AlertDialog } from '@/components/common/alertDialog'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { LOADING_STATE, useChatStore } from '@/store/chat'
@@ -15,6 +16,7 @@ export default function InputSection() {
   const addMessage = useChatStore((state) => state.addMessage)
   const sendChat = useChatStore((state) => state.sendChat)
   const cancelChat = useChatStore((state) => state.cancelChat)
+  const clearMessage = useChatStore((state) => state.clearMessage)
 
   const activeList = list.find((item) => item.chat_id === activeId)
   const isLoading = activeList?.chat_state !== LOADING_STATE.NONE
@@ -85,10 +87,22 @@ export default function InputSection() {
             className="h-8 w-8"
             onClick={() => cancelChat(activeId)}
           >
-            <span className="i-mingcute-stop-circle-fill text-[#ff5f57]" />
+            <span className="i-mingcute-stop-circle-fill h-4 w-4 text-[#ff5f57]" />
           </Button>
         )}
         <Share />
+        {!!activeList?.chat_list?.length && (
+          <AlertDialog
+            trigger={
+              <Button size="icon" variant="ghost" className="h-8 w-8">
+                <span className="i-mdi-tooltip-remove-outline h-4 w-4" />
+              </Button>
+            }
+            title="Clear current session messages"
+            description="This action cannot be undone"
+            onOk={() => clearMessage(activeId)}
+          />
+        )}
       </div>
       <div className="flex gap-2 pb-3">
         <Textarea

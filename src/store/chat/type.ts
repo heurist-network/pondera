@@ -67,6 +67,7 @@ export type ChatStore = {
     message_id: string
     content: string
   }) => void
+  clearMessage: (chat_id: string) => void
 
   // Chat Action
   sendChat: ({ chat_id }: { chat_id: string }) => void
