@@ -196,7 +196,7 @@ export default function SideMenus({ className }: { className?: string }) {
         </Link>
         <Link
           className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-sideMenuItem"
-          href="https://discord.gg/Ch6Y7mYMdr"
+          href="https://discord.com/invite/heuristai"
           target="_blank"
         >
           <span className="i-ri-discord-fill" />
