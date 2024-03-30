@@ -45,7 +45,9 @@ function CopyContent({ content }: { content: string }) {
 }
 
 function getModelInfo(name?: string) {
-  if (name?.startsWith('mistralai') || name?.startsWith('openhermes')) {
+  if (name?.startsWith('openhermes-2-yi')) {
+    return { path: '/yi-logo.svg', bg: 'bg-zinc-200' }
+  } else if (name?.startsWith('mistralai') || name?.startsWith('openhermes')) {
     return { path: '/mistral.svg', bg: 'bg-zinc-200' }
   } else if (name?.startsWith('meta-llama')) {
     return { path: '/llama.jpeg', bg: 'bg-[#1e4be7]' }
