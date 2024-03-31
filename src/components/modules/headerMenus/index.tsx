@@ -17,7 +17,9 @@ import { useChatStore } from '@/store/chat'
 import SideMenus from '../sideMenus'
 
 function getModelIcon(name?: string) {
-  if (name?.startsWith('mistralai') || name?.startsWith('openhermes')) {
+  if (name?.startsWith('openhermes-2-yi')) {
+    return '/yi-logo.svg'
+  } else if (name?.startsWith('mistralai') || name?.startsWith('openhermes')) {
     return '/mistral.svg'
   } else if (name?.startsWith('meta-llama')) {
     return '/llama.jpeg'
@@ -129,6 +131,45 @@ export default function HeaderMenus() {
                 height={24}
               />
               <span>openhermes-2.5-mistral-7b-gptq</span>
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem
+              className="py-2"
+              value="openhermes-2-pro-mistral-7b"
+            >
+              <Image
+                className="mr-2 rounded-md"
+                src="/mistral.svg"
+                alt="mistral"
+                width={24}
+                height={24}
+              />
+              <span>openhermes-2-pro-mistral-7b</span>
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem
+              className="py-2"
+              value="openhermes-mixtral-8x7b-gptq"
+            >
+              <Image
+                className="mr-2 rounded-md"
+                src="/mistral.svg"
+                alt="mistral"
+                width={24}
+                height={24}
+              />
+              <span>openhermes-mixtral-8x7b-gptq</span>
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem
+              className="py-2"
+              value="openhermes-2-yi-34b-gptq"
+            >
+              <Image
+                className="mr-2 rounded-md"
+                src="/yi-logo.svg"
+                alt="yi"
+                width={24}
+                height={24}
+              />
+              <span>openhermes-2-yi-34b-gptq</span>
             </DropdownMenuRadioItem>
             <DropdownMenuRadioItem
               className="py-2"
