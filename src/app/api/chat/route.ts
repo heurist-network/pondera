@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     }
 
     const response = await fetch(
-      'https://llm-gateway.heurist.xyz/v1/chat/completions',
+      `${env.HEURIST_GATEWAY_URL}/v1/chat/completions`,
       {
         headers: {
           Authorization: `Bearer ${env.HEURIST_AUTH_KEY}`,
