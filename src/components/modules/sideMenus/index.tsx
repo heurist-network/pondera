@@ -106,7 +106,7 @@ export default function SideMenus({ className }: { className?: string }) {
                   : 'i-mingcute-message-3-line',
               )}
             />
-            <div className="truncate">{item.chat_name || 'Untitled'}</div>
+            <div className="truncate">{item.chat_name.replaceAll('"','') || 'Untitled'}</div>
             <div className="absolute right-3 opacity-0 group-hover:opacity-100">
               <div className="flex items-center gap-2">
                 <Dialog>
@@ -115,7 +115,7 @@ export default function SideMenus({ className }: { className?: string }) {
                       className="i-ri-edit-line text-base"
                       onClick={(e) => {
                         e.stopPropagation()
-                        setValue(item.chat_name)
+                        setValue(item.chat_name.replaceAll('"',""))
                       }}
                     />
                   </DialogTrigger>
