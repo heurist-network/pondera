@@ -19,9 +19,9 @@ import SideMenus from '../sideMenus'
 function getModelIcon(name?: string) {
   if (name?.startsWith('openhermes-2-yi')) {
     return '/yi-logo.svg'
-  } else if (name?.startsWith('mistralai') || name?.startsWith('openhermes')) {
+  } else if (name?.includes('mistral') || name?.includes('mixtral')) {
     return '/mistral.svg'
-  } else if (name?.startsWith('meta-llama')) {
+  } else if (name?.includes('llama')) {
     return '/llama.jpeg'
   } else {
     return ''

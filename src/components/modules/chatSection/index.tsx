@@ -47,9 +47,9 @@ function CopyContent({ content }: { content: string }) {
 function getModelInfo(name?: string) {
   if (name?.startsWith('openhermes-2-yi')) {
     return { path: '/yi-logo.svg', bg: 'bg-zinc-200' }
-  } else if (name?.startsWith('mistralai') || name?.startsWith('openhermes')) {
+  } else if (name?.includes('mistral') || name?.includes('mixtral')) {
     return { path: '/mistral.svg', bg: 'bg-zinc-200' }
-  } else if (name?.startsWith('meta-llama')) {
+  } else if (name?.includes('llama')) {
     return { path: '/llama.jpeg', bg: 'bg-[#1e4be7]' }
   } else {
     return { path: '', bg: 'bg-zinc-200' }
