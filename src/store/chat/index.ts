@@ -16,7 +16,7 @@ export { LOADING_STATE } from './type'
 export const initChatItem: ChatListItem = {
   chat_id: uuidv4(),
   chat_name: '',
-  chat_model: 'mistralai/mixtral-8x7b-instruct-v0.1',
+  chat_model: 'mistralai/mixtral-8x7b-instruct',
   chat_prompt: BASE_PROMPT,
   chat_state: LOADING_STATE.NONE,
   chat_context_length: 8,
@@ -29,7 +29,7 @@ export const useChatStore = create<ChatStore>()(
       activeId: initChatItem.chat_id,
       list: [initChatItem],
       abort: {},
-      recentModel: 'mistralai/mixtral-8x7b-instruct-v0.1',
+      recentModel: 'mistralai/mixtral-8x7b-instruct',
 
       toggleChatActive: (chat_id) => {
         set({ activeId: chat_id })
@@ -353,7 +353,7 @@ export const useChatStore = create<ChatStore>()(
               ...messages,
               { role: 'user', content: GENERATE_CHAT_NAME_PROMPT },
             ],
-            modelId: 'mistralai/mixtral-8x7b-instruct-v0.1',
+            modelId: 'mistralai/mixtral-8x7b-instruct',
             stream: true,
           }),
           // Not set onopen will lead to content-type error: `Error: Expected content-type to be text/event-stream, Actual: null`
@@ -422,7 +422,7 @@ export const useChatStore = create<ChatStore>()(
           persistedState.list.forEach((item: any) => {
             item.chat_state = LOADING_STATE.NONE
             if (typeof item.chat_model !== 'string') {
-              item.chat_model = 'mistralai/mixtral-8x7b-instruct-v0.1'
+              item.chat_model = 'mistralai/mixtral-8x7b-instruct'
             }
           })
         }

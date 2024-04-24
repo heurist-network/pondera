@@ -95,7 +95,7 @@ export default function HeaderMenus() {
           >
             <DropdownMenuRadioItem
               className="py-2"
-              value="mistralai/mixtral-8x7b-instruct-v0.1"
+              value="mistralai/mixtral-8x7b-instruct"
             >
               <Image
                 className="mr-2 rounded-md"
@@ -104,11 +104,11 @@ export default function HeaderMenus() {
                 width={24}
                 height={24}
               />
-              <span>mistralai/mixtral-8x7b-instruct-v0.1</span>
+              <span>mistralai/mixtral-8x7b-instruct</span>
             </DropdownMenuRadioItem>
             <DropdownMenuRadioItem
               className="py-2"
-              value="mistralai/mistral-7b-instruct-v0.2"
+              value="mistralai/mistral-7b-instruct"
             >
               <Image
                 className="mr-2 rounded-md"
@@ -117,7 +117,20 @@ export default function HeaderMenus() {
                 width={24}
                 height={24}
               />
-              <span>mistralai/mistral-7b-instruct-v0.2</span>
+              <span>mistralai/mistral-7b-instruct</span>
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem
+              className="py-2"
+              value="dolphin-2.9-llama3-8b"
+            >
+              <Image
+                className="mr-2 rounded-md"
+                src="/llama.jpeg"
+                alt="llama"
+                width={24}
+                height={24}
+              />
+              <span>dolphin-2.9-llama3-8b</span>
             </DropdownMenuRadioItem>
             <DropdownMenuRadioItem
               className="py-2"
