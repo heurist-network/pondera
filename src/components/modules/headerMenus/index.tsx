@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 import {
   DropdownMenu,
@@ -29,8 +30,16 @@ function getModelIcon(name?: string) {
 }
 
 export default function HeaderMenus() {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
+
+  const model = searchParams.get('model')
+
   const [activeId, list] = useChatStore((state) => [state.activeId, state.list])
   const updateChatModel = useChatStore((state) => state.updateChatModel)
+
+  const [models, setModels] = useState<any[]>([])
 
   const activeChat = list.find((item) => item.chat_id === activeId)
 
@@ -43,12 +52,50 @@ export default function HeaderMenus() {
     }
   }
 
+  const getModels = async () => {
+    const res: any[] = await fetch(
+      'https://raw.githubusercontent.com/heurist-network/heurist-models/main/models.json',
+      { next: { revalidate: 3600 } },
+    ).then((res) => res.json())
+
+    const arr = res.filter((item) => item.type?.includes('llm'))
+
+    const findModel = arr.find((item) => item.name === model)
+    if (findModel) {
+      updateChatModel(activeId, findModel.name)
+      router.replace(pathname)
+    }
+
+    setModels(
+      arr.map((item) => {
+        let icon = ''
+        if (
+          item.name.startsWith('mistralai') ||
+          item.name.startsWith('openhermes')
+        ) {
+          icon = '/mistral.svg'
+        }
+        if (item.name.includes('llama')) {
+          icon = '/llama.jpeg'
+        }
+        if (item.name.includes('-yi-')) {
+          icon = '/yi-logo.svg'
+        }
+        return { ...item, label: item.name, value: item.name, icon }
+      }),
+    )
+  }
+
   useEffect(() => {
     window.addEventListener('resize', resize)
 
     return () => {
       window.removeEventListener('resize', resize)
     }
+  }, [])
+
+  useEffect(() => {
+    getModels()
   }, [])
 
   return (
@@ -93,124 +140,22 @@ export default function HeaderMenus() {
             value={activeChat?.chat_model}
             onValueChange={(value) => updateChatModel(activeId, value)}
           >
-            <DropdownMenuRadioItem
-              className="py-2"
-              value="mistralai/mixtral-8x7b-instruct"
-            >
-              <Image
-                className="mr-2 rounded-md"
-                src="/mistral.svg"
-                alt="mistral"
-                width={24}
-                height={24}
-              />
-              <span>mistralai/mixtral-8x7b-instruct</span>
-            </DropdownMenuRadioItem>
-            <DropdownMenuRadioItem
-              className="py-2"
-              value="mistralai/mistral-7b-instruct"
-            >
-              <Image
-                className="mr-2 rounded-md"
-                src="/mistral.svg"
-                alt="mistral"
-                width={24}
-                height={24}
-              />
-              <span>mistralai/mistral-7b-instruct</span>
-            </DropdownMenuRadioItem>
-            <DropdownMenuRadioItem
-              className="py-2"
-              value="dolphin-2.9-llama3-8b"
-            >
-              <Image
-                className="mr-2 rounded-md"
-                src="/llama.jpeg"
-                alt="llama"
-                width={24}
-                height={24}
-              />
-              <span>dolphin-2.9-llama3-8b</span>
-            </DropdownMenuRadioItem>
-            <DropdownMenuRadioItem
-              className="py-2"
-              value="openhermes-2.5-mistral-7b-gptq"
-            >
-              <Image
-                className="mr-2 rounded-md"
-                src="/mistral.svg"
-                alt="mistral"
-                width={24}
-                height={24}
-              />
-              <span>openhermes-2.5-mistral-7b-gptq</span>
-            </DropdownMenuRadioItem>
-            <DropdownMenuRadioItem
-              className="py-2"
-              value="openhermes-2-pro-mistral-7b"
-            >
-              <Image
-                className="mr-2 rounded-md"
-                src="/mistral.svg"
-                alt="mistral"
-                width={24}
-                height={24}
-              />
-              <span>openhermes-2-pro-mistral-7b</span>
-            </DropdownMenuRadioItem>
-            <DropdownMenuRadioItem
-              className="py-2"
-              value="openhermes-mixtral-8x7b-gptq"
-            >
-              <Image
-                className="mr-2 rounded-md"
-                src="/mistral.svg"
-                alt="mistral"
-                width={24}
-                height={24}
-              />
-              <span>openhermes-mixtral-8x7b-gptq</span>
-            </DropdownMenuRadioItem>
-            <DropdownMenuRadioItem
-              className="py-2"
-              value="openhermes-2-yi-34b-gptq"
-            >
-              <Image
-                className="mr-2 rounded-md"
-                src="/yi-logo.svg"
-                alt="yi"
-                width={24}
-                height={24}
-              />
-              <span>openhermes-2-yi-34b-gptq</span>
-            </DropdownMenuRadioItem>
-            <DropdownMenuRadioItem
-              className="py-2"
-              value="meta-llama/llama-2-70b-chat"
-            >
-              <Image
-                className="mr-2 rounded-md"
-                src="/llama.jpeg"
-                alt="llama"
-                width={24}
-                height={24}
-              />
-              <span>meta-llama/llama-2-70b-chat</span>
-            </DropdownMenuRadioItem>
-            <DropdownMenuRadioItem
-              className="py-2"
-              value="codellama-70b"
-              disabled
-            >
-              <Image
-                className="mr-2"
-                src="/codellama.png"
-                alt="codellama"
-                width={24}
-                height={24}
-              />
-              <span>codellama-70b</span>
-            </DropdownMenuRadioItem>
+            {models.map((item) => (
+              <DropdownMenuRadioItem
+                className="py-2"
+                value={item.value}
+                key={item.value}
+              >
+                <Image
+                  className="mr-2 rounded-md"
+                  src={item.icon}
+                  alt="icon"
+                  width={24}
+                  height={24}
+                />
+                <span>{item.label}</span>
+              </DropdownMenuRadioItem>
+            ))}
           </DropdownMenuRadioGroup>
         </DropdownMenuContent>
       </DropdownMenu>
