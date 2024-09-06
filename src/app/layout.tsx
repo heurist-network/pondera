@@ -1,15 +1,20 @@
 import { Inter } from 'next/font/google'
 import type { Metadata, Viewport } from 'next'
 
-import { env } from '@/env.mjs'
-
-import '@/styles/globals.css'
-
-import { Toaster } from 'react-hot-toast'
-
 import { Provider } from './providers'
 
-const inter = Inter({ subsets: ['latin'] })
+import './globals.css'
+
+import { Toaster } from '@/components/ui/sonner'
+import { cn } from '@/lib/utils'
+
+const inter = Inter({ subsets: ['latin'], display: 'swap' })
+
+export const metadata: Metadata = {
+  title: 'Pondera | Open-source AI Chat',
+  description:
+    'Pondera is an open-source conversational AI assistant that makes the best language models available to everyone. Powered by Heurist.',
+}
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -20,27 +25,14 @@ export const viewport: Viewport = {
   userScalable: false,
 }
 
-export const metadata: Metadata = {
-  title: 'Pondera | Open-source AI Chat',
-  description:
-    'Pondera is an open-source conversational AI assistant that makes the best language models available to everyone. Powered by Heurist.',
-}
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      {!!(env.UMAMI_URL && env.UMAMI_WEBSITE_ID) && (
-        <script
-          async
-          src={env.UMAMI_URL}
-          data-website-id={env.UMAMI_WEBSITE_ID}
-        />
-      )}
-      <body className={inter.className}>
+    <html lang="en" className={cn(inter.className)}>
+      <body>
         <Provider>{children}</Provider>
         <Toaster />
       </body>
