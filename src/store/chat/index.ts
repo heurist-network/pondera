@@ -7,9 +7,19 @@ export type ChatStore = {
   setHasHydrated: (state: boolean) => void
 }
 
+export type ChatListItem = {
+  id: string
+}
+
+export const initChatItem: ChatListItem = {
+  id: '',
+}
+
 export const useChatStore = create<ChatStore>()(
   persist(
     (set, get) => ({
+      activeId: '',
+
       // Hydration
       _hasHydrated: false,
       setHasHydrated: (state) => set({ _hasHydrated: state }),

@@ -1,4 +1,3 @@
-// import { Input } from '@/components/ui/input'
 import Image from 'next/image'
 
 import { Input } from '@/components/ui/input'
@@ -34,7 +33,7 @@ export function ChatList() {
               <div className="ml-1 mr-6">
                 Meta-llama/llama-3.1-405b-instruct
               </div>
-              <div className="flex h-[26px] cursor-pointer items-center rounded-full bg-gray-950 pl-3 pr-2 text-white">
+              <div className="flex h-[26px] cursor-pointer items-center gap-[3px] rounded-full bg-gray-950 pl-3 pr-2 text-white">
                 <div className="text-[13px] font-medium">Model</div>
                 <span className="i-mingcute-down-fill" />
               </div>

@@ -34,9 +34,7 @@ export function MenuItem({ className }: { className?: string }) {
         onMouseEnter={() => setVisible(true)}
         onMouseLeave={() => setVisible(false)}
       >
-        <div className="line-clamp-1">
-          Exploring Our Design Services Exploring Our Design Services
-        </div>
+        <div className="line-clamp-1">Website Redesign Discussion</div>
 
         <DropdownMenu open={open} onOpenChange={setOpen}>
           <DropdownMenuTrigger className="border-none outline-none">
