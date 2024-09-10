@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 
 export function ChatList() {
   return (
-    <div className="flex flex-1 rounded-2xl bg-[#F7F7F6]">
+    <div className="flex flex-1 bg-[#F7F7F6] md:rounded-2xl">
       <div
         className={cn(
           'mx-auto max-w-5xl px-4',
@@ -13,7 +13,12 @@ export function ChatList() {
         )}
       >
         <div className="flex flex-col items-center">
-          <div className="text-[48px] font-bold leading-[48px] -tracking-[0.0192em]">
+          <div
+            className={cn(
+              'font-bold -tracking-[0.0192em]',
+              'text-[32px] leading-[1] md:text-[36px] lg:text-[40px] xl:text-[44px] 2xl:text-[48px]',
+            )}
+          >
             What can I do for you today?
           </div>
           <div className="mb-4 mt-2">

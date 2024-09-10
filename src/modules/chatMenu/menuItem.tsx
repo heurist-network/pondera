@@ -18,11 +18,20 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
+import { ChatListItem, useChatStore } from '@/store/chat'
 
-export function MenuItem({ className }: { className?: string }) {
+export function MenuItem({
+  className,
+  data,
+}: {
+  className?: string
+  data: ChatListItem
+}) {
   const [visible, setVisible] = useState(false)
   const [open, setOpen] = useState(false)
   const [alertOpen, setAlertOpen] = useState(false)
+
+  const { toggleChat, deleteChat } = useChatStore()
 
   return (
     <>
@@ -33,9 +42,11 @@ export function MenuItem({ className }: { className?: string }) {
         )}
         onMouseEnter={() => setVisible(true)}
         onMouseLeave={() => setVisible(false)}
+        onClick={() => {
+          toggleChat(data.id)
+        }}
       >
-        <div className="line-clamp-1">Website Redesign Discussion</div>
-
+        <div className="flex-1 truncate">{data.title || 'Untitled'}</div>
         <DropdownMenu open={open} onOpenChange={setOpen}>
           <DropdownMenuTrigger className="border-none outline-none">
             <div
@@ -43,19 +54,17 @@ export function MenuItem({ className }: { className?: string }) {
                 'flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-gray-50 transition-all',
                 visible || open ? 'flex' : 'hidden',
               )}
-              onClick={(e) => {
-                e.stopPropagation()
-              }}
+              onClick={(e) => e.stopPropagation()}
             >
               <span className="i-mingcute-more-1-fill text-gray-950" />
             </div>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-[140px]" align="start">
-            <DropdownMenuGroup
-              onSelect={() => {
-                console.log(21412)
-              }}
-            >
+          <DropdownMenuContent
+            className="w-[140px]"
+            align="start"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <DropdownMenuGroup>
               <DropdownMenuItem
                 onClick={() => {
                   setVisible(false)
@@ -81,15 +90,18 @@ export function MenuItem({ className }: { className?: string }) {
       <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle>Delete Chat</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove your data from our servers.
+              Are you sure you want to delete this chat? This action cannot be
+              undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction variant="destructive">
+            <AlertDialogAction
+              variant="destructive"
+              onClick={() => deleteChat(data.id)}
+            >
               Continue
             </AlertDialogAction>
           </AlertDialogFooter>

@@ -45,7 +45,7 @@ export default function HomePage() {
           </Link>
         </div>
       </div>
-      <div className="relative flex flex-1 py-4 pl-4 pr-4 md:pl-0">
+      <div className="relative flex flex-1 md:p-4 md:pl-0">
         <ChatList />
       </div>
     </div>

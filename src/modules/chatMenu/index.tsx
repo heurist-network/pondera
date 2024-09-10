@@ -11,13 +11,19 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
+import { useChatStore } from '@/store/chat'
 
 import { MenuItem } from './menuItem'
 
 export function ChatMenu() {
+  const { list, activeId, addChat } = useChatStore()
+
   return (
     <div className="flex w-full flex-1 flex-col">
-      <div className="mx-3 mb-4 flex h-12 flex-shrink-0 cursor-pointer items-center gap-2 rounded-xl bg-[#01E3F5] px-3 font-medium text-gray-950 transition-colors hover:bg-[#01E3F5]/90">
+      <div
+        className="mx-3 mb-4 flex h-12 flex-shrink-0 cursor-pointer items-center gap-2 rounded-xl bg-[#01E3F5] px-3 font-medium text-gray-950 transition-colors hover:bg-[#01E3F5]/90"
+        onClick={addChat}
+      >
         <span className="i-f7-plus text-sm" />
         New Chat
       </div>
@@ -25,51 +31,52 @@ export function ChatMenu() {
         className="h-[calc(100dvh-270px)] w-full px-3 text-white"
         scrollHideDelay={0}
       >
-        <div className="flex flex-col gap-1">
-          {Array.from({ length: 40 }).map((_, index) => {
-            if (index === 0) {
-              return (
-                <div
-                  key={0}
-                  className="flex h-10 items-center gap-2.5 px-3 text-xs text-[rgba(255,255,255,0.45)]"
-                >
-                  <div>Day</div>
-                  <div className="flex-1 border-t border-dashed border-t-[rgba(255,255,255,0.45)]" />
-                </div>
-              )
-            }
+        <div className="flex w-[256px] flex-col gap-1">
+          {list.map((item, index) => {
+            // if (index === 0) {
+            //   return (
+            //     <div
+            //       key={0}
+            //       className="flex h-10 items-center gap-2.5 px-3 text-xs text-[rgba(255,255,255,0.45)]"
+            //     >
+            //       <div>Day</div>
+            //       <div className="flex-1 border-t border-dashed border-t-[rgba(255,255,255,0.45)]" />
+            //     </div>
+            //   )
+            // }
 
-            if (index === 4) {
-              return (
-                <div
-                  key={4}
-                  className="flex h-10 items-center gap-2.5 px-3 text-xs text-[rgba(255,255,255,0.45)]"
-                >
-                  <div>Yesterday</div>
-                  <div className="flex-1 border-t border-dashed border-t-[rgba(255,255,255,0.45)]" />
-                </div>
-              )
-            }
+            // if (index === 4) {
+            //   return (
+            //     <div
+            //       key={4}
+            //       className="flex h-10 items-center gap-2.5 px-3 text-xs text-[rgba(255,255,255,0.45)]"
+            //     >
+            //       <div>Yesterday</div>
+            //       <div className="flex-1 border-t border-dashed border-t-[rgba(255,255,255,0.45)]" />
+            //     </div>
+            //   )
+            // }
 
-            if (index === 10) {
-              return (
-                <div
-                  key={10}
-                  className="flex h-10 items-center gap-2.5 px-3 text-xs text-[rgba(255,255,255,0.45)]"
-                >
-                  <div>4 days ago</div>
-                  <div className="flex-1 border-t border-dashed border-t-[rgba(255,255,255,0.45)]" />
-                </div>
-              )
-            }
+            // if (index === 10) {
+            //   return (
+            //     <div
+            //       key={10}
+            //       className="flex h-10 items-center gap-2.5 px-3 text-xs text-[rgba(255,255,255,0.45)]"
+            //     >
+            //       <div>4 days ago</div>
+            //       <div className="flex-1 border-t border-dashed border-t-[rgba(255,255,255,0.45)]" />
+            //     </div>
+            //   )
+            // }
 
             return (
               <MenuItem
                 key={index}
                 className={cn({
                   'bg-[rgba(255,255,255,0.2)] hover:bg-[rgba(255,255,255,0.25)]':
-                    index === 2,
+                    item.id === activeId,
                 })}
+                data={item}
               />
             )
 
