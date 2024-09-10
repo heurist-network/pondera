@@ -33,6 +33,7 @@ export type ChatStore = {
   addChat: () => void
   toggleChat: (id: string) => void
   deleteChat: (id: string) => void
+  updateChat: (id: string, { title }: { title: string }) => void
 
   // Model
   models: ChatModel[]
@@ -87,6 +88,16 @@ export const useChatStore = create<ChatStore>()(
         } else {
           set({ list: newList })
         }
+      },
+      updateChat: (id, { title }) => {
+        const { list } = get()
+        const newList = list.map((item) => {
+          if (item.id === id) {
+            return { ...item, title }
+          }
+          return item
+        })
+        set({ list: newList })
       },
 
       // Model

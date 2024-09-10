@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { clone, cn } from '@/lib/utils'
@@ -10,6 +10,7 @@ import { MenuItem } from './menuItem'
 
 export function ChatMenu() {
   const { list, activeId, addChat } = useChatStore()
+  const viewportRef = useRef<HTMLDivElement>(null)
 
   const calcList = useMemo(() => {
     const today = new Date()
@@ -74,12 +75,16 @@ export function ChatMenu() {
     <div className="flex w-full flex-1 flex-col">
       <div
         className="mx-3 mb-4 flex h-12 flex-shrink-0 cursor-pointer items-center gap-2 rounded-xl bg-[#01E3F5] px-3 font-medium text-gray-950 transition-colors hover:bg-[#01E3F5]/90"
-        onClick={addChat}
+        onClick={() => {
+          addChat()
+          viewportRef.current?.scrollTo({ top: 0 })
+        }}
       >
         <span className="i-f7-plus h-[18px] w-[18px]" />
         New Chat
       </div>
       <ScrollArea
+        viewportRef={viewportRef}
         className="h-[calc(100dvh-270px)] w-full px-3 text-white"
         scrollHideDelay={0}
       >
@@ -104,18 +109,9 @@ export function ChatMenu() {
                   </div>
                   {clone(list)
                     .sort((x, y) => y.updatedAt! - x.updatedAt!)
-                    .map((item, index) => {
-                      return (
-                        <MenuItem
-                          key={index}
-                          className={cn({
-                            'bg-[rgba(255,255,255,0.15)] hover:bg-[rgba(255,255,255,0.2)]':
-                              item.id === activeId,
-                          })}
-                          data={item}
-                        />
-                      )
-                    })}
+                    .map((item, index) => (
+                      <MenuItem key={index} data={item} />
+                    ))}
                 </div>
               )
             }
