@@ -37,7 +37,7 @@ export function MenuItem({
     <>
       <div
         className={cn(
-          'flex h-10 cursor-pointer items-center rounded-xl px-3 font-medium transition-colors hover:bg-[rgba(255,255,255,0.15)]',
+          'flex h-12 cursor-pointer items-center rounded-xl px-3 font-medium transition-colors hover:bg-[rgba(255,255,255,0.1)]',
           className,
         )}
         onMouseEnter={() => setVisible(true)}
@@ -51,12 +51,12 @@ export function MenuItem({
           <DropdownMenuTrigger className="border-none outline-none">
             <div
               className={cn(
-                'flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-gray-50 transition-all',
+                'flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-[rgba(255,255,255,0.2)] transition-all',
                 visible || open ? 'flex' : 'hidden',
               )}
               onClick={(e) => e.stopPropagation()}
             >
-              <span className="i-mingcute-more-1-fill text-gray-950" />
+              <span className="i-mingcute-more-1-fill text-white" />
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent

@@ -65,7 +65,6 @@ export const useChatStore = create<ChatStore>()(
         const newChat = {
           ...clone(initChatItem),
           id,
-          title: String(Math.random()),
           createdAt: Date.now(),
           updatedAt: Date.now(),
         }
@@ -78,12 +77,13 @@ export const useChatStore = create<ChatStore>()(
         const { list, activeId } = get()
         const newList = list.filter((item) => item.id !== id)
 
-        console.log(newList, 'newList')
-
         if (newList.length <= 1) {
           set({ activeId: initChatItem.id, list: [clone(initChatItem)] })
         } else if (activeId === id) {
-          set({ activeId: newList[0].id, list: newList })
+          const find = clone(newList).sort(
+            (x, y) => y.updatedAt! - x.updatedAt!,
+          )[0]
+          set({ activeId: find.id, list: newList })
         } else {
           set({ list: newList })
         }
