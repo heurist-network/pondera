@@ -3,13 +3,13 @@
 import { useMemo, useRef } from 'react'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { clone, cn } from '@/lib/utils'
+import { clone } from '@/lib/utils'
 import { ChatListItem, useChatStore } from '@/store/chat'
 
 import { MenuItem } from './menuItem'
 
 export function ChatMenu() {
-  const { list, activeId, addChat } = useChatStore()
+  const { list, addChat } = useChatStore()
   const viewportRef = useRef<HTMLDivElement>(null)
 
   const calcList = useMemo(() => {

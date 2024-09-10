@@ -1,7 +1,7 @@
 import Image from 'next/image'
 
-import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
+import { ChatInput } from '@/modules/chatInput'
 
 export function ChatList() {
   return (
@@ -45,7 +45,7 @@ export function ChatList() {
             </div>
           </div>
           <div className="mb-3 mt-16 w-full">
-            <Input className="w-full" placeholder="What do you want?" />
+            <ChatInput />
           </div>
           <div className="flex flex-wrap justify-center gap-2">
             <div className="flex h-9 cursor-pointer items-center rounded-lg bg-white px-3 text-sm font-medium text-gray-950">
