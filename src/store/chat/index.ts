@@ -1,13 +1,21 @@
 import { nanoid } from 'nanoid'
+import { toast } from 'sonner'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 import { clone } from '@/lib/utils'
+import { fetchEventSource } from '@fortaine/fetch-event-source'
 
 export type ChatRole = 'user' | 'assistant' | 'system'
 
 export type ChatModel = {
   name: string
+}
+
+export enum CHAT_STATE {
+  NONE, // Not loading
+  CONNECTING, // Requesting to server
+  RESPONDING, // Responding from server
 }
 
 export type ChatItem = {
@@ -24,6 +32,7 @@ export type ChatListItem = {
   model: string
   prompt: string
   list: ChatItem[]
+  state: CHAT_STATE
   createdAt: number | null
   updatedAt: number | null
 }
@@ -32,6 +41,7 @@ export type ChatStore = {
   activeId: string
   list: ChatListItem[]
 
+  getActiveChat: (id: string) => ChatListItem | undefined
   getActiveList: (id: string) => ChatItem[]
 
   // Chat Handlers
@@ -39,6 +49,9 @@ export type ChatStore = {
   toggleChat: (id: string) => void
   deleteChat: (id: string) => void
   updateChat: (id: string, { title }: { title: string }) => void
+
+  // Chat Actions
+  sendChat: (id: string) => void
 
   // Message Handlers
   addMessage: ({
@@ -50,7 +63,7 @@ export type ChatStore = {
     content: string
     role: ChatRole
   }) => void
-  // addMessage: (id: string, message: ChatItem) => void
+  clearMessage: (id: string) => void
 
   // Model
   models: ChatModel[]
@@ -64,9 +77,10 @@ export type ChatStore = {
 export const initChatItem: ChatListItem = {
   id: nanoid(),
   title: '',
-  model: '',
+  model: 'mistralai/mixtral-8x7b-instruct',
   prompt: '',
   list: [],
+  state: CHAT_STATE.NONE,
   createdAt: Date.now(),
   updatedAt: Date.now(),
 }
@@ -77,6 +91,10 @@ export const useChatStore = create<ChatStore>()(
       activeId: initChatItem.id,
       list: [initChatItem],
 
+      getActiveChat: (id) => {
+        const { list } = get()
+        return list.find((item) => item.id === id)
+      },
       getActiveList: (id) => {
         const { list } = get()
         return list.find((item) => item.id === id)?.list || []
@@ -123,6 +141,89 @@ export const useChatStore = create<ChatStore>()(
         set({ list: newList })
       },
 
+      // Chat Actions
+      sendChat: (id) => {
+        const { list } = get()
+        const item = list.find((item) => item.id === id)
+        if (
+          !item ||
+          item.state === CHAT_STATE.CONNECTING ||
+          item.state === CHAT_STATE.RESPONDING
+        )
+          return
+
+        item.state = CHAT_STATE.CONNECTING
+        set({ list: [...list] })
+
+        const controller = new AbortController()
+        const messages = item.list.slice(-8).map((item) => ({
+          role: item.role,
+          content: item.content,
+        }))
+
+        fetchEventSource('/api/chat', {
+          method: 'POST',
+          signal: controller.signal,
+          openWhenHidden: true,
+          body: JSON.stringify({
+            messages,
+            modelId: item.model,
+            stream: true,
+          }),
+          onopen: async (res) => {
+            if (!res.ok || res.status !== 200 || !res.body) {
+              item.state = CHAT_STATE.NONE
+              set({ list: [...list] })
+
+              if (res.status === 429) {
+                toast.error('Too Many Requests')
+              } else {
+                const errRes = await res.json()
+                toast.error(errRes.msg || 'Error')
+              }
+            }
+          },
+          onmessage: (res) => {
+            const data = JSON.parse(res.data).choices[0]
+            try {
+              const content = data.delta.content
+              if (!content) return
+
+              item.state = CHAT_STATE.RESPONDING
+              set({ list: [...list] })
+
+              const lastItem = item.list.at(-1)
+
+              if (!lastItem) return
+
+              if (lastItem.role === 'user') {
+                item.list.push({
+                  id: nanoid(),
+                  role: 'assistant',
+                  content,
+                  createdAt: Date.now(),
+                  updatedAt: Date.now(),
+                })
+              } else {
+                lastItem.content += content
+              }
+
+              set({ list: [...list] })
+            } catch {}
+          },
+          onerror: () => {
+            // 设置状态为NONE
+            item.state = CHAT_STATE.NONE
+            set({ list: [...list] })
+
+            throw null
+          },
+          onclose: () => {
+            console.log('onclose')
+          },
+        })
+      },
+
       // Message Handlers
       addMessage: ({ id, content, role }) => {
         const { list } = get()
@@ -141,6 +242,16 @@ export const useChatStore = create<ChatStore>()(
                 },
               ],
             }
+          }
+          return item
+        })
+        set({ list: newList })
+      },
+      clearMessage: (id) => {
+        const { list } = get()
+        const newList = list.map((item) => {
+          if (item.id === id) {
+            return { ...item, list: [] }
           }
           return item
         })
@@ -172,6 +283,12 @@ export const useChatStore = create<ChatStore>()(
           })
       },
       merge: (persistedState: any, currentState) => {
+        // reset chat store
+        if (persistedState) {
+          persistedState.list.forEach((item: any) => {
+            item.state = CHAT_STATE.NONE
+          })
+        }
         return Object.assign({}, currentState, persistedState)
       },
     },

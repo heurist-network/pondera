@@ -9,10 +9,11 @@ import { cn } from '@/lib/utils'
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   onSubmit?: () => void
+  loadingSubmit?: boolean
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, onSubmit, ...props }, ref) => {
+  ({ className, type, onSubmit, loadingSubmit, ...props }, ref) => {
     const radius = 100 // change this to increase the rdaius of the hover effect
     const [visible, setVisible] = React.useState(false)
 
@@ -56,12 +57,20 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <div className="absolute right-14 top-[15px] flex h-[22px] items-center px-1 text-[14px] leading-[14px] text-gray-300">
           / input
         </div>
-        <div
-          className="absolute right-2 top-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-md bg-gray-950 text-white transition-colors hover:bg-gray-950/80"
+        <button
+          className={cn(
+            'absolute right-2 top-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-md bg-gray-950 text-white transition-colors hover:bg-gray-950/80',
+            'disabled:opacity-50',
+          )}
           onClick={onSubmit}
+          disabled={loadingSubmit}
         >
-          <span className="i-mingcute-arrow-up-fill" />
-        </div>
+          {loadingSubmit ? (
+            <span className="i-mingcute-loading-fill animate-spin" />
+          ) : (
+            <span className="i-mingcute-arrow-up-fill" />
+          )}
+        </button>
       </motion.div>
     )
   },

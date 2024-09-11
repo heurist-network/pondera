@@ -22,6 +22,7 @@ export default function HomePage() {
           <Image
             src="/logo.svg"
             alt="logo"
+            priority
             width={196}
             height={38}
             style={{ width: '196px', height: '38px' }}
