@@ -4,13 +4,15 @@ import { persist } from 'zustand/middleware'
 
 import { clone } from '@/lib/utils'
 
+export type ChatRole = 'user' | 'assistant' | 'system'
+
 export type ChatModel = {
   name: string
 }
 
 export type ChatItem = {
   id: string
-  role: 'user' | 'assistant' | 'system'
+  role: ChatRole
   content: string
   createdAt: number | null
   updatedAt: number | null
@@ -30,10 +32,25 @@ export type ChatStore = {
   activeId: string
   list: ChatListItem[]
 
+  getActiveList: (id: string) => ChatItem[]
+
+  // Chat Handlers
   addChat: () => void
   toggleChat: (id: string) => void
   deleteChat: (id: string) => void
   updateChat: (id: string, { title }: { title: string }) => void
+
+  // Message Handlers
+  addMessage: ({
+    id,
+    content,
+    role,
+  }: {
+    id: string
+    content: string
+    role: ChatRole
+  }) => void
+  // addMessage: (id: string, message: ChatItem) => void
 
   // Model
   models: ChatModel[]
@@ -60,6 +77,12 @@ export const useChatStore = create<ChatStore>()(
       activeId: initChatItem.id,
       list: [initChatItem],
 
+      getActiveList: (id) => {
+        const { list } = get()
+        return list.find((item) => item.id === id)?.list || []
+      },
+
+      // Chat Handlers
       addChat: () => {
         const { list } = get()
         const id = nanoid()
@@ -94,6 +117,30 @@ export const useChatStore = create<ChatStore>()(
         const newList = list.map((item) => {
           if (item.id === id) {
             return { ...item, title }
+          }
+          return item
+        })
+        set({ list: newList })
+      },
+
+      // Message Handlers
+      addMessage: ({ id, content, role }) => {
+        const { list } = get()
+        const newList = list.map((item) => {
+          if (item.id === id) {
+            return {
+              ...item,
+              list: [
+                ...item.list,
+                {
+                  id: `message-${nanoid()}`,
+                  role,
+                  content,
+                  createdAt: Date.now(),
+                  updatedAt: Date.now(),
+                },
+              ],
+            }
           }
           return item
         })

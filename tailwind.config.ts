@@ -65,6 +65,7 @@ const config: Config = {
   },
   plugins: [
     require('tailwindcss-animate'),
+    require('@tailwindcss/typography'),
     iconsPlugin({
       collections: getIconCollections(['f7', 'ri', 'mingcute']),
     }),

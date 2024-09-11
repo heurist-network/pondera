@@ -3,14 +3,21 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 
 import { Input } from '@/components/ui/input'
+import { useChatStore } from '@/store/chat'
 
 export function ChatInput() {
+  const { addMessage, activeId } = useChatStore()
+
   const inputRef = useRef<HTMLInputElement>(null)
 
   const [input, setInput] = useState('')
 
   const onSubmit = () => {
-    console.log(input, 'input')
+    addMessage({
+      id: activeId,
+      content: input,
+      role: 'user',
+    })
   }
 
   useLayoutEffect(() => {
