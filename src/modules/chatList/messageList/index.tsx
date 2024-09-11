@@ -19,20 +19,22 @@ export function MessageList() {
   const list = getActiveList(activeId)
   const chat = getActiveChat(activeId)
 
-  const loadingSubmit =
-    chat?.state === CHAT_STATE.CONNECTING ||
-    chat?.state === CHAT_STATE.RESPONDING
+  const onScrollToEnd = () => {
+    setTimeout(() => {
+      if (virtuosoRef.current) {
+        virtuosoRef.current.scrollTo({
+          top: 999999,
+        })
+      }
+    }, 50)
+  }
 
   useEffect(() => {
     setVirtuosoLoaded(false)
   }, [activeId])
 
   useEffect(() => {
-    if (virtuosoRef.current) {
-      virtuosoRef.current.scrollTo({
-        top: 999999,
-      })
-    }
+    onScrollToEnd()
   }, [list, virtuosoLoaded])
 
   return (
@@ -47,8 +49,8 @@ export function MessageList() {
             followOutput
             components={{
               Footer: () =>
-                loadingSubmit && (
-                  <div className="mx-auto max-w-3xl px-4">
+                chat?.state === CHAT_STATE.CONNECTING ? (
+                  <div className="mx-auto max-w-3xl px-4 pb-5">
                     <div className={cn('flex gap-3')}>
                       <div>
                         <Image
@@ -63,6 +65,8 @@ export function MessageList() {
                       </div>
                     </div>
                   </div>
+                ) : (
+                  <div className="pb-5" />
                 ),
             }}
             totalCount={list.length}
@@ -114,7 +118,11 @@ export function MessageList() {
               Clear messages
             </div>
           </div>
-          <ChatInput />
+          <ChatInput
+            onMessageResponse={() => {
+              onScrollToEnd()
+            }}
+          />
         </div>
       </div>
     </div>

@@ -51,7 +51,7 @@ export type ChatStore = {
   updateChat: (id: string, { title }: { title: string }) => void
 
   // Chat Actions
-  sendChat: (id: string) => void
+  sendChat: (id: string, callback: () => void) => void
 
   // Message Handlers
   addMessage: ({
@@ -142,7 +142,7 @@ export const useChatStore = create<ChatStore>()(
       },
 
       // Chat Actions
-      sendChat: (id) => {
+      sendChat: (id, callback) => {
         const { list } = get()
         const item = list.find((item) => item.id === id)
         if (
@@ -184,6 +184,7 @@ export const useChatStore = create<ChatStore>()(
             }
           },
           onmessage: (res) => {
+            callback()
             const data = JSON.parse(res.data).choices[0]
             try {
               const content = data.delta.content

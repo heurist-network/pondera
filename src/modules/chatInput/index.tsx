@@ -5,10 +5,18 @@ import { useLayoutEffect, useRef, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { CHAT_STATE, useChatStore } from '@/store/chat'
 
-export function ChatInput() {
+export function ChatInput({
+  onMessageResponse,
+}: {
+  onMessageResponse?: () => void
+}) {
   const { addMessage, activeId, sendChat, getActiveChat } = useChatStore()
 
   const chat = getActiveChat(activeId)
+
+  const onHandleMessageResponse = () => {
+    onMessageResponse?.()
+  }
 
   const loadingSubmit =
     chat?.state === CHAT_STATE.CONNECTING ||
@@ -28,7 +36,7 @@ export function ChatInput() {
       role: 'user',
     })
     setInput('')
-    sendChat(activeId)
+    sendChat(activeId, onHandleMessageResponse)
   }
 
   useLayoutEffect(() => {

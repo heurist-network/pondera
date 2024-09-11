@@ -52,17 +52,12 @@ export async function POST(req: Request) {
     )
 
     const stream = OpenAIStream(response, {
-      onStart: () => {
-        // console.log('start')
-      },
-      onCompletion: (data) => {
-        // console.log(data, 'data')
-      },
+      onStart: () => {},
+      onCompletion: (data) => {},
     })
 
     return new Response(stream)
   } catch (error) {
-    console.log(error, 'api/chat error')
     return ResError({ msg: 'api/chat error', data: error })
   }
 }
