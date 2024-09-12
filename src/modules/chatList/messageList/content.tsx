@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils'
 export function Content({ data }: { data: ChatItem }) {
   return (
     <div
-      className={cn('rounded-2xl px-4 py-3', {
+      className={cn('self-end rounded-2xl px-4 py-3', {
         'bg-[#e4e4e3]': data.role === 'user',
         'bg-white': data.role !== 'user',
       })}

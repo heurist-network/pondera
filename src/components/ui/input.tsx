@@ -8,12 +8,13 @@ import { cn } from '@/lib/utils'
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
-  onSubmit?: () => void
   loadingSubmit?: boolean
+  onSubmit?: () => void
+  onStop?: () => void
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, onSubmit, loadingSubmit, ...props }, ref) => {
+  ({ className, type, loadingSubmit, onSubmit, onStop, ...props }, ref) => {
     const radius = 100 // change this to increase the rdaius of the hover effect
     const [visible, setVisible] = React.useState(false)
 
@@ -40,7 +41,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setVisible(true)}
         onMouseLeave={() => setVisible(false)}
-        className="group/input relative rounded-lg p-[2px] transition duration-300"
+        className="rounded-lg p-[2px] transition duration-300 group/input relative"
       >
         <input
           type={type}
@@ -54,19 +55,20 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           {...props}
         />
-        <div className="absolute right-14 top-[15px] flex h-[22px] items-center px-1 text-[14px] leading-[14px] text-gray-300">
+        <div className="flex h-[22px] px-1 top-[15px] right-14 text-[14px] text-gray-300 leading-[14px] absolute items-center">
           / input
         </div>
         <button
           className={cn(
-            'absolute right-2 top-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-md bg-gray-950 text-white transition-colors hover:bg-gray-950/80',
-            'disabled:opacity-50',
+            'absolute right-2 top-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-md text-white transition-colors',
+            loadingSubmit
+              ? 'bg-destructive hover:bg-destructive/80'
+              : 'bg-gray-950 hover:bg-gray-950/80',
           )}
-          onClick={onSubmit}
-          disabled={loadingSubmit}
+          onClick={loadingSubmit ? onStop : onSubmit}
         >
           {loadingSubmit ? (
-            <span className="i-mingcute-loading-fill animate-spin" />
+            <span className="i-mingcute-stop-fill" />
           ) : (
             <span className="i-mingcute-arrow-up-fill" />
           )}

@@ -10,7 +10,8 @@ export function ChatInput({
 }: {
   onMessageResponse?: () => void
 }) {
-  const { addMessage, activeId, sendChat, getActiveChat } = useChatStore()
+  const { addMessage, activeId, sendChat, getActiveChat, cancelChat } =
+    useChatStore()
 
   const chat = getActiveChat(activeId)
 
@@ -60,11 +61,12 @@ export function ChatInput({
     <Input
       ref={inputRef}
       className="w-full"
-      placeholder="What do you want?"
+      placeholder="Enter message here"
       value={input}
       loadingSubmit={loadingSubmit}
       onChange={(e) => setInput(e.target.value)}
       onSubmit={onSubmit}
+      onStop={() => cancelChat(activeId)}
       onCompositionStart={() => setIsComposing(true)}
       onCompositionEnd={() => setIsComposing(false)}
       onKeyDown={(e) => {

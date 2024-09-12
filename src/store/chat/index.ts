@@ -43,6 +43,7 @@ export type ChatListItem = {
 export type ChatStore = {
   activeId: string
   list: ChatListItem[]
+  abort: Record<string, AbortController>
 
   getActiveChat: (id: string) => ChatListItem | undefined
   getActiveList: (id: string) => ChatItem[]
@@ -58,6 +59,7 @@ export type ChatStore = {
 
   // Chat Actions
   sendChat: (id: string, model: string, callback: () => void) => void
+  cancelChat: (id: string) => void
   generateTitle: (id: string) => void
 
   // Message Handlers
@@ -99,6 +101,7 @@ export const useChatStore = create<ChatStore>()(
     (set, get) => ({
       activeId: initChatItem.id,
       list: [initChatItem],
+      abort: {},
 
       getActiveChat: (id) => {
         const { list } = get()
@@ -170,6 +173,9 @@ export const useChatStore = create<ChatStore>()(
         set({ list: [...list] })
 
         const controller = new AbortController()
+
+        get().abort[id] = controller
+
         const messages = item.list.slice(-8).map((item) => ({
           role: item.role,
           content: item.content,
@@ -242,6 +248,17 @@ export const useChatStore = create<ChatStore>()(
           },
           onclose: () => {},
         })
+      },
+      cancelChat: (id) => {
+        const { abort, list } = get()
+        abort[id]?.abort()
+        delete abort[id]
+
+        const item = list.find((item) => item.id === id)
+        if (item) {
+          item.state = CHAT_STATE.NONE
+          set({ list: [...list] })
+        }
       },
       generateTitle: (id) => {
         const { list } = get()

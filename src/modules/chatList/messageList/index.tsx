@@ -112,7 +112,7 @@ export function MessageList() {
                         />
                       </div>
                     )}
-                    <div>
+                    <div className="flex flex-col">
                       <Content data={item} />
                       <TooltipProvider>
                         <div
