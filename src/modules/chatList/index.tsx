@@ -11,7 +11,7 @@ export function ChatList() {
   const list = getActiveList(activeId)
 
   return (
-    <div className="bg-[#F7F7F6] flex-1 md:rounded-2xl">
+    <div className="flex-1 rounded-t-2xl bg-[#F7F7F6] md:rounded-2xl">
       {list.length ? <MessageList /> : <Welcome />}
     </div>
   )

@@ -376,7 +376,7 @@ export const useChatStore = create<ChatStore>()(
       setHasHydrated: (state) => set({ _hasHydrated: state }),
     }),
     {
-      name: 'chat-list',
+      name: 'pondera-chat-list',
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true)
 

@@ -123,10 +123,10 @@ export function ChatMenu() {
       </div>
       <ScrollArea
         viewportRef={viewportRef}
-        className="h-[calc(100dvh-270px)] w-full px-3 text-white"
+        className="h-[calc(100dvh-302px)] w-full px-3 text-white"
         scrollHideDelay={0}
       >
-        <div className="flex w-[256px] flex-col">
+        <div className="flex w-full flex-col">
           {Object.keys(calcList).map((key, index) => {
             const list = calcList[key as keyof typeof calcList]
             if (list.length) {
