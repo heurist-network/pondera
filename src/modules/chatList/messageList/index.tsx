@@ -230,10 +230,10 @@ export function MessageList() {
             </ChatModel>
 
             <div
-              className="cursor-pointer text-sm font-medium text-gray-950"
+              className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-[10px] border border-[#e0e0e0] bg-white text-sm font-medium text-gray-950"
               onClick={() => clearMessage(activeId)}
             >
-              Clear messages
+              <span className="i-mingcute-broom-line h-5 w-5" />
             </div>
           </div>
           <ChatInput

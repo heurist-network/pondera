@@ -56,6 +56,7 @@ export type ChatStore = {
     id: string,
     { title, model }: { title?: string; model?: string },
   ) => void
+  clearChat: () => void
 
   // Chat Actions
   sendChat: (id: string, model: string, callback?: () => void) => void
@@ -157,6 +158,9 @@ export const useChatStore = create<ChatStore>()(
           return item
         })
         set({ list: newList })
+      },
+      clearChat: () => {
+        set({ activeId: initChatItem.id, list: [clone(initChatItem)] })
       },
 
       // Chat Actions

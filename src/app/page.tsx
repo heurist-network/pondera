@@ -44,6 +44,13 @@ export default function HomePage() {
           >
             <span className="i-ri-twitter-x-line h-[18px] w-[18px]" />
           </Link>
+          <Link
+            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-[rgba(255,255,255,0.15)]"
+            href="https://discord.com/invite/heuristai"
+            target="_blank"
+          >
+            <span className="i-ri-discord-fill h-[18px] w-[18px]" />
+          </Link>
         </div>
       </div>
       <div className="relative flex flex-1 md:p-4 md:pl-0">
