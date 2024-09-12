@@ -3,14 +3,22 @@ import { Virtuoso, VirtuosoHandle } from 'react-virtuoso'
 import Image from 'next/image'
 import type { ChatItem } from '@/store/chat'
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { CHAT_STATE, useChatStore } from '@/store/chat'
 
 import { ChatInput } from '../../chatInput'
 import { Content } from './content'
+import { CopyContent } from './copyContent'
 
 export function MessageList() {
   const virtuosoRef = useRef<VirtuosoHandle>(null)
+
   const { getActiveList, getActiveChat, activeId, clearMessage } =
     useChatStore()
 
@@ -74,7 +82,7 @@ export function MessageList() {
             itemContent={(index: number, item: ChatItem) => {
               return (
                 <div
-                  className={cn('mx-auto mb-5 max-w-3xl px-4', {
+                  className={cn('group mx-auto mb-5 max-w-3xl px-4', {
                     'mt-5': index === 0,
                   })}
                 >
@@ -84,9 +92,7 @@ export function MessageList() {
                       item.role === 'user' ? 'flex-row-reverse' : 'flex-row',
                     )}
                   >
-                    {item.role === 'user' ? (
-                      <div className="i-mingcute-user-4-fill h-9 w-9 bg-[#1d1d1c]" />
-                    ) : (
+                    {item.role !== 'user' && (
                       <div>
                         <Image
                           src="/model/mistral.svg"
@@ -96,7 +102,73 @@ export function MessageList() {
                         />
                       </div>
                     )}
-                    <Content data={item} />
+                    <div>
+                      <Content data={item} />
+                      <TooltipProvider>
+                        <div
+                          className={cn(
+                            'flex opacity-0 transition-opacity group-hover:opacity-100',
+                            item.role === 'user'
+                              ? 'justify-end'
+                              : 'justify-start',
+                          )}
+                        >
+                          <div className="mt-2 flex gap-0.5 rounded-[10px] bg-white p-1">
+                            <CopyContent content={item.content} />
+                            {item.role !== 'user' ? (
+                              <>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <div className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-[#F0F0EF]">
+                                      <Image
+                                        src="/icon/generate.svg"
+                                        alt="generate"
+                                        width={20}
+                                        height={20}
+                                      />
+                                    </div>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Regenerate</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <div className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-[#F0F0EF]">
+                                      <Image
+                                        src="/icon/share.svg"
+                                        alt="share"
+                                        width={20}
+                                        height={20}
+                                      />
+                                    </div>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>Share</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </>
+                            ) : (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <div className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-[#F0F0EF]">
+                                    <Image
+                                      src="/icon/edit.svg"
+                                      alt="edit"
+                                      width={24}
+                                      height={24}
+                                    />
+                                  </div>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Edit</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            )}
+                          </div>
+                        </div>
+                      </TooltipProvider>
+                    </div>
                   </div>
                 </div>
               )
