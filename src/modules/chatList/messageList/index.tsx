@@ -210,8 +210,8 @@ export function MessageList() {
           />
         </div>
       </div>
-      <div className="h-32">
-        <div className="mx-auto max-w-3xl">
+      <div className="h-32 border-t border-t-zinc-200/50 pt-2 md:border-t-0">
+        <div className="mx-auto max-w-3xl px-4">
           <div className="flex items-center justify-between">
             <ChatModel>
               <div className="mb-2 flex h-10 w-[104px] cursor-pointer items-center justify-center gap-1 rounded-[10px] bg-[#4ae3f5] text-sm font-medium text-gray-950">

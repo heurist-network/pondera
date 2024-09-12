@@ -1,17 +1,12 @@
 import Image from 'next/image'
 
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetTrigger,
-} from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 
 import { SideBar as PcSideBar } from '../pc'
 
 export function SideBar() {
   return (
-    <div className="flex h-[63px] md:hidden">
+    <div className="flex h-[52px] md:hidden">
       <Sheet>
         <SheetTrigger asChild>
           <div className="flex w-14 items-center justify-center">
