@@ -3,6 +3,7 @@ import { toast } from 'sonner'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
+import { GENERATE_CHAT_NAME_PROMPT } from '@/lib/constant'
 import { clone } from '@/lib/utils'
 import { fetchEventSource } from '@fortaine/fetch-event-source'
 
@@ -57,6 +58,7 @@ export type ChatStore = {
 
   // Chat Actions
   sendChat: (id: string, model: string, callback: () => void) => void
+  generateTitle: (id: string) => void
 
   // Message Handlers
   addMessage: ({
@@ -228,12 +230,60 @@ export const useChatStore = create<ChatStore>()(
           onerror: () => {
             // 设置状态为NONE
             item.state = CHAT_STATE.NONE
+
             set({ list: [...list] })
+
+            if (!item.title) {
+              // generate title
+              get().generateTitle(id)
+            }
 
             throw null
           },
           onclose: () => {},
         })
+      },
+      generateTitle: (id) => {
+        const { list } = get()
+        const item = list.find((item) => item.id === id)
+        if (!item) return
+
+        const messages = item.list.slice(-8).map((item) => ({
+          role: item.role,
+          content: item.content,
+        }))
+
+        fetchEventSource('/api/chat', {
+          method: 'POST',
+          openWhenHidden: true,
+          body: JSON.stringify({
+            messages: [
+              ...messages,
+              { role: 'user', content: GENERATE_CHAT_NAME_PROMPT },
+            ],
+            modelId: item.model,
+            stream: true,
+          }),
+          // Not set onopen will lead to content-type error: `Error: Expected content-type to be text/event-stream, Actual: null`
+          onopen: async () => {},
+          onmessage: (res) => {
+            const data = JSON.parse(res.data).choices[0]
+            try {
+              const content = data.delta.content
+              if (!content) return
+
+              item.title += content
+
+              set({ list: [...list] })
+            } catch {}
+          },
+          onerror: () => {
+            throw null
+          },
+          onclose: () => {},
+        })
+
+        // generate title
       },
 
       // Message Handlers
