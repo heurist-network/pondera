@@ -20,13 +20,15 @@ import { CopyContent } from './copyContent'
 export function MessageList() {
   const virtuosoRef = useRef<VirtuosoHandle>(null)
 
-  const { getActiveList, getActiveChat, activeId, clearMessage } =
+  const { getActiveList, getActiveChat, activeId, clearMessage, models } =
     useChatStore()
 
   const [virtuosoLoaded, setVirtuosoLoaded] = useState(false)
 
   const list = getActiveList(activeId)
   const chat = getActiveChat(activeId)
+
+  const findModel = models.find((model) => model.name === chat?.model)
 
   const onScrollToEnd = () => {
     setTimeout(() => {
@@ -182,6 +184,15 @@ export function MessageList() {
           <div className="flex items-center justify-between">
             <ChatModel>
               <div className="mb-2 flex h-10 w-[104px] cursor-pointer items-center justify-center gap-1 rounded-[10px] bg-[#4ae3f5] text-sm font-medium text-gray-950">
+                {findModel?.icon && (
+                  <Image
+                    className="rounded-md"
+                    src={findModel.icon}
+                    alt="model"
+                    width={20}
+                    height={20}
+                  />
+                )}
                 Model
                 <span className="i-mingcute-up-fill rotate-90" />
               </div>

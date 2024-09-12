@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import Image from 'next/image'
 
 import {
   DropdownMenu,
@@ -10,19 +10,29 @@ import {
 import { useChatStore } from '@/store/chat'
 
 export function ChatModel({ children }: { children: React.ReactNode }) {
-  const { models } = useChatStore()
+  const { models, updateChat, getActiveChat, activeId } = useChatStore()
 
-  const [position, setPosition] = useState('bottom')
+  const activeChat = getActiveChat(activeId)
 
-  console.log(models, 'models')
+  const onChangeModel = (model: string) => updateChat(activeId, { model })
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
       <DropdownMenuContent align="start">
-        <DropdownMenuRadioGroup value={position} onValueChange={setPosition}>
+        <DropdownMenuRadioGroup
+          value={activeChat?.model}
+          onValueChange={onChangeModel}
+        >
           {models.map((model) => (
             <DropdownMenuRadioItem key={model.name} value={model.name}>
+              <Image
+                className="mr-2 rounded-md"
+                src={model.icon}
+                alt="icon"
+                width={24}
+                height={24}
+              />
               {model.name}
             </DropdownMenuRadioItem>
           ))}

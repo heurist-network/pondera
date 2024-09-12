@@ -2,8 +2,16 @@ import Image from 'next/image'
 
 import { cn } from '@/lib/utils'
 import { ChatInput } from '@/modules/chatInput'
+import { ChatModel } from '@/modules/chatModel'
+import { useChatStore } from '@/store/chat'
 
 export function Welcome() {
+  const { models, getActiveChat, activeId } = useChatStore()
+
+  const chat = getActiveChat(activeId)
+
+  const findModel = models.find((model) => model.name === chat?.model)
+
   return (
     <div className="flex h-full">
       <div
@@ -29,19 +37,22 @@ export function Welcome() {
               Current Model:
             </div>
             <div className="flex h-[34px] flex-row items-center rounded-full bg-[#01E3F5] pl-4 pr-1 text-[13px] font-medium leading-[18px]">
-              <Image
-                src="/icon/mistral.svg"
-                alt="mistral"
-                width={20}
-                height={20}
-              />
-              <div className="ml-1 mr-6">
-                Meta-llama/llama-3.1-405b-instruct
-              </div>
-              <div className="flex h-[26px] cursor-pointer items-center gap-[3px] rounded-full bg-gray-950 pl-3 pr-2 text-white">
-                <div className="text-[13px] font-medium">Model</div>
-                <span className="i-mingcute-down-fill" />
-              </div>
+              {findModel?.icon && (
+                <Image
+                  className="rounded-md"
+                  src={findModel.icon}
+                  alt="model"
+                  width={20}
+                  height={20}
+                />
+              )}
+              <div className="ml-1 mr-6">{findModel?.name}</div>
+              <ChatModel>
+                <div className="flex h-[26px] cursor-pointer items-center gap-[3px] rounded-full bg-gray-950 pl-3 pr-2 text-white">
+                  <div className="text-[13px] font-medium">Model</div>
+                  <span className="i-mingcute-down-fill" />
+                </div>
+              </ChatModel>
             </div>
           </div>
           <div className="mb-3 mt-16 w-full">

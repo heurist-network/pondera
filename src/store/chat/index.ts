@@ -10,6 +10,7 @@ export type ChatRole = 'user' | 'assistant' | 'system'
 
 export type ChatModel = {
   name: string
+  icon: string
 }
 
 export enum CHAT_STATE {
@@ -48,7 +49,10 @@ export type ChatStore = {
   addChat: () => void
   toggleChat: (id: string) => void
   deleteChat: (id: string) => void
-  updateChat: (id: string, { title }: { title: string }) => void
+  updateChat: (
+    id: string,
+    { title, model }: { title?: string; model?: string },
+  ) => void
 
   // Chat Actions
   sendChat: (id: string, callback: () => void) => void
@@ -130,11 +134,20 @@ export const useChatStore = create<ChatStore>()(
           set({ list: newList })
         }
       },
-      updateChat: (id, { title }) => {
+      updateChat: (id, { title, model }) => {
         const { list } = get()
         const newList = list.map((item) => {
           if (item.id === id) {
-            return { ...item, title }
+            const newItem = { ...item, updatedAt: Date.now() }
+            if (title) {
+              newItem.title = title
+            }
+
+            if (model) {
+              newItem.model = model
+            }
+
+            return newItem
           }
           return item
         })
@@ -219,9 +232,7 @@ export const useChatStore = create<ChatStore>()(
 
             throw null
           },
-          onclose: () => {
-            console.log('onclose')
-          },
+          onclose: () => {},
         })
       },
 
@@ -280,7 +291,25 @@ export const useChatStore = create<ChatStore>()(
           .then((res) => res.json())
           .then((res) => {
             const arr = res.filter((res: any) => res.type?.includes('llm'))
-            state?.setModels(arr)
+            state?.setModels(
+              arr.map((item: any) => {
+                let icon = ''
+                if (
+                  item.name.startsWith('mistralai') ||
+                  item.name.startsWith('openhermes')
+                ) {
+                  icon = '/model/mistral.svg'
+                }
+                if (item.name.includes('llama')) {
+                  icon = '/model/llama.jpeg'
+                }
+                if (item.name.includes('-yi-')) {
+                  icon = '/model/yi.svg'
+                }
+
+                return { ...item, icon }
+              }),
+            )
           })
       },
       merge: (persistedState: any, currentState) => {
