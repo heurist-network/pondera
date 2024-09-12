@@ -10,6 +10,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
+import { ChatModel } from '@/modules/chatModel'
 import { CHAT_STATE, useChatStore } from '@/store/chat'
 
 import { ChatInput } from '../../chatInput'
@@ -179,10 +180,13 @@ export function MessageList() {
       <div className="h-32">
         <div className="mx-auto max-w-3xl">
           <div className="flex items-center justify-between">
-            <div className="mb-2 flex h-10 w-[104px] cursor-pointer items-center justify-center gap-1 rounded-[10px] bg-[#4ae3f5] text-sm font-medium text-gray-950">
-              Model
-              <span className="i-mingcute-up-fill rotate-90" />
-            </div>
+            <ChatModel>
+              <div className="mb-2 flex h-10 w-[104px] cursor-pointer items-center justify-center gap-1 rounded-[10px] bg-[#4ae3f5] text-sm font-medium text-gray-950">
+                Model
+                <span className="i-mingcute-up-fill rotate-90" />
+              </div>
+            </ChatModel>
+
             <div
               className="cursor-pointer text-sm font-medium text-gray-950"
               onClick={() => clearMessage(activeId)}
