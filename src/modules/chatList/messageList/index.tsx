@@ -20,8 +20,15 @@ import { CopyContent } from './copyContent'
 export function MessageList() {
   const virtuosoRef = useRef<VirtuosoHandle>(null)
 
-  const { getActiveList, getActiveChat, activeId, clearMessage, models } =
-    useChatStore()
+  const {
+    getActiveList,
+    getActiveChat,
+    activeId,
+    clearMessage,
+    models,
+    regenerateChat,
+    sendChat,
+  } = useChatStore()
 
   const [virtuosoLoaded, setVirtuosoLoaded] = useState(false)
 
@@ -29,6 +36,10 @@ export function MessageList() {
   const chat = getActiveChat(activeId)
 
   const findModel = models.find((model) => model.name === chat?.model)
+
+  const loadingChat =
+    chat?.state === CHAT_STATE.CONNECTING ||
+    chat?.state === CHAT_STATE.RESPONDING
 
   const getModelIcon = (model: string) => {
     const findModel = models.find((item) => item.name === model)
@@ -57,7 +68,7 @@ export function MessageList() {
   }, [list, virtuosoLoaded])
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex h-full flex-col">
       <div className="grow">
         <div
           className={cn('h-full', virtuosoLoaded ? 'opacity-100' : 'opacity-0')}
@@ -79,8 +90,8 @@ export function MessageList() {
                           height={32}
                         />
                       </div>
-                      <div className="bg-white flex rounded-2xl py-3 px-4 items-center">
-                        <span className="animate-spin i-mingcute-loading-fill" />
+                      <div className="flex items-center rounded-2xl bg-white px-4 py-3">
+                        <span className="i-mingcute-loading-fill animate-spin" />
                       </div>
                     </div>
                   </div>
@@ -123,28 +134,35 @@ export function MessageList() {
                               : 'justify-start',
                           )}
                         >
-                          <div className="bg-white flex rounded-[10px] mt-2 p-1 gap-0.5">
+                          <div className="mt-2 flex gap-0.5 rounded-[10px] bg-white p-1">
                             <CopyContent content={item.content} />
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div
+                                  className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-[#F0F0EF]"
+                                  onClick={() => {
+                                    if (loadingChat) return
+                                    regenerateChat(activeId, item.id)
+                                    sendChat(activeId, chat?.model!)
+                                  }}
+                                >
+                                  <Image
+                                    src="/icon/generate.svg"
+                                    alt="generate"
+                                    width={20}
+                                    height={20}
+                                  />
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Regenerate</p>
+                              </TooltipContent>
+                            </Tooltip>
                             {item.role !== 'user' ? (
                               <>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    <div className="rounded-md cursor-pointer flex h-8 transition-colors w-8 items-center justify-center hover:bg-[#F0F0EF]">
-                                      <Image
-                                        src="/icon/generate.svg"
-                                        alt="generate"
-                                        width={20}
-                                        height={20}
-                                      />
-                                    </div>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p>Regenerate</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <div className="rounded-md cursor-pointer flex h-8 transition-colors w-8 items-center justify-center hover:bg-[#F0F0EF]">
+                                    <div className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-[#F0F0EF]">
                                       <Image
                                         src="/icon/share.svg"
                                         alt="share"
@@ -161,7 +179,13 @@ export function MessageList() {
                             ) : (
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <div className="rounded-md cursor-pointer flex h-8 transition-colors w-8 items-center justify-center hover:bg-[#F0F0EF]">
+                                  <div
+                                    className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-[#F0F0EF]"
+                                    onClick={() => {
+                                      if (loadingChat) return
+                                      console.log('edit')
+                                    }}
+                                  >
                                     <Image
                                       src="/icon/edit.svg"
                                       alt="edit"
@@ -190,7 +214,7 @@ export function MessageList() {
         <div className="mx-auto max-w-3xl">
           <div className="flex items-center justify-between">
             <ChatModel>
-              <div className="cursor-pointer flex font-medium bg-[#4ae3f5] rounded-[10px] h-10 text-sm mb-2 text-gray-950 w-[104px] gap-1 items-center justify-center">
+              <div className="mb-2 flex h-10 w-[104px] cursor-pointer items-center justify-center gap-1 rounded-[10px] bg-[#4ae3f5] text-sm font-medium text-gray-950">
                 {findModel?.icon && (
                   <Image
                     className="rounded-md"
@@ -201,12 +225,12 @@ export function MessageList() {
                   />
                 )}
                 Model
-                <span className="rotate-90 i-mingcute-up-fill" />
+                <span className="i-mingcute-up-fill rotate-90" />
               </div>
             </ChatModel>
 
             <div
-              className="cursor-pointer font-medium text-sm text-gray-950"
+              className="cursor-pointer text-sm font-medium text-gray-950"
               onClick={() => clearMessage(activeId)}
             >
               Clear messages

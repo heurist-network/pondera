@@ -58,8 +58,9 @@ export type ChatStore = {
   ) => void
 
   // Chat Actions
-  sendChat: (id: string, model: string, callback: () => void) => void
+  sendChat: (id: string, model: string, callback?: () => void) => void
   cancelChat: (id: string) => void
+  regenerateChat: (id: string, message_id: string) => void
   generateTitle: (id: string) => void
 
   // Message Handlers
@@ -204,7 +205,7 @@ export const useChatStore = create<ChatStore>()(
             }
           },
           onmessage: (res) => {
-            callback()
+            callback?.()
             const data = JSON.parse(res.data).choices[0]
             try {
               const content = data.delta.content
@@ -259,6 +260,29 @@ export const useChatStore = create<ChatStore>()(
           item.state = CHAT_STATE.NONE
           set({ list: [...list] })
         }
+      },
+      regenerateChat: (id, message_id) => {
+        const { list } = get()
+        const item = list.find((item) => item.id === id)
+        if (!item) return
+
+        const message = item.list.find((item) => item.id === message_id)
+        const messageIndex = item.list.findIndex(
+          (item) => item.id === message_id,
+        )
+
+        if (!message) return
+
+        let array: ChatItem[] = []
+
+        if (message.role === 'user') {
+          array = item.list.slice(0, messageIndex + 1)
+        } else {
+          array = item.list.slice(0, messageIndex)
+        }
+
+        item.list = array
+        set({ list: [...list] })
       },
       generateTitle: (id) => {
         const { list } = get()
