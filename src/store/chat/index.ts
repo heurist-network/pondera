@@ -23,6 +23,7 @@ export type ChatItem = {
   id: string
   role: ChatRole
   content: string
+  model: string
   createdAt: number | null
   updatedAt: number | null
 }
@@ -55,17 +56,19 @@ export type ChatStore = {
   ) => void
 
   // Chat Actions
-  sendChat: (id: string, callback: () => void) => void
+  sendChat: (id: string, model: string, callback: () => void) => void
 
   // Message Handlers
   addMessage: ({
     id,
-    content,
     role,
+    content,
+    model,
   }: {
     id: string
-    content: string
     role: ChatRole
+    content: string
+    model: string
   }) => void
   clearMessage: (id: string) => void
 
@@ -139,13 +142,9 @@ export const useChatStore = create<ChatStore>()(
         const newList = list.map((item) => {
           if (item.id === id) {
             const newItem = { ...item, updatedAt: Date.now() }
-            if (title) {
-              newItem.title = title
-            }
+            if (title) newItem.title = title
 
-            if (model) {
-              newItem.model = model
-            }
+            if (model) newItem.model = model
 
             return newItem
           }
@@ -155,7 +154,7 @@ export const useChatStore = create<ChatStore>()(
       },
 
       // Chat Actions
-      sendChat: (id, callback) => {
+      sendChat: (id, model, callback) => {
         const { list } = get()
         const item = list.find((item) => item.id === id)
         if (
@@ -215,6 +214,7 @@ export const useChatStore = create<ChatStore>()(
                   id: nanoid(),
                   role: 'assistant',
                   content,
+                  model,
                   createdAt: Date.now(),
                   updatedAt: Date.now(),
                 })
@@ -237,7 +237,7 @@ export const useChatStore = create<ChatStore>()(
       },
 
       // Message Handlers
-      addMessage: ({ id, content, role }) => {
+      addMessage: ({ id, role, content, model }) => {
         const { list } = get()
         const newList = list.map((item) => {
           if (item.id === id) {
@@ -249,10 +249,12 @@ export const useChatStore = create<ChatStore>()(
                   id: `message-${nanoid()}`,
                   role,
                   content,
+                  model,
                   createdAt: Date.now(),
                   updatedAt: Date.now(),
                 },
               ],
+              updatedAt: Date.now(),
             }
           }
           return item

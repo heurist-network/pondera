@@ -30,6 +30,11 @@ export function MessageList() {
 
   const findModel = models.find((model) => model.name === chat?.model)
 
+  const getModelIcon = (model: string) => {
+    const findModel = models.find((item) => item.name === model)
+    return findModel?.icon
+  }
+
   const onScrollToEnd = () => {
     setTimeout(() => {
       if (virtuosoRef.current) {
@@ -65,7 +70,7 @@ export function MessageList() {
                     <div className={cn('flex gap-3')}>
                       <div>
                         <Image
-                          src="/model/mistral.svg"
+                          src={getModelIcon(chat?.model!)!}
                           alt="mistral"
                           width={32}
                           height={32}
@@ -98,8 +103,8 @@ export function MessageList() {
                     {item.role !== 'user' && (
                       <div>
                         <Image
-                          src="/model/mistral.svg"
-                          alt="mistral"
+                          src={getModelIcon(item.model)!}
+                          alt="model"
                           width={32}
                           height={32}
                         />

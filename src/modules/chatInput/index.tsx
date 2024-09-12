@@ -32,11 +32,12 @@ export function ChatInput({
 
     addMessage({
       id: activeId,
-      content: input,
       role: 'user',
+      content: input,
+      model: chat?.model!,
     })
     setInput('')
-    sendChat(activeId, onHandleMessageResponse)
+    sendChat(activeId, chat?.model!, onHandleMessageResponse)
   }
 
   useLayoutEffect(() => {
