@@ -38,6 +38,13 @@ export function SideBar({ className }: { className?: string }) {
         <div className="flex w-full flex-shrink-0 gap-2.5 px-3 text-white">
           <Link
             className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-[rgba(255,255,255,0.15)]"
+            href="https://www.heurist.ai"
+            target="_blank"
+          >
+            <span className="i-ri-home-3-fill h-[18px] w-[18px]" />
+          </Link>
+          <Link
+            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-[rgba(255,255,255,0.15)]"
             href="https://github.com/heurist-network"
             target="_blank"
           >
