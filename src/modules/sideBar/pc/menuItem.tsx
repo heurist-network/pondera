@@ -89,7 +89,9 @@ export function MenuItem({
           </div>
         ) : (
           <>
-            <div className="flex-1 truncate">{data.title || 'Untitled'}</div>
+            <div className="line-clamp-1 w-full">
+              {data.title || 'Untitled'}
+            </div>
             <DropdownMenu open={open} onOpenChange={setOpen}>
               <DropdownMenuTrigger className="border-none outline-none">
                 <div
