@@ -214,11 +214,11 @@ export function MessageList() {
           />
         </div>
       </div>
-      <div className="h-32 border-t border-t-zinc-200/50 pt-2 md:border-t-0">
+      <div className="border-t border-t-zinc-200/50 pb-4 pt-2 md:border-t-0">
         <div className="mx-auto max-w-3xl px-4">
           <div className="flex items-center justify-between">
             <ChatModel>
-              <div className="mb-2 flex h-10 w-[104px] cursor-pointer items-center justify-center gap-1 rounded-[10px] bg-[#4ae3f5] text-sm font-medium text-gray-950">
+              <div className="mb-2 flex h-9 cursor-pointer items-center justify-center gap-1 rounded-[10px] bg-[#4ae3f5] px-2 text-sm font-medium text-gray-950">
                 {findModel?.icon && (
                   <Image
                     className="rounded-md"
@@ -234,17 +234,13 @@ export function MessageList() {
             </ChatModel>
 
             <div
-              className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-[10px] border border-[#e0e0e0] bg-white text-sm font-medium text-gray-950"
+              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-[10px] border border-[#e0e0e0] bg-white text-sm font-medium text-gray-950"
               onClick={() => clearMessage(activeId)}
             >
               <span className="i-mingcute-broom-line h-5 w-5" />
             </div>
           </div>
-          <ChatInput
-            onMessageResponse={() => {
-              onScrollToEnd()
-            }}
-          />
+          <ChatInput onMessageResponse={() => onScrollToEnd()} />
         </div>
       </div>
     </div>

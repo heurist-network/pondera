@@ -41,7 +41,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setVisible(true)}
         onMouseLeave={() => setVisible(false)}
-        className="rounded-lg p-[2px] transition duration-300 group/input relative"
+        className="group/input relative rounded-lg p-[2px] transition duration-300"
       >
         <input
           type={type}
@@ -55,12 +55,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           {...props}
         />
-        <div className="flex h-[22px] px-1 top-[15px] right-14 text-[14px] text-gray-300 leading-[14px] absolute items-center">
+        <div className="absolute right-12 top-[15px] flex h-[22px] items-center px-1 text-[14px] leading-[14px] text-gray-300">
           / input
         </div>
         <button
           className={cn(
-            'absolute right-2 top-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-md text-white transition-colors',
+            'absolute right-2 top-2.5 flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-white transition-colors',
             loadingSubmit
               ? 'bg-destructive hover:bg-destructive/80'
               : 'bg-gray-950 hover:bg-gray-950/80',
