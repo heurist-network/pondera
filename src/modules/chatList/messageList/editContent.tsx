@@ -1,54 +1,58 @@
-import { forwardRef, useImperativeHandle, useState } from 'react'
+import { useEffect, useState } from 'react'
+import type { ChatItem } from '@/store/chat'
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
+import { useChatStore } from '@/store/chat'
 
-export const EditContent = forwardRef<{}, { content: string }>(
-  ({ content }, forwardedRef) => {
-    const [open, setOpen] = useState(false)
+export function EditContent({ data }: { data: ChatItem }) {
+  const { updateMessage, activeId } = useChatStore()
+  const [value, setValue] = useState(data.content)
 
-    useImperativeHandle(forwardedRef, () => ({
-      open: () => {
-        console.log('open')
-      },
-    }))
+  useEffect(() => {
+    const textarea = document.querySelector('textarea')
+    if (textarea) {
+      textarea.focus()
+      textarea.setSelectionRange(value.length, value.length)
+    }
+  }, [value])
 
-    return (
-      <Dialog>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Edit profile</DialogTitle>
-            <DialogDescription>
-              Make changes to your profile here. Click save when you're done.
-            </DialogDescription>
-          </DialogHeader>
-          {/* <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
-                Name
-              </Label>
-              <Input id="name" value="Pedro Duarte" className="col-span-3" />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="username" className="text-right">
-                Username
-              </Label>
-              <Input id="username" value="@peduarte" className="col-span-3" />
-            </div>
-          </div> */}
-          <DialogFooter>
-            {/* <Button type="submit">Save changes</Button> */}
-            <div>button</div>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    )
-  },
-)
+  return (
+    <div className="w-full rounded-2xl bg-[#e4e4e3] p-3">
+      <div className="m-2">
+        <textarea
+          className="col-start-1 col-end-2 row-start-1 row-end-2 m-0 w-full resize-none overflow-hidden border-0 bg-transparent p-0 outline-none focus:ring-0 focus-visible:ring-0"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+        />
+      </div>
+      <div className="flex justify-end gap-2">
+        <div
+          className="cursor-pointer rounded-full border border-[rgba(0,0,0,0.15)] bg-white px-[14px] py-2 text-sm font-medium"
+          onClick={() => {
+            updateMessage({
+              chat_id: activeId,
+              message_id: data.id,
+              isEdit: false,
+            })
+          }}
+        >
+          Cancel
+        </div>
+        <div
+          className="cursor-pointer rounded-full bg-[#0d0d0d] px-[14px] py-2 text-sm font-medium text-white transition-colors hover:bg-[#0d0d0d]/80"
+          onClick={() => {
+            if (!value?.trim()) return
+
+            updateMessage({
+              chat_id: activeId,
+              message_id: data.id,
+              isEdit: false,
+              content: value,
+            })
+          }}
+        >
+          OK
+        </div>
+      </div>
+    </div>
+  )
+}

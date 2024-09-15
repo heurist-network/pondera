@@ -16,6 +16,7 @@ import { CHAT_STATE, useChatStore } from '@/store/chat'
 import { ChatInput } from '../../chatInput'
 import { Content } from './content'
 import { CopyContent } from './copyContent'
+import { EditContent } from './editContent'
 
 export function MessageList() {
   const virtuosoRef = useRef<VirtuosoHandle>(null)
@@ -27,6 +28,7 @@ export function MessageList() {
     models,
     regenerateChat,
     sendChat,
+    updateMessage,
   } = useChatStore()
 
   const [virtuosoLoaded, setVirtuosoLoaded] = useState(false)
@@ -126,86 +128,97 @@ export function MessageList() {
                       className={cn(
                         'flex items-end gap-2',
                         item.role === 'user' ? 'flex-row-reverse' : 'flex-row',
+                        item.isEdit ? 'flex-1' : '',
                       )}
                     >
-                      <Content data={item} />
-                      <TooltipProvider>
-                        <div
-                          className={cn(
-                            'flex opacity-0 transition-opacity group-hover:opacity-100',
-                            item.role === 'user'
-                              ? 'justify-end'
-                              : 'justify-start',
-                          )}
-                        >
-                          <div className="mt-2 flex gap-0.5 rounded-[10px] bg-white p-1">
-                            <CopyContent content={item.content} />
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <div
-                                  className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-[#F0F0EF]"
-                                  onClick={() => {
-                                    if (loadingChat) return
-                                    regenerateChat(activeId, item.id)
-                                    sendChat(activeId, chat?.model!)
-                                  }}
-                                >
-                                  <Image
-                                    src="/icon/generate.svg"
-                                    alt="generate"
-                                    width={16}
-                                    height={16}
-                                  />
-                                </div>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Regenerate</p>
-                              </TooltipContent>
-                            </Tooltip>
-                            {item.role !== 'user' ? (
-                              <>
+                      {item.isEdit ? (
+                        <EditContent data={item} />
+                      ) : (
+                        <>
+                          <Content data={item} />
+                          <TooltipProvider>
+                            <div
+                              className={cn(
+                                'flex opacity-0 transition-opacity group-hover:opacity-100',
+                                item.role === 'user'
+                                  ? 'justify-end'
+                                  : 'justify-start',
+                              )}
+                            >
+                              <div className="mt-2 flex gap-0.5 rounded-[10px] bg-white p-1">
+                                <CopyContent content={item.content} />
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    <div className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-[#F0F0EF]">
+                                    <div
+                                      className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-[#F0F0EF]"
+                                      onClick={() => {
+                                        if (loadingChat) return
+                                        regenerateChat(activeId, item.id)
+                                        sendChat(activeId, chat?.model!)
+                                      }}
+                                    >
                                       <Image
-                                        src="/icon/share.svg"
-                                        alt="share"
+                                        src="/icon/generate.svg"
+                                        alt="generate"
                                         width={16}
                                         height={16}
                                       />
                                     </div>
                                   </TooltipTrigger>
                                   <TooltipContent>
-                                    <p>Share</p>
+                                    <p>Regenerate</p>
                                   </TooltipContent>
                                 </Tooltip>
-                              </>
-                            ) : (
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <div
-                                    className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-[#F0F0EF]"
-                                    onClick={() => {
-                                      if (loadingChat) return
-                                      console.log('edit')
-                                    }}
-                                  >
-                                    <Image
-                                      src="/icon/edit.svg"
-                                      alt="edit"
-                                      width={16}
-                                      height={16}
-                                    />
-                                  </div>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Edit</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            )}
-                          </div>
-                        </div>
-                      </TooltipProvider>
+                                {item.role !== 'user' ? (
+                                  <>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <div className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-[#F0F0EF]">
+                                          <Image
+                                            src="/icon/share.svg"
+                                            alt="share"
+                                            width={16}
+                                            height={16}
+                                          />
+                                        </div>
+                                      </TooltipTrigger>
+                                      <TooltipContent>
+                                        <p>Share</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </>
+                                ) : (
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <div
+                                        className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-[#F0F0EF]"
+                                        onClick={() => {
+                                          if (loadingChat) return
+                                          updateMessage({
+                                            chat_id: activeId,
+                                            message_id: item.id,
+                                            isEdit: true,
+                                          })
+                                        }}
+                                      >
+                                        <Image
+                                          src="/icon/edit.svg"
+                                          alt="edit"
+                                          width={16}
+                                          height={16}
+                                        />
+                                      </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>Edit</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                )}
+                              </div>
+                            </div>
+                          </TooltipProvider>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>

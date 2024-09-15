@@ -25,6 +25,7 @@ export type ChatItem = {
   role: ChatRole
   content: string
   model: string
+  isEdit: boolean
   createdAt: number | null
   updatedAt: number | null
 }
@@ -77,6 +78,17 @@ export type ChatStore = {
     model: string
   }) => void
   clearMessage: (id: string) => void
+  updateMessage: ({
+    chat_id,
+    message_id,
+    isEdit,
+    content,
+  }: {
+    chat_id: string
+    message_id: string
+    isEdit?: boolean
+    content?: string
+  }) => void
 
   // Model
   models: ChatModel[]
@@ -228,6 +240,7 @@ export const useChatStore = create<ChatStore>()(
                   role: 'assistant',
                   content,
                   model,
+                  isEdit: false,
                   createdAt: Date.now(),
                   updatedAt: Date.now(),
                 })
@@ -345,6 +358,7 @@ export const useChatStore = create<ChatStore>()(
                   role,
                   content,
                   model,
+                  isEdit: false,
                   createdAt: Date.now(),
                   updatedAt: Date.now(),
                 },
@@ -365,6 +379,25 @@ export const useChatStore = create<ChatStore>()(
           return item
         })
         set({ list: newList })
+      },
+      updateMessage: ({ chat_id, message_id, isEdit, content }) => {
+        const { list } = get()
+
+        const findChat = list.find((item) => item.id === chat_id)
+        if (!findChat) return
+
+        const findMessage = findChat.list.find((item) => item.id === message_id)
+        if (!findMessage) return
+
+        if (isEdit !== undefined) {
+          findMessage.isEdit = isEdit
+        }
+
+        if (content !== undefined) {
+          findMessage.content = content
+        }
+
+        set({ list: [...list] })
       },
 
       // Model
@@ -414,6 +447,9 @@ export const useChatStore = create<ChatStore>()(
         if (persistedState) {
           persistedState.list.forEach((item: any) => {
             item.state = CHAT_STATE.NONE
+            item.list.forEach((item: any) => {
+              item.isEdit = false
+            })
           })
         }
         return Object.assign({}, currentState, persistedState)
