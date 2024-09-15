@@ -1,16 +1,20 @@
 import Image from 'next/image'
 
+import { useRandomPrompts } from '@/hooks/useRandomPrompts'
 import { cn } from '@/lib/utils'
 import { ChatInput } from '@/modules/chatInput'
 import { ChatModel } from '@/modules/chatModel'
 import { useChatStore } from '@/store/chat'
 
 export function Welcome() {
-  const { models, getActiveChat, activeId } = useChatStore()
+  const { models, getActiveChat, activeId, sendChat, addMessage } =
+    useChatStore()
 
   const chat = getActiveChat(activeId)
 
   const findModel = models.find((model) => model.name === chat?.model)
+
+  const randomPrompts = useRandomPrompts()
 
   return (
     <div className="flex h-full">
@@ -61,15 +65,23 @@ export function Welcome() {
             <ChatInput />
           </div>
           <div className="flex flex-wrap justify-center gap-2">
-            <div className="flex h-9 cursor-pointer items-center rounded-lg bg-white px-3 text-sm font-medium text-gray-950">
-              How to invest in Bitcoin ETF?
-            </div>
-            <div className="flex h-9 cursor-pointer items-center rounded-lg bg-white px-3 text-sm font-medium text-gray-950">
-              What is ETF？
-            </div>
-            <div className="flex h-9 cursor-pointer items-center rounded-lg bg-white px-3 text-sm font-medium text-gray-950">
-              How to invest in Bitcoin ETF?
-            </div>
+            {randomPrompts.map((item, index) => (
+              <div
+                key={index}
+                className="flex h-9 cursor-pointer items-center rounded-lg border bg-white px-3 text-sm font-medium text-gray-950"
+                onClick={() => {
+                  addMessage({
+                    id: activeId,
+                    role: 'user',
+                    content: item.value,
+                    model: chat?.model!,
+                  })
+                  sendChat(activeId, chat?.model!)
+                }}
+              >
+                {item.label}
+              </div>
+            ))}
           </div>
         </div>
       </div>
