@@ -85,7 +85,7 @@ export function ChatMenu() {
   return (
     <div className="group/menu flex w-full flex-1 flex-col">
       <div
-        className="mx-3 mb-4 flex h-12 flex-shrink-0 cursor-pointer items-center gap-2 rounded-xl bg-[#01E3F5] px-3 font-medium text-gray-950 transition-colors hover:bg-[#01E3F5]/90"
+        className="mx-3 mb-4 flex h-12 flex-shrink-0 cursor-pointer items-center gap-1.5 rounded-xl bg-[#01E3F5] px-3 text-sm font-medium text-gray-950 transition-colors hover:bg-[#01E3F5]/90"
         onClick={() => {
           addChat()
           viewportRef.current?.scrollTo({ top: 0 })

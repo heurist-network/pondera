@@ -63,7 +63,7 @@ export function MenuItem({
               ref={inputRef}
               type="text"
               className={cn(
-                'h-7 w-full rounded-lg border-input bg-transparent px-3 focus-visible:outline-none',
+                'h-7 w-full rounded-lg border-input bg-transparent px-3 text-sm focus-visible:outline-none',
                 'bg-[#484850]',
               )}
               value={tempTitle}
@@ -89,7 +89,7 @@ export function MenuItem({
           </div>
         ) : (
           <>
-            <div className="line-clamp-1 w-full">
+            <div className="line-clamp-1 w-full text-sm">
               {data.title || 'Untitled'}
             </div>
             <DropdownMenu open={open} onOpenChange={setOpen}>

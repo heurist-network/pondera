@@ -19,7 +19,6 @@ import { CopyContent } from './copyContent'
 
 export function MessageList() {
   const virtuosoRef = useRef<VirtuosoHandle>(null)
-
   const {
     getActiveList,
     getActiveChat,
@@ -128,7 +127,7 @@ export function MessageList() {
                       <TooltipProvider>
                         <div
                           className={cn(
-                            'flex opacity-0 transition-opacity group-hover:opacity-100',
+                            'flex opacity-100 transition-opacity group-hover:opacity-100',
                             item.role === 'user'
                               ? 'justify-end'
                               : 'justify-start',
@@ -139,7 +138,7 @@ export function MessageList() {
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <div
-                                  className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-[#F0F0EF]"
+                                  className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-[#F0F0EF]"
                                   onClick={() => {
                                     if (loadingChat) return
                                     regenerateChat(activeId, item.id)
@@ -149,8 +148,8 @@ export function MessageList() {
                                   <Image
                                     src="/icon/generate.svg"
                                     alt="generate"
-                                    width={20}
-                                    height={20}
+                                    width={16}
+                                    height={16}
                                   />
                                 </div>
                               </TooltipTrigger>
@@ -162,12 +161,12 @@ export function MessageList() {
                               <>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    <div className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-[#F0F0EF]">
+                                    <div className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-[#F0F0EF]">
                                       <Image
                                         src="/icon/share.svg"
                                         alt="share"
-                                        width={20}
-                                        height={20}
+                                        width={16}
+                                        height={16}
                                       />
                                     </div>
                                   </TooltipTrigger>
@@ -180,7 +179,7 @@ export function MessageList() {
                               <Tooltip>
                                 <TooltipTrigger asChild>
                                   <div
-                                    className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-[#F0F0EF]"
+                                    className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-[#F0F0EF]"
                                     onClick={() => {
                                       if (loadingChat) return
                                       console.log('edit')
@@ -189,8 +188,8 @@ export function MessageList() {
                                     <Image
                                       src="/icon/edit.svg"
                                       alt="edit"
-                                      width={24}
-                                      height={24}
+                                      width={16}
+                                      height={16}
                                     />
                                   </div>
                                 </TooltipTrigger>

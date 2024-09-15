@@ -14,7 +14,7 @@ export function CopyContent({ content }: { content: string }) {
     <Tooltip>
       <TooltipTrigger asChild>
         <div
-          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-[#F0F0EF]"
+          className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-[#F0F0EF]"
           onClick={() => {
             if (isCopied) return
 
@@ -22,9 +22,9 @@ export function CopyContent({ content }: { content: string }) {
           }}
         >
           {isCopied ? (
-            <span className="i-mingcute-check-line h-5 w-5 text-[#52ce7c]" />
+            <span className="i-mingcute-check-line h-4 w-4 text-[#52ce7c]" />
           ) : (
-            <Image src="/icon/copy.svg" alt="copy" width={20} height={20} />
+            <Image src="/icon/copy.svg" alt="copy" width={16} height={16} />
           )}
         </div>
       </TooltipTrigger>

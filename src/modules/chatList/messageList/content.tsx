@@ -16,9 +16,6 @@ export function Content({ data }: { data: ChatItem }) {
     >
       <ReactMarkdown
         className={cn('prose')}
-        // className={cn(
-        //   'prose mb-4 max-w-full overflow-hidden rounded-2xl px-[11px] py-[7.5px] text-left text-sm',
-        // )}
         remarkPlugins={[RemarkGfm, RemarkMath]}
         rehypePlugins={[RehypeKatex]}
       >
