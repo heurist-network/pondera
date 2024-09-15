@@ -43,7 +43,7 @@ export function MenuItem({
     <>
       <div
         className={cn(
-          'flex h-12 cursor-pointer items-center rounded-xl px-3 font-medium transition-colors',
+          'relative flex h-12 cursor-pointer items-center rounded-xl px-3 font-medium transition-colors',
           !isEditing && 'hover:bg-[rgba(255,255,255,0.1)]',
           data.id === activeId &&
             !isEditing &&
@@ -89,7 +89,12 @@ export function MenuItem({
           </div>
         ) : (
           <>
-            <div className="line-clamp-1 w-full text-sm">
+            <div
+              className={cn(
+                'line-clamp-1 text-sm',
+                visible || open ? 'w-[208px]' : 'w-[232px]',
+              )}
+            >
               {data.title || 'Untitled'}
             </div>
             <DropdownMenu open={open} onOpenChange={setOpen}>
