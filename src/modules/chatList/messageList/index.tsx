@@ -122,12 +122,17 @@ export function MessageList() {
                         />
                       </div>
                     )}
-                    <div className="flex flex-col">
+                    <div
+                      className={cn(
+                        'flex items-end gap-2',
+                        item.role === 'user' ? 'flex-row-reverse' : 'flex-row',
+                      )}
+                    >
                       <Content data={item} />
                       <TooltipProvider>
                         <div
                           className={cn(
-                            'flex opacity-100 transition-opacity group-hover:opacity-100',
+                            'flex opacity-0 transition-opacity group-hover:opacity-100',
                             item.role === 'user'
                               ? 'justify-end'
                               : 'justify-start',
