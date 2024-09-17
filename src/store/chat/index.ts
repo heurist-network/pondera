@@ -1,210 +1,202 @@
-import { toast } from 'react-hot-toast'
-import { v4 as uuidv4 } from 'uuid'
+import { nanoid } from 'nanoid'
+import { toast } from 'sonner'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-import { BASE_PROMPT, GENERATE_CHAT_NAME_PROMPT } from '@/lib/constant'
+import { GENERATE_CHAT_NAME_PROMPT } from '@/lib/constant'
 import { clone } from '@/lib/utils'
 import { fetchEventSource } from '@fortaine/fetch-event-source'
 
-import { ChatListItem, ChatStore, LOADING_STATE, Message } from './type'
+export type ChatRole = 'user' | 'assistant' | 'system'
 
-export type { ChatListItem, Message }
+export type ChatModel = {
+  name: string
+  icon: string
+}
 
-export { LOADING_STATE } from './type'
+export enum CHAT_STATE {
+  NONE, // Not loading
+  CONNECTING, // Requesting to server
+  RESPONDING, // Responding from server
+}
+
+export type ChatItem = {
+  id: string
+  role: ChatRole
+  content: string
+  model: string
+  isEdit: boolean
+  createdAt: number | null
+  updatedAt: number | null
+}
+
+export type ChatListItem = {
+  id: string
+  title: string
+  model: string
+  prompt: string
+  list: ChatItem[]
+  state: CHAT_STATE
+  createdAt: number | null
+  updatedAt: number | null
+}
+
+export type ChatStore = {
+  activeId: string
+  list: ChatListItem[]
+  abort: Record<string, AbortController>
+
+  getActiveChat: (id: string) => ChatListItem | undefined
+  getActiveList: (id: string) => ChatItem[]
+
+  // Chat Handlers
+  addChat: () => void
+  toggleChat: (id: string) => void
+  deleteChat: (id: string) => void
+  updateChat: (
+    id: string,
+    { title, model }: { title?: string; model?: string },
+  ) => void
+  clearChat: () => void
+
+  // Chat Actions
+  sendChat: (id: string, model: string, callback?: () => void) => void
+  cancelChat: (id: string) => void
+  regenerateChat: (id: string, message_id: string) => void
+  generateTitle: (id: string) => void
+
+  // Message Handlers
+  addMessage: ({
+    id,
+    role,
+    content,
+    model,
+  }: {
+    id: string
+    role: ChatRole
+    content: string
+    model: string
+  }) => void
+  clearMessage: (id: string) => void
+  updateMessage: ({
+    chat_id,
+    message_id,
+    isEdit,
+    content,
+  }: {
+    chat_id: string
+    message_id: string
+    isEdit?: boolean
+    content?: string
+  }) => void
+
+  // Model
+  models: ChatModel[]
+  setModels: (models: ChatModel[]) => void
+
+  // Hydration
+  _hasHydrated: boolean
+  setHasHydrated: (state: boolean) => void
+}
 
 export const initChatItem: ChatListItem = {
-  chat_id: uuidv4(),
-  chat_name: '',
-  chat_model: 'mistralai/mixtral-8x7b-instruct',
-  chat_prompt: BASE_PROMPT,
-  chat_state: LOADING_STATE.NONE,
-  chat_context_length: 8,
-  chat_list: [],
+  id: nanoid(),
+  title: '',
+  model: 'mistralai/mixtral-8x7b-instruct',
+  prompt: '',
+  list: [],
+  state: CHAT_STATE.NONE,
+  createdAt: Date.now(),
+  updatedAt: Date.now(),
 }
 
 export const useChatStore = create<ChatStore>()(
   persist(
     (set, get) => ({
-      activeId: initChatItem.chat_id,
+      activeId: initChatItem.id,
       list: [initChatItem],
       abort: {},
-      recentModel: 'mistralai/mixtral-8x7b-instruct',
 
-      toggleChatActive: (chat_id) => {
-        set({ activeId: chat_id })
+      getActiveChat: (id) => {
+        const { list } = get()
+        return list.find((item) => item.id === id)
       },
+      getActiveList: (id) => {
+        const { list } = get()
+        return list.find((item) => item.id === id)?.list || []
+      },
+
+      // Chat Handlers
       addChat: () => {
-        const chat_id = uuidv4()
-        const chatItem = {
+        const { list } = get()
+        const id = nanoid()
+        const newChat = {
           ...clone(initChatItem),
-          chat_id,
-          chat_model: get().recentModel,
+          id,
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
         }
-
-        set((state) => ({
-          list: [...state.list, chatItem],
-          activeId: chat_id,
-        }))
+        set({ list: [...list, newChat], activeId: id })
       },
-      deleteChat: (chat_id) => {
-        set((state) => {
-          if (state.list.length <= 1) {
-            const activeId = initChatItem.chat_id
-            return { activeId, list: [clone(initChatItem)] }
-          } else {
-            const list = state.list.filter((item) => item.chat_id !== chat_id)
+      toggleChat: (id) => {
+        set({ activeId: id })
+      },
+      deleteChat: (id) => {
+        const { list, activeId } = get()
+        const newList = list.filter((item) => item.id !== id)
 
-            if (chat_id === state.activeId) {
-              return { activeId: list[0].chat_id, list }
-            }
+        if (newList.length <= 1) {
+          set({ activeId: initChatItem.id, list: [clone(initChatItem)] })
+        } else if (activeId === id) {
+          const find = clone(newList).sort(
+            (x, y) => y.updatedAt! - x.updatedAt!,
+          )[0]
+          set({ activeId: find.id, list: newList })
+        } else {
+          set({ list: newList })
+        }
+      },
+      updateChat: (id, { title, model }) => {
+        const { list } = get()
+        const newList = list.map((item) => {
+          if (item.id === id) {
+            const newItem = { ...item, updatedAt: Date.now() }
+            if (title) newItem.title = title
 
-            return { list }
+            if (model) newItem.model = model
+
+            return newItem
           }
+          return item
         })
+        set({ list: newList })
       },
       clearChat: () => {
-        set(() => {
-          const activeId = initChatItem.chat_id
-          return {
-            activeId,
-            list: [{ ...clone(initChatItem), chat_model: get().recentModel }],
-          }
-        })
-      },
-      regenerateChat: ({ chat_id, message_id }) => {
-        set((state) => {
-          const newList: ChatListItem[] = clone(state.list)
-          const findChat = newList.find((chat) => chat.chat_id === chat_id)
-          if (!findChat) return {}
-
-          const findMessage = findChat.chat_list.find(
-            (item) => item.id === message_id,
-          )
-          const findMessageIndex = findChat.chat_list.findIndex(
-            (item) => item.id === message_id,
-          )
-
-          if (!findMessage) return {}
-
-          let arr: Message[] = []
-
-          if (findMessage.role === 'assistant') {
-            arr = findChat.chat_list.slice(0, findMessageIndex)
-          } else if (findMessage.role === 'user') {
-            arr = findChat.chat_list.slice(0, findMessageIndex + 1)
-          }
-
-          findChat.chat_list = arr
-
-          return { list: newList }
-        })
-      },
-      updateChatName: (chat_id, chat_name) => {
-        set((state) => {
-          const newList: ChatListItem[] = clone(state.list)
-          const findChat = newList.find((chat) => chat.chat_id === chat_id)
-          if (!findChat) return {}
-          findChat.chat_name = chat_name
-
-          return { list: newList }
-        })
-      },
-      updateChatModel: (chat_id, chat_model) => {
-        set((state) => {
-          const newList: ChatListItem[] = clone(state.list)
-          const findChat = newList.find((chat) => chat.chat_id === chat_id)
-          if (!findChat) return {}
-          findChat.chat_model = chat_model
-          get().updateRecentModel(chat_model)
-
-          return { list: newList }
-        })
-      },
-      addMessage: ({ chat_id, message, role }) => {
-        set((state) => {
-          const newList: ChatListItem[] = clone(state.list)
-          const findChat = newList.find((chat) => chat.chat_id === chat_id)
-          if (!findChat) return {}
-
-          findChat.chat_list.push({
-            id: uuidv4(),
-            role,
-            content: message,
-            time: String(+new Date()),
-          })
-
-          return { list: newList }
-        })
-      },
-      deleteMessage: ({ chat_id, message_id }) => {
-        set((state) => {
-          const newList: ChatListItem[] = clone(state.list)
-          const findChat = newList.find((chat) => chat.chat_id === chat_id)
-          if (!findChat) return {}
-          findChat.chat_list = findChat.chat_list.filter(
-            (item) => item.id !== message_id,
-          )
-          return { list: newList }
-        })
-      },
-      updateMessage: ({ chat_id, message_id, content }) => {
-        set((state) => {
-          const newList: ChatListItem[] = clone(state.list)
-          const findChat = newList.find((chat) => chat.chat_id === chat_id)
-          if (!findChat) return {}
-          const findMessage = findChat.chat_list.find(
-            (item) => item.id === message_id,
-          )
-          if (!findMessage) return {}
-
-          findMessage.content = content
-
-          return { list: newList }
-        })
-      },
-      clearMessage: (chat_id) => {
-        set((state) => {
-          const newList: ChatListItem[] = clone(state.list)
-          const findChat = newList.find((chat) => chat.chat_id === chat_id)
-          if (!findChat) return {}
-          findChat.chat_list = []
-
-          return { list: newList }
-        })
+        set({ activeId: initChatItem.id, list: [clone(initChatItem)] })
       },
 
-      // Chat Action
-      sendChat: ({ chat_id }) => {
-        let findChat: ChatListItem | undefined
+      // Chat Actions
+      sendChat: (id, model, callback) => {
+        const { list } = get()
+        const item = list.find((item) => item.id === id)
+        if (
+          !item ||
+          item.state === CHAT_STATE.CONNECTING ||
+          item.state === CHAT_STATE.RESPONDING
+        )
+          return
 
-        set((state) => {
-          const newList: ChatListItem[] = clone(state.list)
-          findChat = newList.find((chat) => chat.chat_id === chat_id)
-
-          if (!findChat) return {}
-          findChat.chat_state = LOADING_STATE.CONNECTING
-
-          return { list: newList }
-        })
-
-        if (!findChat) return
+        item.state = CHAT_STATE.CONNECTING
+        set({ list: [...list] })
 
         const controller = new AbortController()
 
-        const messages = findChat.chat_list.slice(-8).map((item) => ({
+        get().abort[id] = controller
+
+        const messages = item.list.slice(-8).map((item) => ({
           role: item.role,
           content: item.content,
         }))
-
-        set((state) => {
-          return { abort: { ...state.abort, [chat_id]: controller } }
-        })
-
-        const timeout = setTimeout(() => {
-          get().cancelChat(chat_id)
-          toast.error('Request Timed out. Please try again.')
-        }, 20000)
 
         fetchEventSource('/api/chat', {
           method: 'POST',
@@ -212,135 +204,109 @@ export const useChatStore = create<ChatStore>()(
           openWhenHidden: true,
           body: JSON.stringify({
             messages,
-            modelId: findChat.chat_model,
+            modelId: item.model,
             stream: true,
           }),
           onopen: async (res) => {
-            clearTimeout(timeout)
-            const isError = !res.ok || res.status !== 200 || !res.body
-
-            if (isError) {
-              set((state) => {
-                const newList: ChatListItem[] = clone(state.list)
-                const findChat = newList.find(
-                  (chat) => chat.chat_id === chat_id,
-                )
-                if (!findChat) return {}
-                findChat.chat_state = LOADING_STATE.NONE
-
-                return { list: newList }
-              })
+            if (!res.ok || res.status !== 200 || !res.body) {
+              item.state = CHAT_STATE.NONE
+              set({ list: [...list] })
 
               if (res.status === 429) {
                 toast.error('Too Many Requests')
-                return
+              } else {
+                const errRes = await res.json()
+                toast.error(errRes.msg || 'Error')
               }
-
-              const errRes = await res.json()
-
-              toast.error(errRes.msg || 'Error')
             }
           },
           onmessage: (res) => {
+            callback?.()
             const data = JSON.parse(res.data).choices[0]
-            if (data.finish_reason === 'stop') {
-              set((state) => {
-                const newList: ChatListItem[] = clone(state.list)
-                const findChat = newList.find(
-                  (chat) => chat.chat_id === chat_id,
-                )
-                if (!findChat) return {}
-                findChat.chat_state = LOADING_STATE.NONE
-
-                // If no title, generate one.
-                if (!findChat.chat_name) {
-                  state.generateChatName({
-                    chat_id,
-                    messages: [
-                      ...messages,
-                      {
-                        role: 'user',
-                        content: GENERATE_CHAT_NAME_PROMPT,
-                      },
-                    ],
-                  })
-                }
-
-                return { list: newList }
-              })
-
-              return console.log('response over')
-            }
-
             try {
               const content = data.delta.content
               if (!content) return
 
-              set((state) => {
-                const newList: ChatListItem[] = clone(state.list)
-                const findChat = newList.find(
-                  (chat) => chat.chat_id === chat_id,
-                )
-                if (!findChat) return {}
+              item.state = CHAT_STATE.RESPONDING
+              set({ list: [...list] })
 
-                findChat.chat_state = LOADING_STATE.RESPONDING
+              const lastItem = item.list.at(-1)
 
-                const lastItem = findChat.chat_list.at(-1)
-                if (!lastItem) return {}
+              if (!lastItem) return
 
-                if (lastItem.role === 'user') {
-                  findChat.chat_list.push({
-                    id: uuidv4(),
-                    role: 'assistant',
-                    time: String(+new Date()),
-                    content,
-                  })
-                } else {
-                  lastItem.content += content
-                }
+              if (lastItem.role === 'user') {
+                item.list.push({
+                  id: nanoid(),
+                  role: 'assistant',
+                  content,
+                  model,
+                  isEdit: false,
+                  createdAt: Date.now(),
+                  updatedAt: Date.now(),
+                })
+              } else {
+                lastItem.content += content
+              }
 
-                return { list: newList }
-              })
+              set({ list: [...list] })
             } catch {}
           },
           onerror: () => {
-            console.log('stop streaming')
-            // FIXME: This is a hack to stop the SSE stream in onerror. The SSE client is probably not closing the stream properly.
-            set((state) => {
-              const newList: ChatListItem[] = clone(state.list)
-              const findChat = newList.find((chat) => chat.chat_id === chat_id)
-              if (!findChat) return {}
-              findChat.chat_state = LOADING_STATE.NONE
+            // 设置状态为NONE
+            item.state = CHAT_STATE.NONE
 
-              // If no title, generate one.
-              if (!findChat.chat_name) {
-                state.generateChatName({
-                  chat_id,
-                  messages: [
-                    ...messages,
-                    {
-                      role: 'user',
-                      content: GENERATE_CHAT_NAME_PROMPT,
-                    },
-                  ],
-                })
-              }
+            set({ list: [...list] })
 
-              return { list: newList }
-            })
+            if (!item.title) {
+              // generate title
+              get().generateTitle(id)
+            }
+
             throw null
           },
-          onclose: () => {
-            console.log('onclose')
-          },
+          onclose: () => {},
         })
       },
-      generateChatName: ({ chat_id }) => {
-        const findChat = get().list.find((item) => item.chat_id === chat_id)
-        if (!findChat) return
+      cancelChat: (id) => {
+        const { abort, list } = get()
+        abort[id]?.abort()
+        delete abort[id]
 
-        // last 10 messages
-        const messages = findChat.chat_list.slice(-10).map((item) => ({
+        const item = list.find((item) => item.id === id)
+        if (item) {
+          item.state = CHAT_STATE.NONE
+          set({ list: [...list] })
+        }
+      },
+      regenerateChat: (id, message_id) => {
+        const { list } = get()
+        const item = list.find((item) => item.id === id)
+        if (!item) return
+
+        const message = item.list.find((item) => item.id === message_id)
+        const messageIndex = item.list.findIndex(
+          (item) => item.id === message_id,
+        )
+
+        if (!message) return
+
+        let array: ChatItem[] = []
+
+        if (message.role === 'user') {
+          array = item.list.slice(0, messageIndex + 1)
+        } else {
+          array = item.list.slice(0, messageIndex)
+        }
+
+        item.list = array
+        set({ list: [...list] })
+      },
+      generateTitle: (id) => {
+        const { list } = get()
+        const item = list.find((item) => item.id === id)
+        if (!item) return
+
+        const messages = item.list.slice(-8).map((item) => ({
           role: item.role,
           content: item.content,
         }))
@@ -353,80 +319,139 @@ export const useChatStore = create<ChatStore>()(
               ...messages,
               { role: 'user', content: GENERATE_CHAT_NAME_PROMPT },
             ],
-            modelId: 'mistralai/mixtral-8x7b-instruct',
+            modelId: item.model,
             stream: true,
           }),
           // Not set onopen will lead to content-type error: `Error: Expected content-type to be text/event-stream, Actual: null`
           onopen: async () => {},
           onmessage: (res) => {
             const data = JSON.parse(res.data).choices[0]
-
             try {
               const content = data.delta.content
               if (!content) return
 
-              set((state) => {
-                const newList: ChatListItem[] = clone(state.list)
-                const findChat = newList.find(
-                  (item) => item.chat_id === chat_id,
-                )
-                if (!findChat) return {}
+              item.title += content
 
-                findChat.chat_name += content
-
-                return { list: newList }
-              })
+              set({ list: [...list] })
             } catch {}
           },
-          onerror: (error) => {
-            console.log(error, 'generateChatName error')
+          onerror: () => {
             throw null
           },
+          onclose: () => {},
         })
-      },
-      cancelChat: (chat_id) => {
-        set((state) => {
-          if (!state.abort[chat_id]) return {}
-          state.abort[chat_id].abort()
-          delete state.abort[chat_id]
 
-          const newList: ChatListItem[] = clone(state.list)
-          const findChat = newList.find((item) => item.chat_id === chat_id)
-          if (!findChat) return {}
-          findChat.chat_state = LOADING_STATE.NONE
-
-          return { list: newList }
-        })
+        // generate title
       },
 
-      // Other
-      updateRecentModel: (recentModel) => set({ recentModel }),
+      // Message Handlers
+      addMessage: ({ id, role, content, model }) => {
+        const { list } = get()
+        const newList = list.map((item) => {
+          if (item.id === id) {
+            return {
+              ...item,
+              list: [
+                ...item.list,
+                {
+                  id: `message-${nanoid()}`,
+                  role,
+                  content,
+                  model,
+                  isEdit: false,
+                  createdAt: Date.now(),
+                  updatedAt: Date.now(),
+                },
+              ],
+              updatedAt: Date.now(),
+            }
+          }
+          return item
+        })
+        set({ list: newList })
+      },
+      clearMessage: (id) => {
+        const { list } = get()
+        const newList = list.map((item) => {
+          if (item.id === id) {
+            return { ...item, list: [] }
+          }
+          return item
+        })
+        set({ list: newList })
+      },
+      updateMessage: ({ chat_id, message_id, isEdit, content }) => {
+        const { list } = get()
+
+        const findChat = list.find((item) => item.id === chat_id)
+        if (!findChat) return
+
+        const findMessage = findChat.list.find((item) => item.id === message_id)
+        if (!findMessage) return
+
+        if (isEdit !== undefined) {
+          findMessage.isEdit = isEdit
+        }
+
+        if (content !== undefined) {
+          findMessage.content = content
+        }
+
+        set({ list: [...list] })
+      },
+
+      // Model
+      models: [],
+      setModels: (models) => set({ models }),
 
       // Hydration
       _hasHydrated: false,
-      setHasHydrated: (state) => {
-        set({
-          _hasHydrated: state,
-        })
-      },
+      setHasHydrated: (state) => set({ _hasHydrated: state }),
     }),
     {
-      name: 'chat-list',
+      name: 'pondera-chat-list',
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true)
+
+        // get llm models
+        fetch(
+          'https://raw.githubusercontent.com/heurist-network/heurist-models/main/models.json',
+          { next: { revalidate: 3600 } },
+        )
+          .then((res) => res.json())
+          .then((res) => {
+            const arr = res.filter((res: any) => res.type?.includes('llm'))
+            state?.setModels(
+              arr.map((item: any) => {
+                let icon = ''
+                if (
+                  item.name.startsWith('mistralai') ||
+                  item.name.startsWith('openhermes')
+                ) {
+                  icon = '/model/mistral.svg'
+                }
+                if (item.name.includes('llama')) {
+                  icon = '/model/llama.jpeg'
+                }
+                if (item.name.includes('-yi-')) {
+                  icon = '/model/yi.svg'
+                }
+
+                return { ...item, icon }
+              }),
+            )
+          })
       },
       merge: (persistedState: any, currentState) => {
-        // reset data
+        // reset chat store
         if (persistedState) {
-          persistedState.abort = {}
           persistedState.list.forEach((item: any) => {
-            item.chat_state = LOADING_STATE.NONE
-            if (typeof item.chat_model !== 'string') {
-              item.chat_model = 'mistralai/mixtral-8x7b-instruct'
-            }
+            item.state = CHAT_STATE.NONE
+            item.list.forEach((item: any) => {
+              item.isEdit = false
+            })
           })
         }
-
         return Object.assign({}, currentState, persistedState)
       },
     },

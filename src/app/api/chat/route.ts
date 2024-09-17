@@ -1,6 +1,6 @@
 import { OpenAIStream } from 'ai-stream-sdk'
 
-import { env } from '@/env.mjs'
+import { env } from '@/env'
 import { redis } from '@/lib/redis'
 import { ResError } from '@/lib/response'
 import { Ratelimit } from '@upstash/ratelimit'
@@ -23,16 +23,16 @@ export async function POST(req: Request) {
       stream: useStream,
     } = await req.json()
 
-    const identifier =
-      ((req as any).ip || req.headers.get('X-Forwarded-For')) + '-chat'
+    // const identifier =
+    //   ((req as any).ip || req.headers.get('X-Forwarded-For')) + '-chat'
 
-    // ip rate limits
-    const { success } = await ratelimit.limit(identifier)
-    if (!success) {
-      return new Response('Too Many Requests', {
-        status: 429,
-      })
-    }
+    // // ip rate limits
+    // const { success } = await ratelimit.limit(identifier)
+    // if (!success) {
+    //   return new Response('Too Many Requests', {
+    //     status: 429,
+    //   })
+    // }
 
     const response = await fetch(
       `${env.HEURIST_GATEWAY_URL}/v1/chat/completions`,
@@ -52,17 +52,12 @@ export async function POST(req: Request) {
     )
 
     const stream = OpenAIStream(response, {
-      onStart: () => {
-        // console.log('start')
-      },
-      onCompletion: (data) => {
-        // console.log(data, 'data')
-      },
+      onStart: () => {},
+      onCompletion: (data) => {},
     })
 
     return new Response(stream)
   } catch (error) {
-    console.log(error, 'api/chat error')
     return ResError({ msg: 'api/chat error', data: error })
   }
 }
