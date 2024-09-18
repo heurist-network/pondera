@@ -70,7 +70,7 @@ export function MessageList() {
 
   return (
     <TooltipProvider>
-      <div className="flex h-full flex-col">
+      <div className="relative flex h-full flex-col">
         <div className="grow">
           <div
             className={cn(
@@ -83,26 +83,30 @@ export function MessageList() {
               data={list}
               followOutput
               components={{
-                Footer: () =>
-                  chat?.state === CHAT_STATE.CONNECTING ? (
-                    <div className="mx-auto max-w-3xl px-4 pb-5">
-                      <div className={cn('flex gap-3')}>
-                        <div>
-                          <Image
-                            src={getModelIcon(chat?.model!)!}
-                            alt="model"
-                            width={32}
-                            height={32}
-                          />
-                        </div>
-                        <div className="flex items-center rounded-2xl bg-white px-4 py-3">
-                          <span className="i-mingcute-loading-fill animate-spin" />
+                Footer: () => (
+                  <div>
+                    {chat?.state === CHAT_STATE.CONNECTING ? (
+                      <div className="mx-auto max-w-3xl px-4 pb-5">
+                        <div className={cn('flex gap-3')}>
+                          <div>
+                            <Image
+                              src={getModelIcon(chat?.model!)!}
+                              alt="model"
+                              width={32}
+                              height={32}
+                            />
+                          </div>
+                          <div className="flex items-center rounded-2xl bg-white px-4 py-3">
+                            <span className="i-mingcute-loading-fill animate-spin" />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="pb-5" />
-                  ),
+                    ) : (
+                      <div className="pb-5" />
+                    )}
+                    <div className="h-[120px]" />
+                  </div>
+                ),
               }}
               totalCount={list.length}
               itemContent={(index: number, item: ChatItem) => {
@@ -254,11 +258,56 @@ export function MessageList() {
             />
           </div>
         </div>
-        <div className="border-t border-t-zinc-200/50 pb-4 pt-2 md:border-t-0">
+        <div
+          className="absolute bottom-0 w-full"
+          style={{
+            backgroundImage:
+              'linear-gradient(to top, rgb(255, 255, 255), rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0))',
+          }}
+        >
+          <div className="pb-4 pt-2 md:border-t-0">
+            <div className="mx-auto max-w-3xl px-4">
+              <div className="flex items-center justify-between">
+                <ChatModel>
+                  <div className="mb-2 flex h-9 cursor-pointer items-center justify-center gap-1 rounded-[10px] bg-[#4ae3f5] px-2 text-sm font-medium text-gray-950">
+                    {findModel?.icon && (
+                      <Image
+                        className="rounded-md"
+                        src={findModel.icon}
+                        alt="model"
+                        width={20}
+                        height={20}
+                      />
+                    )}
+                    Model
+                    <span className="i-mingcute-up-fill rotate-90" />
+                  </div>
+                </ChatModel>
+
+                <div
+                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-[10px] border border-[#e0e0e0] bg-white text-sm font-medium text-gray-950"
+                  onClick={() => clearMessage(activeId)}
+                >
+                  <span className="i-mingcute-broom-line h-5 w-5" />
+                </div>
+              </div>
+              <ChatInput onMessageResponse={() => onScrollToEnd()} />
+            </div>
+          </div>
+        </div>
+
+        {/* pointer-events-none 
+        absolute inset-x-0 bottom-0 z-0 
+        mx-auto flex w-full max-w-3xl flex-col items-center justify-center 
+        bg-gradient-to-t from-white via-white/80 to-white/0 
+        px-3.5 py-4 
+        max-md:border-t max-md:bg-white sm:px-5 md:py-8  */}
+
+        {/* <div className="border-t border-t-zinc-200/50 pt-2 pb-4 md:border-t-0">
           <div className="mx-auto max-w-3xl px-4">
             <div className="flex items-center justify-between">
               <ChatModel>
-                <div className="mb-2 flex h-9 cursor-pointer items-center justify-center gap-1 rounded-[10px] bg-[#4ae3f5] px-2 text-sm font-medium text-gray-950">
+                <div className="cursor-pointer flex font-medium bg-[#4ae3f5] rounded-[10px] h-9 text-sm mb-2 px-2 text-gray-950 gap-1 items-center justify-center">
                   {findModel?.icon && (
                     <Image
                       className="rounded-md"
@@ -269,20 +318,20 @@ export function MessageList() {
                     />
                   )}
                   Model
-                  <span className="i-mingcute-up-fill rotate-90" />
+                  <span className="rotate-90 i-mingcute-up-fill" />
                 </div>
               </ChatModel>
 
               <div
-                className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-[10px] border border-[#e0e0e0] bg-white text-sm font-medium text-gray-950"
+                className="bg-white border cursor-pointer flex font-medium border-[#e0e0e0] rounded-[10px] h-9 text-sm text-gray-950 w-9 items-center justify-center"
                 onClick={() => clearMessage(activeId)}
               >
-                <span className="i-mingcute-broom-line h-5 w-5" />
+                <span className="h-5 w-5 i-mingcute-broom-line" />
               </div>
             </div>
             <ChatInput onMessageResponse={() => onScrollToEnd()} />
           </div>
-        </div>
+        </div> */}
       </div>
     </TooltipProvider>
   )
