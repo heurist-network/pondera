@@ -4,6 +4,17 @@ import Image from 'next/image'
 import type { ChatItem } from '@/store/chat'
 
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -155,10 +166,10 @@ export function MessageList() {
                       )}
                       <div
                         className={cn(
-                          'flex items-end gap-2',
+                          'flex flex-col items-end md:gap-2',
                           item.role === 'user'
-                            ? 'flex-row-reverse'
-                            : 'flex-row',
+                            ? 'md:flex-row-reverse'
+                            : 'md:flex-row',
                           item.isEdit ? 'flex-1' : '',
                         )}
                       >
@@ -284,54 +295,35 @@ export function MessageList() {
                   </div>
                 </ChatModel>
 
-                <div
-                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-[10px] border border-[#e0e0e0] bg-white text-sm font-medium text-gray-950"
-                  onClick={() => clearMessage(activeId)}
-                >
-                  <span className="i-mingcute-broom-line h-5 w-5" />
-                </div>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <div className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-[10px] border border-[#e0e0e0] bg-white text-sm font-medium text-gray-950">
+                      <span className="i-mingcute-broom-line h-5 w-5" />
+                    </div>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Clear Messages?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        variant="destructive"
+                        onClick={() => clearMessage(activeId)}
+                      >
+                        Continue
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
               <ChatInput onMessageResponse={() => onScrollToEnd()} />
             </div>
           </div>
         </div>
-
-        {/* pointer-events-none 
-        absolute inset-x-0 bottom-0 z-0 
-        mx-auto flex w-full max-w-3xl flex-col items-center justify-center 
-        bg-gradient-to-t from-white via-white/80 to-white/0 
-        px-3.5 py-4 
-        max-md:border-t max-md:bg-white sm:px-5 md:py-8  */}
-
-        {/* <div className="border-t border-t-zinc-200/50 pt-2 pb-4 md:border-t-0">
-          <div className="mx-auto max-w-3xl px-4">
-            <div className="flex items-center justify-between">
-              <ChatModel>
-                <div className="cursor-pointer flex font-medium bg-[#4ae3f5] rounded-[10px] h-9 text-sm mb-2 px-2 text-gray-950 gap-1 items-center justify-center">
-                  {findModel?.icon && (
-                    <Image
-                      className="rounded-md"
-                      src={findModel.icon}
-                      alt="model"
-                      width={20}
-                      height={20}
-                    />
-                  )}
-                  Model
-                  <span className="rotate-90 i-mingcute-up-fill" />
-                </div>
-              </ChatModel>
-
-              <div
-                className="bg-white border cursor-pointer flex font-medium border-[#e0e0e0] rounded-[10px] h-9 text-sm text-gray-950 w-9 items-center justify-center"
-                onClick={() => clearMessage(activeId)}
-              >
-                <span className="h-5 w-5 i-mingcute-broom-line" />
-              </div>
-            </div>
-            <ChatInput onMessageResponse={() => onScrollToEnd()} />
-          </div>
-        </div> */}
       </div>
     </TooltipProvider>
   )
