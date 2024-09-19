@@ -270,7 +270,7 @@ export function MessageList() {
           </div>
         </div>
         <div
-          className="absolute bottom-0 w-full"
+          className="absolute bottom-0 w-full rounded-b-2xl"
           style={{
             backgroundImage:
               'linear-gradient(to top, rgb(255, 255, 255), rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0))',
