@@ -57,7 +57,14 @@ export function ShareChat() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="h-9 gap-1 rounded-[10px] px-2">
+        <Button
+          variant="outline"
+          className="h-9 gap-1 rounded-[10px] px-2"
+          onClick={() => {
+            setShareLink('')
+            setDeleteLink('')
+          }}
+        >
           <div>Share</div>
           <Image src="/icon/share.svg" alt="share" width={16} height={16} />
         </Button>
@@ -101,6 +108,7 @@ export function ShareChat() {
                 className="text-red-500 underline transition-colors hover:text-red-500/80"
                 href={deleteLink}
                 target="_blank"
+                prefetch={false}
               >
                 {deleteLink}
               </Link>{' '}
@@ -109,7 +117,12 @@ export function ShareChat() {
           </>
         ) : (
           <div>
-            <Button type="button" onClick={onShare} disabled={loading}>
+            <Button
+              className="rounded-[10px]"
+              type="button"
+              onClick={onShare}
+              disabled={loading}
+            >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Create share link
             </Button>
