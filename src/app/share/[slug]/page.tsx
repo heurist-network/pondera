@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/tooltip'
 import { db } from '@/db'
 import { cn } from '@/lib/utils'
+import { CopyContent } from '@/modules/chatList/messageList/copyContent'
 
 function Content({ data }: { data: ChatItem }) {
   return (
@@ -50,7 +51,7 @@ export default async function Share({ params }: { params: { slug: string } }) {
 
   return (
     <TooltipProvider>
-      <div className="bg-[#F7F7F6]">
+      <div className="min-h-screen bg-[#F7F7F6] pb-10">
         <div
           className={cn(
             'mx-auto max-w-3xl border-b border-gray-200 px-4',
@@ -113,6 +114,18 @@ export default async function Share({ params }: { params: { slug: string } }) {
                 )}
               >
                 <Content data={item} />
+                <TooltipProvider>
+                  <div
+                    className={cn(
+                      'flex opacity-0 transition-opacity group-hover:opacity-100',
+                      item.role === 'user' ? 'justify-end' : 'justify-start',
+                    )}
+                  >
+                    <div className="mt-2 rounded-[10px] bg-white p-1">
+                      <CopyContent content={item.content} />
+                    </div>
+                  </div>
+                </TooltipProvider>
               </div>
             </div>
           </div>
