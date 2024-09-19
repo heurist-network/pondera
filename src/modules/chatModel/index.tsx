@@ -24,6 +24,8 @@ export function ChatModel({ children }: { children: React.ReactNode }) {
   const onChangeModel = (model: string) => {
     updateChat(activeId, { model })
 
+    if (!activeChat?.list.length) return
+
     if (activeChat?.list.at(-1)?.role !== 'system') {
       addMessage({
         id: activeId,
