@@ -59,7 +59,7 @@ export default async function Share({ params }: { params: { slug: string } }) {
           )}
         >
           <div className="text-token-text-primary text-3xl font-semibold leading-tight sm:text-4xl">
-            {res.name}
+            {res.name || 'Pondera Chat Share'}
           </div>
           <div className="flex items-center justify-between pt-3 sm:pt-4">
             <div className="text-base text-gray-400">
