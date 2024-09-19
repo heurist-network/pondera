@@ -28,6 +28,7 @@ import { ChatInput } from '../../chatInput'
 import { Content } from './content'
 import { CopyContent } from './copyContent'
 import { EditContent } from './editContent'
+import { ShareChat } from './shareChat'
 
 export function MessageList() {
   const virtuosoRef = useRef<VirtuosoHandle>(null)
@@ -279,21 +280,24 @@ export function MessageList() {
           <div className="pb-4 pt-2 md:border-t-0">
             <div className="mx-auto max-w-3xl px-4">
               <div className="flex items-center justify-between">
-                <ChatModel>
-                  <div className="mb-2 flex h-9 cursor-pointer items-center justify-center gap-1 rounded-[10px] bg-[#4ae3f5] px-2 text-sm font-medium text-gray-950">
-                    {findModel?.icon && (
-                      <Image
-                        className="rounded-md"
-                        src={findModel.icon}
-                        alt="model"
-                        width={20}
-                        height={20}
-                      />
-                    )}
-                    Model
-                    <span className="i-mingcute-up-fill rotate-90" />
-                  </div>
-                </ChatModel>
+                <div className="flex gap-2">
+                  <ChatModel>
+                    <div className="mb-2 flex h-9 cursor-pointer items-center justify-center gap-1 rounded-[10px] bg-[#4ae3f5] px-2 text-sm font-medium text-gray-950">
+                      {findModel?.icon && (
+                        <Image
+                          className="rounded-md"
+                          src={findModel.icon}
+                          alt="model"
+                          width={20}
+                          height={20}
+                        />
+                      )}
+                      Model
+                      <span className="i-mingcute-up-fill rotate-90" />
+                    </div>
+                  </ChatModel>
+                  <ShareChat />
+                </div>
 
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
