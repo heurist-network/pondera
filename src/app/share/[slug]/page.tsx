@@ -7,6 +7,7 @@ import RehypeKatex from 'rehype-katex'
 import RemarkGfm from 'remark-gfm'
 import RemarkMath from 'remark-math'
 import type { ChatItem } from '@/store/chat'
+import type { Metadata } from 'next'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -38,6 +39,22 @@ function Content({ data }: { data: ChatItem }) {
   )
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string }
+}): Promise<Metadata> {
+  const res: any = await db.query.share.findFirst({
+    where: (share, { eq }) => eq(share.id, params.slug),
+  })
+
+  return {
+    title: res.name || 'Untitled',
+    description:
+      'Pondera is an open-source conversational AI assistant that makes the best language models available to everyone. Powered by Heurist.',
+  }
+}
+
 export default async function Share({ params }: { params: { slug: string } }) {
   if (!params.slug) notFound()
 
@@ -48,6 +65,22 @@ export default async function Share({ params }: { params: { slug: string } }) {
   if (!res) notFound()
 
   const list = res.list as any[]
+
+  const getModelIcon = (model: string) => {
+    let icon = ''
+
+    if (model.startsWith('mistralai') || model.startsWith('openhermes')) {
+      icon = '/model/mistral.svg'
+    }
+    if (model.includes('llama')) {
+      icon = '/model/llama.jpeg'
+    }
+    if (model.includes('-yi-')) {
+      icon = '/model/yi.svg'
+    }
+
+    return icon
+  }
 
   return (
     <TooltipProvider>
@@ -77,59 +110,65 @@ export default async function Share({ params }: { params: { slug: string } }) {
             </Link>
           </div>
         </div>
-        {list.map((item, index) => (
-          <div
-            key={item.id}
-            className={cn('group mx-auto max-w-3xl px-4 pb-5', {
-              'pt-5': index === 0,
-            })}
-          >
+        {list.map((item, index) => {
+          if (item.role === 'system') return null
+
+          return (
             <div
-              className={cn(
-                'flex gap-3',
-                item.role === 'user' ? 'flex-row-reverse' : 'flex-row',
-              )}
+              key={item.id}
+              className={cn('group mx-auto max-w-3xl px-4 pb-5', {
+                'pt-5': index === 0,
+              })}
             >
-              {item.role !== 'user' && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div>
-                      <Image
-                        src={'/model/mistral.svg'}
-                        alt="model"
-                        width={32}
-                        height={32}
-                      />
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{item.model}</p>
-                  </TooltipContent>
-                </Tooltip>
-              )}
               <div
                 className={cn(
-                  'flex flex-col items-end md:gap-2',
-                  item.role === 'user' ? 'md:flex-row-reverse' : 'md:flex-row',
+                  'flex gap-3',
+                  item.role === 'user' ? 'flex-row-reverse' : 'flex-row',
                 )}
               >
-                <Content data={item} />
-                <TooltipProvider>
-                  <div
-                    className={cn(
-                      'flex opacity-0 transition-opacity group-hover:opacity-100',
-                      item.role === 'user' ? 'justify-end' : 'justify-start',
-                    )}
-                  >
-                    <div className="mt-2 rounded-[10px] bg-white p-1">
-                      <CopyContent content={item.content} />
+                {item.role !== 'user' && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <Image
+                          src={getModelIcon(item.model)}
+                          alt="model"
+                          width={32}
+                          height={32}
+                        />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{item.model}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+                <div
+                  className={cn(
+                    'flex flex-col items-end md:gap-2',
+                    item.role === 'user'
+                      ? 'md:flex-row-reverse'
+                      : 'md:flex-row',
+                  )}
+                >
+                  <Content data={item} />
+                  <TooltipProvider>
+                    <div
+                      className={cn(
+                        'flex opacity-0 transition-opacity group-hover:opacity-100',
+                        item.role === 'user' ? 'justify-end' : 'justify-start',
+                      )}
+                    >
+                      <div className="mt-2 rounded-[10px] bg-white p-1">
+                        <CopyContent content={item.content} />
+                      </div>
                     </div>
-                  </div>
-                </TooltipProvider>
+                  </TooltipProvider>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </TooltipProvider>
   )
