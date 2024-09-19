@@ -163,9 +163,9 @@ export const useChatStore = create<ChatStore>()(
         const newList = list.map((item) => {
           if (item.id === id) {
             const newItem = { ...item, updatedAt: Date.now() }
-            if (title) newItem.title = title
+            if (title !== undefined) newItem.title = title
 
-            if (model) newItem.model = model
+            if (model !== undefined) newItem.model = model
 
             return newItem
           }

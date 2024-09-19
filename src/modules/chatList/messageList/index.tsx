@@ -28,6 +28,7 @@ import { ChatInput } from '../../chatInput'
 import { Content } from './content'
 import { CopyContent } from './copyContent'
 import { EditContent } from './editContent'
+import { ShareChat } from './shareChat'
 
 export function MessageList() {
   const virtuosoRef = useRef<VirtuosoHandle>(null)
@@ -211,25 +212,7 @@ export function MessageList() {
                                       <p>Regenerate</p>
                                     </TooltipContent>
                                   </Tooltip>
-                                  {item.role !== 'user' ? (
-                                    <>
-                                      <Tooltip>
-                                        <TooltipTrigger asChild>
-                                          <div className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-md transition-colors hover:bg-[#F0F0EF]">
-                                            <Image
-                                              src="/icon/share.svg"
-                                              alt="share"
-                                              width={16}
-                                              height={16}
-                                            />
-                                          </div>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                          <p>Share</p>
-                                        </TooltipContent>
-                                      </Tooltip>
-                                    </>
-                                  ) : (
+                                  {item.role !== 'user' && (
                                     <Tooltip>
                                       <TooltipTrigger asChild>
                                         <div
@@ -278,9 +261,9 @@ export function MessageList() {
         >
           <div className="pb-4 pt-2 md:border-t-0">
             <div className="mx-auto max-w-3xl px-4">
-              <div className="flex items-center justify-between">
+              <div className="mb-2 flex items-center justify-between">
                 <ChatModel>
-                  <div className="mb-2 flex h-9 cursor-pointer items-center justify-center gap-1 rounded-[10px] bg-[#4ae3f5] px-2 text-sm font-medium text-gray-950">
+                  <div className="flex h-9 cursor-pointer items-center justify-center gap-1 rounded-[10px] bg-[#4ae3f5] px-2 text-sm font-medium text-gray-950">
                     {findModel?.icon && (
                       <Image
                         className="rounded-md"
@@ -295,30 +278,33 @@ export function MessageList() {
                   </div>
                 </ChatModel>
 
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <div className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-[10px] border border-[#e0e0e0] bg-white text-sm font-medium text-gray-950">
-                      <span className="i-mingcute-broom-line h-5 w-5" />
-                    </div>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Clear Messages?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This action cannot be undone.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        variant="destructive"
-                        onClick={() => clearMessage(activeId)}
-                      >
-                        Continue
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                <div className="flex gap-2">
+                  <ShareChat />
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <div className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-[10px] border border-[#e0e0e0] bg-white text-sm font-medium text-gray-950">
+                        <span className="i-mingcute-broom-line h-5 w-5" />
+                      </div>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Clear Messages?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          variant="destructive"
+                          onClick={() => clearMessage(activeId)}
+                        >
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
               </div>
               <ChatInput onMessageResponse={() => onScrollToEnd()} />
             </div>
