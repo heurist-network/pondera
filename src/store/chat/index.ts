@@ -83,11 +83,13 @@ export type ChatStore = {
     message_id,
     isEdit,
     content,
+    model,
   }: {
     chat_id: string
     message_id: string
     isEdit?: boolean
     content?: string
+    model?: string
   }) => void
 
   // Model
@@ -380,7 +382,7 @@ export const useChatStore = create<ChatStore>()(
         })
         set({ list: newList })
       },
-      updateMessage: ({ chat_id, message_id, isEdit, content }) => {
+      updateMessage: ({ chat_id, message_id, isEdit, content, model }) => {
         const { list } = get()
 
         const findChat = list.find((item) => item.id === chat_id)
@@ -395,6 +397,10 @@ export const useChatStore = create<ChatStore>()(
 
         if (content !== undefined) {
           findMessage.content = content
+        }
+
+        if (model !== undefined) {
+          findMessage.model = model
         }
 
         set({ list: [...list] })

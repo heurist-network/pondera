@@ -10,11 +10,37 @@ import {
 import { useChatStore } from '@/store/chat'
 
 export function ChatModel({ children }: { children: React.ReactNode }) {
-  const { models, updateChat, getActiveChat, activeId } = useChatStore()
+  const {
+    models,
+    updateChat,
+    getActiveChat,
+    activeId,
+    addMessage,
+    updateMessage,
+  } = useChatStore()
 
   const activeChat = getActiveChat(activeId)
 
-  const onChangeModel = (model: string) => updateChat(activeId, { model })
+  const onChangeModel = (model: string) => {
+    updateChat(activeId, { model })
+    console.log(activeChat?.list.at(-1)?.role, 'activeChat')
+
+    if (activeChat?.list.at(-1)?.role !== 'system') {
+      addMessage({
+        id: activeId,
+        role: 'system',
+        content: `switch to ${model} model`,
+        model: model,
+      })
+    } else {
+      updateMessage({
+        chat_id: activeId,
+        message_id: activeChat?.list.at(-1)?.id!,
+        content: `switch to ${model} model`,
+        model: model,
+      })
+    }
+  }
 
   return (
     <DropdownMenu>
