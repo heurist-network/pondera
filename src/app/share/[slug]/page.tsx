@@ -64,9 +64,14 @@ export default async function Share({ params }: { params: { slug: string } }) {
 
   if (!res) notFound()
 
-  const list = res.list as any[]
+  const list = (res.list as any[]).map((item) => ({
+    ...item,
+    model: item.model || res.model,
+  }))
 
   const getModelIcon = (model: string) => {
+    if (!model) return ''
+
     let icon = ''
 
     if (model.startsWith('mistralai') || model.startsWith('openhermes')) {
