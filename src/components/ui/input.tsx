@@ -7,14 +7,14 @@ import { motion, useMotionTemplate, useMotionValue } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
 export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   loadingSubmit?: boolean
   onSubmit?: () => void
   onStop?: () => void
 }
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, loadingSubmit, onSubmit, onStop, ...props }, ref) => {
+const Input = React.forwardRef<HTMLTextAreaElement, InputProps>(
+  ({ className, loadingSubmit, onSubmit, onStop, ...props }, ref) => {
     const radius = 100 // change this to increase the rdaius of the hover effect
     const [visible, setVisible] = React.useState(false)
 
@@ -41,12 +41,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setVisible(true)}
         onMouseLeave={() => setVisible(false)}
-        className="group/input relative rounded-lg p-[2px] transition duration-300"
+        className="rounded-lg p-[2px] transition duration-300 group/input relative"
       >
-        <input
-          type={type}
+        <textarea
           className={cn(
-            `dark:placeholder-text-neutral-600 duration-400 flex h-12 w-full rounded-md border-none bg-gray-50 px-3 py-2 text-sm text-black transition file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-800 dark:text-white`,
+            `dark:placeholder-text-neutral-600 duration-400 flex h-12 min-h-[80px] w-full rounded-md border-none bg-gray-50 px-3 py-2 text-sm text-black transition file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-800 dark:text-white`,
             'shadow-input group-hover/input:shadow-none dark:shadow-[0px_0px_1px_1px_var(--neutral-700)]',
             'focus-visible:ring-[2px] focus-visible:ring-gray-950 dark:focus-visible:ring-neutral-600',
             'pr-28',
@@ -55,7 +54,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           {...props}
         />
-        <div className="absolute right-12 top-[15px] flex h-[22px] items-center px-1 text-[14px] leading-[14px] text-gray-300">
+        <div className="flex h-[22px] px-1 top-[15px] right-12 text-[14px] text-gray-300 leading-[14px] absolute items-center">
           / input
         </div>
         <button

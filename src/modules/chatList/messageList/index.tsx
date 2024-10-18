@@ -44,6 +44,7 @@ export function MessageList() {
   } = useChatStore()
 
   const [virtuosoLoaded, setVirtuosoLoaded] = useState(false)
+  const [paddingBottom, setPaddingBottom] = useState(0)
 
   const list = getActiveList(activeId)
   const chat = getActiveChat(activeId)
@@ -83,7 +84,12 @@ export function MessageList() {
   return (
     <TooltipProvider>
       <div className="relative flex h-full flex-col">
-        <div className="grow">
+        <div
+          className="grow"
+          style={{
+            paddingBottom: paddingBottom - 30,
+          }}
+        >
           <div
             className={cn(
               'h-full',
@@ -306,7 +312,10 @@ export function MessageList() {
                   </AlertDialog>
                 </div>
               </div>
-              <ChatInput onMessageResponse={() => onScrollToEnd()} />
+              <ChatInput
+                onMessageResponse={() => onScrollToEnd()}
+                onHeightChange={setPaddingBottom}
+              />
             </div>
           </div>
         </div>
