@@ -1,7 +1,10 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
 
 import { cn } from '@/lib/utils'
+import { useChatStore } from '@/store/chat'
 
 import { ChatMenu } from './chatMenu'
 
@@ -15,6 +18,8 @@ function Mask() {
 }
 
 export function SideBar({ className }: { className?: string }) {
+  const { addChat } = useChatStore()
+
   return (
     <>
       <Mask />
@@ -24,7 +29,10 @@ export function SideBar({ className }: { className?: string }) {
           className,
         )}
       >
-        <div className="flex h-[110px] w-64 flex-shrink-0 items-center justify-center">
+        <div
+          className="flex h-[110px] w-64 flex-shrink-0 cursor-pointer items-center justify-center"
+          onClick={addChat}
+        >
           <Image
             src="/logo.svg"
             alt="logo"
