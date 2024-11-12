@@ -442,6 +442,9 @@ export const useChatStore = create<ChatStore>()(
                 if (item.name.includes('-yi-')) {
                   icon = '/model/yi.svg'
                 }
+                if (item.name.startsWith('qwen')) {
+                  icon = '/model/qwen.svg'
+                }
 
                 return { ...item, icon }
               }),
