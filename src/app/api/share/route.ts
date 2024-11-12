@@ -19,6 +19,7 @@ export async function POST(request: Request) {
     const { model, title, list } = await request.json()
 
     const identifier =
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ((request as any).ip || request.headers.get('X-Forwarded-For')) + '-share'
 
     // ip rate limits
@@ -51,6 +52,7 @@ export async function POST(request: Request) {
       msg: 'success',
       data: { id, deleteId },
     })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.log(error, 'create tokens error')
     return NextResponse.json(

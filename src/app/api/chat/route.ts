@@ -1,17 +1,18 @@
 import { OpenAIStream } from 'ai-stream-sdk'
 
 import { env } from '@/env'
-import { redis } from '@/lib/redis'
+// import { redis } from '@/lib/redis'
 import { ResError } from '@/lib/response'
-import { Ratelimit } from '@upstash/ratelimit'
+
+// import { Ratelimit } from '@upstash/ratelimit'
 
 export const runtime = 'edge'
 
-const ratelimit = new Ratelimit({
-  redis,
-  limiter: Ratelimit.slidingWindow(100, '1 h'),
-  analytics: true,
-})
+// const ratelimit = new Ratelimit({
+//   redis,
+//   limiter: Ratelimit.slidingWindow(100, '1 h'),
+//   analytics: true,
+// })
 
 export async function POST(req: Request) {
   try {
@@ -53,7 +54,7 @@ export async function POST(req: Request) {
 
     const stream = OpenAIStream(response, {
       onStart: () => {},
-      onCompletion: (data) => {},
+      onCompletion: () => {},
     })
 
     return new Response(stream)

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { nanoid } from 'nanoid'
 import { toast } from 'sonner'
 import { create } from 'zustand'

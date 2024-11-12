@@ -18,11 +18,12 @@ const Input = React.forwardRef<HTMLTextAreaElement, InputProps>(
     const radius = 100 // change this to increase the rdaius of the hover effect
     const [visible, setVisible] = React.useState(false)
 
-    let mouseX = useMotionValue(0)
-    let mouseY = useMotionValue(0)
+    const mouseX = useMotionValue(0)
+    const mouseY = useMotionValue(0)
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function handleMouseMove({ currentTarget, clientX, clientY }: any) {
-      let { left, top } = currentTarget.getBoundingClientRect()
+      const { left, top } = currentTarget.getBoundingClientRect()
 
       mouseX.set(clientX - left)
       mouseY.set(clientY - top)
@@ -41,7 +42,7 @@ const Input = React.forwardRef<HTMLTextAreaElement, InputProps>(
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setVisible(true)}
         onMouseLeave={() => setVisible(false)}
-        className="rounded-lg p-[2px] transition duration-300 group/input relative"
+        className="group/input relative rounded-lg p-[2px] transition duration-300"
       >
         <textarea
           className={cn(
@@ -54,7 +55,7 @@ const Input = React.forwardRef<HTMLTextAreaElement, InputProps>(
           ref={ref}
           {...props}
         />
-        <div className="flex h-[22px] px-1 top-[15px] right-12 text-[14px] text-gray-300 leading-[14px] absolute items-center">
+        <div className="absolute right-12 top-[15px] flex h-[22px] items-center px-1 text-[14px] leading-[14px] text-gray-300">
           / input
         </div>
         <button

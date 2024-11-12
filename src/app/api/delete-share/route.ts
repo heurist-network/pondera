@@ -8,7 +8,7 @@ export async function GET(request: Request) {
   const id = searchParams.get('id')
   if (!id) return new Response('missing id')
 
-  const res = await db.delete(share).where(eq(share.deleteId, id))
+  await db.delete(share).where(eq(share.deleteId, id))
 
   return new Response('deleted!')
 }

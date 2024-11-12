@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { PROMPT_STORE } from '@/lib/constant'
 
 export function useRandomPrompts() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [prompts, setPrompts] = useState<any[]>([])
 
   useEffect(() => {

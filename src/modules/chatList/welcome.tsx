@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import Image from 'next/image'
 
 import { useRandomPrompts } from '@/hooks/useRandomPrompts'
@@ -35,7 +36,8 @@ export function Welcome() {
               What can I do for you today?
             </div>
             <div className="mb-4 mt-2 text-center">
-              Write blog articles, build software, solve math problems, and much more.
+              Write blog articles, build software, solve math problems, and much
+              more.
             </div>
             <div className="flex flex-col items-center gap-1">
               <div className="text-[13px] font-medium leading-[18px] text-gray-400">

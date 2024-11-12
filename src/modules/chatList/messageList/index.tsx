@@ -108,6 +108,7 @@ export function MessageList() {
                         <div className={cn('flex gap-3')}>
                           <div>
                             <Image
+                              // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
                               src={getModelIcon(chat?.model!)!}
                               alt="model"
                               width={32}
@@ -203,6 +204,7 @@ export function MessageList() {
                                         onClick={() => {
                                           if (loadingChat) return
                                           regenerateChat(activeId, item.id)
+                                          // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
                                           sendChat(activeId, chat?.model!)
                                         }}
                                       >

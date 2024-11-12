@@ -39,11 +39,14 @@ function Content({ data }: { data: ChatItem }) {
   )
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string }
+type Props = Promise<{ slug: string }>
+
+export async function generateMetadata(props: {
+  params: Props
 }): Promise<Metadata> {
+  const params = await props.params
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const res: any = await db.query.share.findFirst({
     where: (share, { eq }) => eq(share.id, params.slug),
   })
@@ -55,7 +58,9 @@ export async function generateMetadata({
   }
 }
 
-export default async function Share({ params }: { params: { slug: string } }) {
+export default async function Share(props: { params: Props }) {
+  const params = await props.params
+
   if (!params.slug) notFound()
 
   const res = await db.query.share.findFirst({
@@ -64,6 +69,7 @@ export default async function Share({ params }: { params: { slug: string } }) {
 
   if (!res) notFound()
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const list = (res.list as any[]).map((item) => ({
     ...item,
     model: item.model || res.model,
