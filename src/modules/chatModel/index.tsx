@@ -23,7 +23,10 @@ export function ChatModel({ children }: { children: React.ReactNode }) {
   const activeChat = getActiveChat(activeId)
 
   const onChangeModel = (model: string) => {
-    updateChat(activeId, { model })
+    const findModel = models.find((item) => item.name === model)
+    const prompt = findModel?.system_prompt || 'You are a helpful AI assistant.'
+
+    updateChat(activeId, { model, prompt })
 
     if (!activeChat?.list.length) return
 
