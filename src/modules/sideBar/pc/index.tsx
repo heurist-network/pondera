@@ -3,6 +3,17 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { cn } from '@/lib/utils'
 import { useChatStore } from '@/store/chat'
 
@@ -19,6 +30,11 @@ function Mask() {
 
 export function SideBar({ className }: { className?: string }) {
   const { addChat } = useChatStore()
+
+  const onReset = () => {
+    localStorage.clear()
+    window.location.reload()
+  }
 
   return (
     <>
@@ -72,6 +88,28 @@ export function SideBar({ className }: { className?: string }) {
           >
             <span className="i-ri-discord-fill h-[18px] w-[18px]" />
           </Link>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <div className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-[rgba(255,255,255,0.15)]">
+                <span className="i-mingcute-refresh-4-line h-[18px] w-[18px]" />
+              </div>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Reset Pondera Data?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  When you encounter some unknown error issues, you can try
+                  clearing the data of Pondera. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction variant="destructive" onClick={onReset}>
+                  Continue
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </>
