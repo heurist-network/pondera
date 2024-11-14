@@ -14,6 +14,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
 import {
   Tooltip,
   TooltipContent,
@@ -22,6 +23,7 @@ import {
 } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { ChatModel } from '@/modules/chatModel'
+import { Prompt } from '@/modules/prompt'
 import { CHAT_STATE, useChatStore } from '@/store/chat'
 
 import { ChatInput } from '../../chatInput'
@@ -270,21 +272,28 @@ export function MessageList() {
           <div className="pb-4 pt-2 md:border-t-0">
             <div className="mx-auto max-w-3xl px-4">
               <div className="mb-2 flex items-center justify-between">
-                <ChatModel>
-                  <div className="flex h-9 cursor-pointer items-center justify-center gap-1 rounded-[10px] bg-[#4ae3f5] px-2 text-sm font-medium text-gray-950">
-                    {findModel?.icon && (
-                      <Image
-                        className="rounded-md"
-                        src={findModel.icon}
-                        alt="model"
-                        width={20}
-                        height={20}
-                      />
-                    )}
-                    Model
-                    <span className="i-mingcute-up-fill rotate-90" />
-                  </div>
-                </ChatModel>
+                <div className="flex gap-2">
+                  <ChatModel>
+                    <div className="flex h-9 cursor-pointer items-center justify-center gap-1 rounded-[10px] bg-[#4ae3f5] px-2 text-sm font-medium text-gray-950">
+                      {findModel?.icon && (
+                        <Image
+                          className="rounded-md"
+                          src={findModel.icon}
+                          alt="model"
+                          width={20}
+                          height={20}
+                        />
+                      )}
+                      Model
+                      <span className="i-mingcute-up-fill rotate-90" />
+                    </div>
+                  </ChatModel>
+                  <Prompt>
+                    <Button className="h-9 rounded-[10px]" variant="outline">
+                      Advanced
+                    </Button>
+                  </Prompt>
+                </div>
 
                 <div className="flex gap-2">
                   <ShareChat />

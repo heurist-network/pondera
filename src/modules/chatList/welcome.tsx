@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import Image from 'next/image'
 
+import { Button } from '@/components/ui/button'
 import { useRandomPrompts } from '@/hooks/useRandomPrompts'
 import { cn } from '@/lib/utils'
 import { ChatInput } from '@/modules/chatInput'
 import { ChatModel } from '@/modules/chatModel'
+import { Prompt } from '@/modules/prompt'
 import { useChatStore } from '@/store/chat'
 
 export function Welcome() {
@@ -43,23 +45,35 @@ export function Welcome() {
               <div className="text-[13px] font-medium leading-[18px] text-gray-400">
                 Current Model:
               </div>
-              <div className="flex h-[34px] flex-row items-center rounded-full bg-[#01E3F5] pl-4 pr-1 text-[13px] font-medium leading-[18px]">
-                {findModel?.icon && (
-                  <Image
-                    className="rounded-md"
-                    src={findModel.icon}
-                    alt="model"
-                    width={20}
-                    height={20}
-                  />
-                )}
-                <div className="ml-1 mr-6 line-clamp-1">{findModel?.name}</div>
-                <ChatModel>
-                  <div className="flex h-[26px] cursor-pointer items-center gap-[3px] rounded-full bg-gray-950 pl-3 pr-2 text-white">
-                    <div className="text-[13px] font-medium">Model</div>
-                    <span className="i-mingcute-down-fill" />
+              <div className="flex items-center">
+                <div className="flex h-[34px] flex-row items-center rounded-full bg-[#01E3F5] pl-4 pr-1 text-[13px] font-medium leading-[18px]">
+                  {findModel?.icon && (
+                    <Image
+                      className="rounded-md"
+                      src={findModel.icon}
+                      alt="model"
+                      width={20}
+                      height={20}
+                    />
+                  )}
+                  <div className="ml-1 mr-6 line-clamp-1">
+                    {findModel?.name}
                   </div>
-                </ChatModel>
+                  <ChatModel>
+                    <div className="flex h-[26px] cursor-pointer items-center gap-[3px] rounded-full bg-gray-950 pl-3 pr-2 text-white">
+                      <div className="text-[13px] font-medium">Model</div>
+                      <span className="i-mingcute-down-fill" />
+                    </div>
+                  </ChatModel>
+                </div>
+                <Prompt>
+                  <Button
+                    className="ml-2 h-[34px] rounded-full text-[13px] leading-[18px]"
+                    variant="outline"
+                  >
+                    Advanced
+                  </Button>
+                </Prompt>
               </div>
             </div>
           </div>
