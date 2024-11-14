@@ -15,7 +15,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useChatStore } from '@/store/chat'
 
 export function Prompt({ children }: { children: React.ReactNode }) {
-  const { updateChat, getActiveChat, activeId } = useChatStore()
+  const { models, updateChat, getActiveChat, activeId } = useChatStore()
 
   const [prompt, setPrompt] = useState('')
   const [open, setOpen] = useState(false)
@@ -33,8 +33,20 @@ export function Prompt({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (open) {
-      const localPrompt = localStorage.getItem('custom_prompt')
-      setPrompt(localPrompt || activeChat?.prompt || '')
+      if (!activeChat?.prompt) {
+        const findModel = models.find(
+          (model) => model.name === activeChat?.model,
+        )
+
+        updateChat(activeId, {
+          prompt: findModel?.system_prompt || 'You are a helpful AI assistant.',
+        })
+
+        setPrompt(findModel?.system_prompt || 'You are a helpful AI assistant.')
+      } else {
+        const localPrompt = localStorage.getItem('custom_prompt')
+        setPrompt(localPrompt || activeChat?.prompt || '')
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
