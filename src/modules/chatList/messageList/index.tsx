@@ -27,7 +27,7 @@ import { Prompt } from '@/modules/prompt'
 import { CHAT_STATE, useChatStore } from '@/store/chat'
 
 import { ChatInput } from '../../chatInput'
-import { Content } from './content'
+import { Content } from './content/index'
 import { CopyContent } from './copyContent'
 import { EditContent } from './editContent'
 import { ShareChat } from './shareChat'
