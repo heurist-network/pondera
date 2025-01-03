@@ -1,5 +1,9 @@
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
+import ReactMarkdown from 'react-markdown'
 import Image from 'next/image'
+import RehypeKatex from 'rehype-katex'
+import RemarkGfm from 'remark-gfm'
+import RemarkMath from 'remark-math'
 import type { ChatItem } from '@/store/chat'
 
 import { cn } from '@/lib/utils'
@@ -12,12 +16,6 @@ export function Content({ data }: { data: ChatItem }) {
   const { getActiveChat, activeId, models } = useChatStore()
 
   const activeChat = getActiveChat(activeId)
-
-  useEffect(() => {
-    if (contentRef.current) {
-      contentRef.current.scrollIntoView({ behavior: 'smooth' })
-    }
-  }, [data.content])
 
   const shouldShowThinkingDropdown =
     activeChat?.chainOfThought && data.role === 'assistant'
@@ -56,7 +54,14 @@ export function Content({ data }: { data: ChatItem }) {
         {shouldShowThinkingDropdown ? (
           <ThinkingDropdown content={data.content} />
         ) : (
-          <div className="prose max-w-none">{data.content}</div>
+          <div className="prose max-w-none">
+            <ReactMarkdown
+              remarkPlugins={[RemarkGfm, RemarkMath]}
+              rehypePlugins={[RehypeKatex]}
+            >
+              {data.content}
+            </ReactMarkdown>
+          </div>
         )}
       </div>
     </div>

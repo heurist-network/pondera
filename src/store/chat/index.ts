@@ -316,7 +316,13 @@ CRITICAL: NEVER skip the thinking process. ALWAYS use these tags.`
             callback?.()
             try {
               // skip [DONE] messages
-              if (res.data === '[DONE]') return
+              if (res.data === '[DONE]') {
+                if (!item.title && item.list.length > 0) {
+                  // generate title only when response is complete
+                  get().generateTitle(id)
+                }
+                return
+              }
 
               const data = JSON.parse(res.data).choices[0]
               const content = data.delta.content
@@ -347,17 +353,8 @@ CRITICAL: NEVER skip the thinking process. ALWAYS use these tags.`
             } catch {}
           },
           onerror: () => {
-            // 设置状态为NONE
             item.state = CHAT_STATE.NONE
-
             set({ list: [...list] })
-
-            if (!item.title) {
-              // generate title
-              get().generateTitle(id)
-            }
-
-            throw null
           },
           onclose: () => {},
         })
@@ -399,7 +396,7 @@ CRITICAL: NEVER skip the thinking process. ALWAYS use these tags.`
       generateTitle: (id) => {
         const { list } = get()
         const item = list.find((item) => item.id === id)
-        if (!item) return
+        if (!item || item.title) return
 
         const messages = item.list.slice(-8).map((item) => ({
           role: item.role,
@@ -417,26 +414,22 @@ CRITICAL: NEVER skip the thinking process. ALWAYS use these tags.`
             modelId: item.model,
             stream: true,
           }),
-          // Not set onopen will lead to content-type error: `Error: Expected content-type to be text/event-stream, Actual: null`
           onopen: async () => {},
           onmessage: (res) => {
-            const data = JSON.parse(res.data).choices[0]
             try {
+              if (res.data === '[DONE]') return
+
+              const data = JSON.parse(res.data).choices[0]
               const content = data.delta.content
               if (!content) return
 
               item.title += content
-
               set({ list: [...list] })
             } catch {}
           },
-          onerror: () => {
-            throw null
-          },
+          onerror: () => {},
           onclose: () => {},
         })
-
-        // generate title
       },
 
       // Message Handlers
