@@ -2,8 +2,6 @@
 import Image from 'next/image'
 
 import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
 import { useRandomPrompts } from '@/hooks/useRandomPrompts'
 import { cn } from '@/lib/utils'
 import { ChatInput } from '@/modules/chatInput'
@@ -12,7 +10,7 @@ import { Prompt } from '@/modules/prompt'
 import { useChatStore } from '@/store/chat'
 
 export function Welcome() {
-  const { models, getActiveChat, activeId, sendChat, addMessage, updateChat } =
+  const { models, getActiveChat, activeId, sendChat, addMessage } =
     useChatStore()
 
   const chat = getActiveChat(activeId)
@@ -75,22 +73,7 @@ export function Welcome() {
                   >
                     Advanced
                   </Button>
-                </Prompt>
-                <div className="ml-2 flex items-center gap-2">
-                  <Switch
-                    id="chain-of-thought"
-                    checked={chat?.chainOfThought}
-                    onCheckedChange={(checked) =>
-                      updateChat(activeId, { chainOfThought: checked })
-                    }
-                  />
-                  <Label
-                    htmlFor="chain-of-thought"
-                    className="text-[13px] font-medium"
-                  >
-                    Chain of Thought
-                  </Label>
-                </div>
+              </Prompt>
               </div>
             </div>
           </div>

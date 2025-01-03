@@ -11,10 +11,21 @@ export interface InputProps
   loadingSubmit?: boolean
   onSubmit?: () => void
   onStop?: () => void
+  chainOfThoughtSlot?: React.ReactNode
 }
 
 const Input = React.forwardRef<HTMLTextAreaElement, InputProps>(
-  ({ className, loadingSubmit, onSubmit, onStop, ...props }, ref) => {
+  (
+    {
+      className,
+      loadingSubmit,
+      onSubmit,
+      onStop,
+      chainOfThoughtSlot,
+      ...props
+    },
+    ref,
+  ) => {
     const radius = 100 // change this to increase the rdaius of the hover effect
     const [visible, setVisible] = React.useState(false)
 
@@ -55,6 +66,11 @@ const Input = React.forwardRef<HTMLTextAreaElement, InputProps>(
           ref={ref}
           {...props}
         />
+        {chainOfThoughtSlot && (
+          <div className="absolute right-28 top-[15px] flex h-[22px] items-center px-1">
+            {chainOfThoughtSlot}
+          </div>
+        )}
         <div className="absolute right-12 top-[15px] flex h-[22px] items-center px-1 text-[14px] leading-[14px] text-gray-300">
           / input
         </div>
