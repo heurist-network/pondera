@@ -209,18 +209,34 @@ export const useChatStore = create<ChatStore>()(
             }
 
             if (chainOfThought) {
-              // TODO: needs to be made better by a LOT
-              newItem.prompt = `${newItem.prompt}\n\nWhen responding, structure your response as follows:
-1. First, enclose your thought process in <thinking> tags. This should include your analysis and reasoning.
-2. Then, provide your final response in <answer> tags.
+              newItem.prompt = `${newItem.prompt}
 
-Example:
+For EVERY response, you must structure your thinking and answer using these tags:
+
 <thinking>
-Here's my analysis of the question...
+Demonstrate thorough reasoning by:
+- Breaking down the problem into components
+- Analyzing from multiple angles
+- Challenging your assumptions
+- Showing authentic curiosity
+- Considering edge cases and potential issues
+- Developing your understanding progressively
+- Verifying your logic and conclusions
+
+Use natural, flowing thoughts - no rigid structure.
 </thinking>
+
 <answer>
-Here's my final response...
-</answer>`
+Provide your final response here:
+- Clear and concise
+- Directly addresses the question/task
+- Implements insights from thinking process
+- Uses appropriate formatting (code blocks, lists, etc.)
+- Includes examples or references if relevant
+- Highlights key points or takeaways
+</answer>
+
+CRITICAL: NEVER skip the thinking process. ALWAYS use these tags.`
             }
 
             return newItem
@@ -299,8 +315,11 @@ Here's my final response...
           },
           onmessage: (res) => {
             callback?.()
-            const data = JSON.parse(res.data).choices[0]
             try {
+              // skip [DONE] messages
+              if (res.data === '[DONE]') return
+
+              const data = JSON.parse(res.data).choices[0]
               const content = data.delta.content
               if (!content) return
 
