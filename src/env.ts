@@ -2,13 +2,19 @@ import { z } from 'zod'
 
 import { createEnv } from '@t3-oss/env-nextjs'
 
+const isDevelopment = process.env.NODE_ENV === 'development'
+
 export const env = createEnv({
   server: {
     HEURIST_GATEWAY_URL: z.string().min(1),
     HEURIST_AUTH_KEY: z.string().min(1),
-    UPSTASH_REDIS_REST_URL: z.string().min(1),
-    UPSTASH_REDIS_REST_TOKEN: z.string().min(1),
-    DATABASE_URL: z.string().min(1),
+    UPSTASH_REDIS_REST_URL: isDevelopment
+      ? z.string().optional()
+      : z.string().min(1),
+    UPSTASH_REDIS_REST_TOKEN: isDevelopment
+      ? z.string().optional()
+      : z.string().min(1),
+    DATABASE_URL: isDevelopment ? z.string().optional() : z.string().min(1),
     // UMAMI_URL: z.string().optional(),
     // UMAMI_WEBSITE_ID: z.string().optional(),
   },
