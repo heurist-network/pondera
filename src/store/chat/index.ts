@@ -317,6 +317,8 @@ CRITICAL: NEVER skip the thinking process. ALWAYS use these tags.`
             try {
               // skip [DONE] messages
               if (res.data === '[DONE]') {
+                item.state = CHAT_STATE.NONE
+                set({ list: [...list] })
                 if (!item.title && item.list.length > 0) {
                   // generate title only when response is complete
                   get().generateTitle(id)
@@ -356,7 +358,10 @@ CRITICAL: NEVER skip the thinking process. ALWAYS use these tags.`
             item.state = CHAT_STATE.NONE
             set({ list: [...list] })
           },
-          onclose: () => {},
+          onclose: () => {
+            item.state = CHAT_STATE.NONE
+            set({ list: [...list] })
+          },
         })
       },
       cancelChat: (id) => {

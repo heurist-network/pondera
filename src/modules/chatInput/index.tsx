@@ -142,28 +142,105 @@ export function ChatInput({
     </TooltipProvider>
   ) : null
 
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [processing, setProcessing] = useState(false)
+
+  const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || file.type !== 'application/pdf') return
+
+    try {
+      setProcessing(true)
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const response = await fetch('/api/pdf/process', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to process PDF')
+      }
+
+      const result = await response.json()
+      addMessage({
+        id: activeId,
+        role: 'system',
+        content: `Processed PDF "${file.name}" into ${result.chunks} chunks. You can now ask questions about this document.`,
+        model: chat?.model!,
+      })
+    } catch (error) {
+      console.error('PDF processing error:', error)
+      addMessage({
+        id: activeId,
+        role: 'system',
+        content: `Failed to process PDF: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        model: chat?.model!,
+      })
+    } finally {
+      setProcessing(false)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
+  }
+
+  const pdfUploadButton = (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="flex h-8 w-8 items-center justify-center rounded-md bg-gray-950 text-white transition-colors hover:bg-gray-950/80 disabled:opacity-50 dark:bg-zinc-700 dark:hover:bg-zinc-600"
+            disabled={processing}
+          >
+            {processing ? (
+              <span className="i-mingcute-loading-fill animate-spin" />
+            ) : (
+              <span className="i-mingcute-file-upload-line h-4 w-4" />
+            )}
+          </button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Upload PDF</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  )
+
   return (
-    <Input
-      ref={inputRef}
-      className="max-h-56 min-h-min w-full"
-      placeholder="Enter message here"
-      value={input}
-      loadingSubmit={loadingSubmit}
-      onChange={(e) => setInput(e.target.value)}
-      onSubmit={onSubmit}
-      onStop={() => cancelChat(activeId)}
-      onCompositionStart={() => setIsComposing(true)}
-      onCompositionEnd={() => setIsComposing(false)}
-      onInput={onResize}
-      chainOfThoughtSlot={chainOfThoughtSlot}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') {
-          if (e.shiftKey) {
-          } else if (!isComposing) {
-            onSubmit()
+    <>
+      <input
+        type="file"
+        accept=".pdf"
+        className="hidden"
+        ref={fileInputRef}
+        onChange={handlePdfUpload}
+      />
+      <Input
+        ref={inputRef}
+        className="max-h-56 min-h-min w-full"
+        placeholder="Enter message here"
+        value={input}
+        loadingSubmit={loadingSubmit}
+        onChange={(e) => setInput(e.target.value)}
+        onSubmit={onSubmit}
+        onStop={() => cancelChat(activeId)}
+        onCompositionStart={() => setIsComposing(true)}
+        onCompositionEnd={() => setIsComposing(false)}
+        onInput={onResize}
+        chainOfThoughtSlot={chainOfThoughtSlot}
+        pdfUploadButton={pdfUploadButton}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            if (e.shiftKey) {
+            } else if (!isComposing) {
+              onSubmit()
+            }
           }
-        }
-      }}
-    />
+        }}
+      />
+    </>
   )
 }

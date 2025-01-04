@@ -1,56 +1,51 @@
 import { OpenAIStream } from 'ai-stream-sdk'
 
 import { env } from '@/env'
-// import { redis } from '@/lib/redis'
-import { ResError } from '@/lib/response'
-
-// import { Ratelimit } from '@upstash/ratelimit'
+import { getRelevantContext } from '@/lib/rag'
 
 export const runtime = 'edge'
 
-// const ratelimit = new Ratelimit({
-//   redis,
-//   limiter: Ratelimit.slidingWindow(100, '1 h'),
-//   analytics: true,
-// })
-
 export async function POST(req: Request) {
   try {
-    const {
-      messages,
-      modelId,
-      temperature,
-      maxTokens,
-      stream: useStream,
-    } = await req.json()
+    const { messages, modelId, temperature, maxTokens } = await req.json()
 
-    // const identifier =
-    //   ((req as any).ip || req.headers.get('X-Forwarded-For')) + '-chat'
+    const lastMessage = messages[messages.length - 1]
 
-    // // ip rate limits
-    // const { success } = await ratelimit.limit(identifier)
-    // if (!success) {
-    //   return new Response('Too Many Requests', {
-    //     status: 429,
-    //   })
-    // }
+    // get relevant context using langchain rag
+    const context = await getRelevantContext(lastMessage.content)
+
+    // prepare messages with context
+    const promptMessages = [
+      ...messages.slice(0, -1),
+      {
+        role: 'system',
+        content: context,
+      },
+      lastMessage,
+    ].filter((msg) => msg.content)
 
     const response = await fetch(
       `${env.HEURIST_GATEWAY_URL}/v1/chat/completions`,
       {
         headers: {
           Authorization: `Bearer ${env.HEURIST_AUTH_KEY}`,
+          'Content-Type': 'application/json',
         },
         method: 'POST',
         body: JSON.stringify({
           model: modelId,
-          stream: useStream || false,
-          messages,
+          stream: true,
+          messages: promptMessages,
           temperature: temperature || 0.75,
           max_tokens: maxTokens || 2048,
         }),
       },
     )
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error?.message || 'Failed to generate response')
+    }
 
     const stream = OpenAIStream(response, {
       onStart: () => {},
@@ -59,6 +54,13 @@ export async function POST(req: Request) {
 
     return new Response(stream)
   } catch (error) {
-    return ResError({ msg: 'api/chat error', data: error })
+    console.error('Chat error:', error)
+    return new Response(
+      JSON.stringify({ error: 'Failed to generate response' }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    )
   }
 }
