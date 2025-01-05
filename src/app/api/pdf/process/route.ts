@@ -1,10 +1,10 @@
-import { WebPDFLoader } from 'langchain/document_loaders/web/pdf'
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { nanoid } from 'nanoid'
 import { NextResponse } from 'next/server'
 
 import { env } from '@/env'
 import { embeddings, pinecone } from '@/lib/vectorstore'
+import { WebPDFLoader } from '@langchain/community/document_loaders/web/pdf'
 
 function cleanText(text: string): string {
   return text

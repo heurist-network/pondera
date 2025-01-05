@@ -164,6 +164,9 @@ export function ChatInput({
       }
 
       const result = await response.json()
+
+      updateChat(activeId, { hasDocument: true })
+
       addMessage({
         id: activeId,
         role: 'system',

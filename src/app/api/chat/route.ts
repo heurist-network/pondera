@@ -7,22 +7,26 @@ export const runtime = 'edge'
 
 export async function POST(req: Request) {
   try {
-    const { messages, modelId, temperature, maxTokens } = await req.json()
+    const { messages, modelId, temperature, maxTokens, hasDocument } =
+      await req.json()
 
     const lastMessage = messages[messages.length - 1]
 
-    // get relevant context using langchain rag
-    const context = await getRelevantContext(lastMessage.content)
+    // prepare messages
+    let promptMessages = messages
 
-    // prepare messages with context
-    const promptMessages = [
-      ...messages.slice(0, -1),
-      {
-        role: 'system',
-        content: context,
-      },
-      lastMessage,
-    ].filter((msg) => msg.content)
+    // only get context if document is uploaded in current chat
+    if (hasDocument) {
+      const context = await getRelevantContext(lastMessage.content)
+      promptMessages = [
+        ...messages.slice(0, -1),
+        {
+          role: 'system',
+          content: context,
+        },
+        lastMessage,
+      ].filter((msg) => msg.content)
+    }
 
     const response = await fetch(
       `${env.HEURIST_GATEWAY_URL}/v1/chat/completions`,

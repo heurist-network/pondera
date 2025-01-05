@@ -38,6 +38,7 @@ export type ChatListItem = {
   model: string
   prompt: string
   chainOfThought: boolean
+  hasDocument: boolean
   list: ChatItem[]
   state: CHAT_STATE
   createdAt: number | null
@@ -63,11 +64,13 @@ export type ChatStore = {
       model,
       prompt,
       chainOfThought,
+      hasDocument,
     }: {
       title?: string
       model?: string
       prompt?: string
       chainOfThought?: boolean
+      hasDocument?: boolean
     },
   ) => void
   clearChat: () => void
@@ -120,6 +123,7 @@ export const initChatItem: ChatListItem = {
   model: 'meta-llama/llama-3.3-70b-instruct',
   prompt: 'You are a helpful AI assistant.',
   chainOfThought: false,
+  hasDocument: false,
   list: [],
   state: CHAT_STATE.NONE,
   createdAt: Date.now(),
@@ -188,7 +192,10 @@ export const useChatStore = create<ChatStore>()(
           set({ list: newList })
         }
       },
-      updateChat: (id, { title, model, prompt, chainOfThought }) => {
+      updateChat: (
+        id,
+        { title, model, prompt, chainOfThought, hasDocument },
+      ) => {
         const localPrompt = localStorage.getItem('custom_prompt')
 
         const { list } = get()
@@ -196,10 +203,10 @@ export const useChatStore = create<ChatStore>()(
           if (item.id === id) {
             const newItem = { ...item, updatedAt: Date.now() }
             if (title !== undefined) newItem.title = title
-
             if (model !== undefined) newItem.model = model
             if (chainOfThought !== undefined)
               newItem.chainOfThought = chainOfThought
+            if (hasDocument !== undefined) newItem.hasDocument = hasDocument
 
             if (localPrompt) {
               newItem.prompt = localPrompt
@@ -298,6 +305,7 @@ CRITICAL: NEVER skip the thinking process. ALWAYS use these tags.`
             ],
             modelId: item.model,
             stream: true,
+            hasDocument: item.hasDocument,
           }),
           onopen: async (res) => {
             if (!res.ok || res.status !== 200 || !res.body) {
