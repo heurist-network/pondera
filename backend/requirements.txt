@@ -1,0 +1,11 @@
+# TODO: pin versions
+flask==3.0.0
+flask-cors==4.0.0
+python-dotenv==1.0.0
+langchain
+langchain-community
+pypdf
+openai>=1.0.0
+langchain-pinecone==0.1.3
+pinecone-client
+requests==2.31.0

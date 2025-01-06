@@ -1,7 +1,6 @@
 import { OpenAIStream } from 'ai-stream-sdk'
 
 import { env } from '@/env'
-import { getRelevantContext } from '@/lib/rag'
 
 export const runtime = 'edge'
 
@@ -17,7 +16,27 @@ export async function POST(req: Request) {
 
     // only get context if document is uploaded in current chat
     if (hasDocument) {
-      const context = await getRelevantContext(lastMessage.content)
+      // prepare request body
+      const requestBody = JSON.stringify({
+        query: lastMessage.content,
+        chatHistory: messages.slice(-4),
+      })
+
+      // get context from flask backend
+      const contextResponse = await fetch(`${env.FLASK_API_URL}/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(requestBody).toString(),
+        },
+        body: requestBody,
+      })
+
+      if (!contextResponse.ok) {
+        throw new Error('Failed to get context')
+      }
+
+      const { context } = await contextResponse.json()
       promptMessages = [
         ...messages.slice(0, -1),
         {
@@ -28,21 +47,25 @@ export async function POST(req: Request) {
       ].filter((msg) => msg.content)
     }
 
+    // prepare openai request body
+    const openaiBody = JSON.stringify({
+      model: modelId,
+      stream: true,
+      messages: promptMessages,
+      temperature: temperature || 0.75,
+      max_tokens: maxTokens || 2048,
+    })
+
     const response = await fetch(
       `${env.HEURIST_GATEWAY_URL}/v1/chat/completions`,
       {
+        method: 'POST',
         headers: {
           Authorization: `Bearer ${env.HEURIST_AUTH_KEY}`,
           'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(openaiBody).toString(),
         },
-        method: 'POST',
-        body: JSON.stringify({
-          model: modelId,
-          stream: true,
-          messages: promptMessages,
-          temperature: temperature || 0.75,
-          max_tokens: maxTokens || 2048,
-        }),
+        body: openaiBody,
       },
     )
 
