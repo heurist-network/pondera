@@ -1,7 +1,16 @@
-/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+'use client'
+
+import { useState } from 'react'
 import Image from 'next/image'
 
 import { Button } from '@/components/ui/button'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import { UploadDialog } from '@/components/uploadDialog'
 import { useRandomPrompts } from '@/hooks/useRandomPrompts'
 import { cn } from '@/lib/utils'
 import { ChatInput } from '@/modules/chatInput'
@@ -12,12 +21,13 @@ import { useChatStore } from '@/store/chat'
 export function Welcome() {
   const { models, getActiveChat, activeId, sendChat, addMessage } =
     useChatStore()
+  const [uploadOpen, setUploadOpen] = useState(false)
+  const { list } = useChatStore()
 
   const chat = getActiveChat(activeId)
-
   const findModel = models.find((model) => model.name === chat?.model)
-
   const randomPrompts = useRandomPrompts()
+  const hasWorkspace = list.some((chat) => chat.hasDocument)
 
   return (
     <div className="flex h-full">
@@ -73,7 +83,31 @@ export function Welcome() {
                   >
                     Advanced
                   </Button>
-              </Prompt>
+                </Prompt>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <Button
+                          className="ml-2 h-[34px] w-[34px] rounded-full p-0"
+                          variant="outline"
+                          onClick={() => setUploadOpen(true)}
+                          disabled={hasWorkspace}
+                        >
+                          <span className="i-mingcute-plus-line text-lg" />
+                        </Button>
+                      </div>
+                    </TooltipTrigger>
+                    {hasWorkspace && (
+                      <TooltipContent>
+                        <p>
+                          Only one workspace is allowed. Upload files to the
+                          existing workspace.
+                        </p>
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </div>
           </div>
@@ -101,6 +135,7 @@ export function Welcome() {
           </div>
         </div>
       </div>
+      <UploadDialog open={uploadOpen} onOpenChange={setUploadOpen} />
     </div>
   )
 }

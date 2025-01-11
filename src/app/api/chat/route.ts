@@ -1,13 +1,20 @@
 import { OpenAIStream } from 'ai-stream-sdk'
 
 import { env } from '@/env'
+import { api } from '@/lib/workspaceApi'
 
 export const runtime = 'edge'
 
 export async function POST(req: Request) {
   try {
-    const { messages, modelId, temperature, maxTokens, hasDocument } =
-      await req.json()
+    const {
+      messages,
+      modelId,
+      temperature,
+      maxTokens,
+      hasDocument,
+      namespaceId,
+    } = await req.json()
 
     const lastMessage = messages[messages.length - 1]
 
@@ -15,36 +22,42 @@ export async function POST(req: Request) {
     let promptMessages = messages
 
     // only get context if document is uploaded in current chat
-    if (hasDocument) {
-      // prepare request body
-      const requestBody = JSON.stringify({
-        query: lastMessage.content,
-        chatHistory: messages.slice(-4),
-      })
+    if (hasDocument && namespaceId) {
+      try {
+        // Get context from backend
+        const chunks = await api.getDocumentContext(
+          lastMessage.content,
+          namespaceId,
+        )
 
-      // get context from flask backend
-      const contextResponse = await fetch(`${env.FLASK_API_URL}/chat`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(requestBody).toString(),
-        },
-        body: requestBody,
-      })
+        // Add context to system message
+        if (chunks.length > 0) {
+          const context = `Here are relevant excerpts from the documents:\n\n${chunks
+            .map(
+              (chunk, i) =>
+                `[${i + 1}] ${chunk.metadata.text}${
+                  chunk.metadata.source
+                    ? ` (Source: ${chunk.metadata.source})`
+                    : ''
+                }`,
+            )
+            .join(
+              '\n\n',
+            )}\n\nUse ONLY this information to answer the question. If you cannot find the answer in these excerpts, say so clearly.`
 
-      if (!contextResponse.ok) {
+          promptMessages = [
+            ...messages.slice(0, -1),
+            {
+              role: 'system',
+              content: context,
+            },
+            lastMessage,
+          ].filter((msg) => msg.content)
+        }
+      } catch (error) {
+        console.error('Context fetch failed:', error)
         throw new Error('Failed to get context')
       }
-
-      const { context } = await contextResponse.json()
-      promptMessages = [
-        ...messages.slice(0, -1),
-        {
-          role: 'system',
-          content: context,
-        },
-        lastMessage,
-      ].filter((msg) => msg.content)
     }
 
     // prepare openai request body

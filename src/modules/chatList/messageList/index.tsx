@@ -3,6 +3,7 @@ import { Virtuoso, VirtuosoHandle } from 'react-virtuoso'
 import Image from 'next/image'
 import type { ChatItem } from '@/store/chat'
 
+import { FileListDialog } from '@/components/fileListDialog'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,6 +22,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { UploadDialog } from '@/components/uploadDialog'
 import { cn } from '@/lib/utils'
 import { ChatModel } from '@/modules/chatModel'
 import { Prompt } from '@/modules/prompt'
@@ -47,6 +49,8 @@ export function MessageList() {
 
   const [virtuosoLoaded, setVirtuosoLoaded] = useState(false)
   const [paddingBottom, setPaddingBottom] = useState(0)
+  const [uploadOpen, setUploadOpen] = useState(false)
+  const [fileListOpen, setFileListOpen] = useState(false)
 
   const list = getActiveList(activeId)
   const chat = getActiveChat(activeId)
@@ -63,13 +67,12 @@ export function MessageList() {
   }
 
   const onScrollToEnd = () => {
-    setTimeout(() => {
-      if (virtuosoRef.current) {
-        virtuosoRef.current.scrollTo({
-          top: 999999,
-        })
-      }
-    }, 50)
+    if (virtuosoRef.current) {
+      virtuosoRef.current.scrollToIndex({
+        index: list.length - 1,
+        behavior: 'smooth',
+      })
+    }
   }
 
   useEffect(() => {
@@ -80,7 +83,9 @@ export function MessageList() {
   }, [activeId])
 
   useEffect(() => {
-    onScrollToEnd()
+    if (virtuosoLoaded) {
+      onScrollToEnd()
+    }
   }, [list, virtuosoLoaded])
 
   return (
@@ -89,7 +94,7 @@ export function MessageList() {
         <div
           className="grow"
           style={{
-            paddingBottom: paddingBottom - 30,
+            paddingBottom: Math.max(0, paddingBottom - 30),
           }}
         >
           <div
@@ -101,7 +106,8 @@ export function MessageList() {
             <Virtuoso
               ref={virtuosoRef}
               data={list}
-              followOutput
+              followOutput="smooth"
+              initialTopMostItemIndex={list.length - 1}
               components={{
                 Footer: () => (
                   <div>
@@ -297,6 +303,34 @@ export function MessageList() {
 
                 <div className="flex gap-2">
                   <ShareChat />
+                  <UploadDialog
+                    open={uploadOpen}
+                    onOpenChange={setUploadOpen}
+                  />
+                  <FileListDialog
+                    open={fileListOpen}
+                    onOpenChange={setFileListOpen}
+                  />
+                  {chat?.hasDocument && (
+                    <>
+                      <Button
+                        variant="outline"
+                        className="h-9 gap-1 rounded-[10px] px-2"
+                        onClick={() => setUploadOpen(true)}
+                      >
+                        <div>Upload</div>
+                        <span className="i-mingcute-upload-2-line h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="h-9 gap-1 rounded-[10px] px-2"
+                        onClick={() => setFileListOpen(true)}
+                      >
+                        <div>Files</div>
+                        <span className="i-mingcute-folder-open-line h-4 w-4" />
+                      </Button>
+                    </>
+                  )}
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <div className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-[10px] border border-[#e0e0e0] bg-white text-sm font-medium text-gray-950">

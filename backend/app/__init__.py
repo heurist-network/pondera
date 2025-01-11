@@ -1,18 +1,17 @@
-from dotenv import load_dotenv
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 
-load_dotenv()
+from .routes.document_routes import document_routes
 
 
 def create_app():
     app = Flask(__name__)
-    CORS(app)
+    CORS(app, resources={r"/*": {"origins": "*"}})
 
-    # register routes
-    from .routes import chat, pdf
+    app.register_blueprint(document_routes, url_prefix="/api/documents")
 
-    app.register_blueprint(chat.bp)
-    app.register_blueprint(pdf.bp)
+    @app.route("/")
+    def index():
+        return jsonify({"message": "up!"}), 200
 
     return app

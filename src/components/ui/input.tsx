@@ -12,7 +12,6 @@ export interface InputProps
   onSubmit?: () => void
   onStop?: () => void
   chainOfThoughtSlot?: React.ReactNode
-  pdfUploadButton?: React.ReactNode
 }
 
 const Input = React.forwardRef<HTMLTextAreaElement, InputProps>(
@@ -23,7 +22,6 @@ const Input = React.forwardRef<HTMLTextAreaElement, InputProps>(
       onSubmit,
       onStop,
       chainOfThoughtSlot,
-      pdfUploadButton,
       ...props
     },
     ref,
@@ -69,16 +67,13 @@ const Input = React.forwardRef<HTMLTextAreaElement, InputProps>(
           {...props}
         />
         {chainOfThoughtSlot && (
-          <div className="absolute right-36 top-[15px] flex h-[22px] items-center px-1">
+          <div className="absolute right-24 top-[15px] flex h-[22px] items-center px-1">
             {chainOfThoughtSlot}
           </div>
         )}
-        <div className="absolute right-24 top-[15px] flex h-[22px] items-center px-1 text-[14px] leading-[14px] text-gray-300">
+        <div className="absolute right-12 top-[15px] flex h-[22px] items-center px-1 text-[14px] leading-[14px] text-gray-300">
           / input
         </div>
-        {pdfUploadButton && (
-          <div className="absolute right-12 top-2.5">{pdfUploadButton}</div>
-        )}
         <button
           className={cn(
             'absolute right-2 top-2.5 flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-white transition-colors',
