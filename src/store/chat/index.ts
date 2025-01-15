@@ -43,7 +43,6 @@ export interface ChatListItem {
   namespaceId?: string
   list: ChatItem[]
   state: CHAT_STATE
-  files?: { name: string; documentId?: string; url?: string }[]
   createdAt: number | null
   updatedAt: number | null
 }
@@ -126,7 +125,6 @@ type ChatUpdatePayload = Partial<{
   chainOfThought: boolean
   hasDocument: boolean
   namespaceId: string
-  files: { name: string; documentId?: string; url?: string }[]
 }>
 
 export const useChatStore = create<ChatStore>()(

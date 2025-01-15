@@ -13,6 +13,10 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
+import {
+  invalidateFileCache,
+  useWorkspaceFiles,
+} from '@/hooks/useWorkspaceFiles'
 import { cn } from '@/lib/utils'
 import { api } from '@/lib/workspaceApi'
 import { useChatStore } from '@/store/chat'
@@ -28,7 +32,8 @@ export function UploadDialog({
   const [uploading, setUploading] = useState(false)
   const { updateChat, getActiveChat, activeId } = useChatStore()
   const chat = getActiveChat(activeId)
-  const existingFileCount = chat?.files?.length || 0
+  const { files: existingFiles } = useWorkspaceFiles(chat?.namespaceId)
+  const existingFileCount = existingFiles?.length || 0
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -49,7 +54,7 @@ export function UploadDialog({
         return
       }
 
-      const existingFileNames = chat?.files?.map((f) => f.name) || []
+      const existingFileNames = existingFiles?.map((f) => f.filename) || []
       const duplicateFiles = pdfFiles.filter(
         (file) =>
           existingFileNames.includes(file.name) ||
@@ -101,25 +106,11 @@ export function UploadDialog({
           hasDocument: true,
           namespaceId: response.namespace_id,
           title: 'Workspace',
-          files: response.document_responses.map((doc, index) => ({
-            name: files[index].name,
-            documentId: doc.document.document_id,
-            url: doc.document.document_url,
-          })),
         })
         chatStore.addFilesUploadedMessage(chatId)
+        invalidateFileCache(response.namespace_id)
       } else {
-        const existingFiles = existingWorkspace.files || []
-        updateChat(chatId, {
-          files: [
-            ...existingFiles,
-            ...response.document_responses.map((doc, index) => ({
-              name: files[index].name,
-              documentId: doc.document.document_id,
-              url: doc.document.document_url,
-            })),
-          ],
-        })
+        invalidateFileCache(existingWorkspace.namespaceId)
       }
 
       toast.success('Files uploaded successfully')
