@@ -1,7 +1,7 @@
 from io import BytesIO
 from typing import Any, Dict, List
 
-import PyPDF2
+import pymupdf
 from config import Config
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from openai import OpenAI
@@ -30,10 +30,9 @@ class DocumentProcessor:
         try:
             document_content = ""
             if file_type == "application/pdf":
-                pdf_reader = PyPDF2.PdfReader(BytesIO(file_data))
-                document_content = ""
-                for page in pdf_reader.pages:
-                    document_content += page.extract_text() + "\n"
+                with pymupdf.open(stream=file_data, filetype="pdf") as doc:
+                    for page in doc:
+                        document_content += page.get_text() + "\n"
                 logger.info(f"Processing file {file_name}")
             else:
                 document_content = file_data.decode("utf-8")
@@ -85,6 +84,7 @@ class DocumentProcessor:
 
             # TODO: https://docs.pinecone.io/guides/data/upsert-data#upsert-limits
             # batch size can be 1000 or 2mb, and should be as large as possible, so implement logic for that
+            # or switch to https://docs.pinecone.io/guides/data/upsert-data#send-upserts-in-parallel
             upsert_batch_size = 500
             for i in range(0, len(vectors), upsert_batch_size):
                 batch = vectors[i : i + upsert_batch_size]

@@ -49,6 +49,19 @@ export function UploadDialog({
         return
       }
 
+      const existingFileNames = chat?.files?.map((f) => f.name) || []
+      const duplicateFiles = pdfFiles.filter(
+        (file) =>
+          existingFileNames.includes(file.name) ||
+          files.some((f) => f.name === file.name),
+      )
+      if (duplicateFiles.length > 0) {
+        toast.error(
+          `Duplicate file(s): ${duplicateFiles.map((f) => f.name).join(', ')}`,
+        )
+        return
+      }
+
       const totalFiles = [...files, ...pdfFiles]
       const totalCount = existingFileCount + totalFiles.length
       if (totalCount > 5) {
