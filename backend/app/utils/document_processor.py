@@ -1,4 +1,3 @@
-from io import BytesIO
 from typing import Any, Dict, List
 
 import pymupdf

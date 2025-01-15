@@ -2,7 +2,6 @@ import time
 from typing import Any, Dict, List
 
 import boto3
-from botocore.client import Config
 from botocore.exceptions import ClientError
 from config import Config as AppConfig
 
