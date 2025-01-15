@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
 import Image from 'next/image'
+import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -124,9 +124,9 @@ export function Welcome() {
                     id: activeId,
                     role: 'user',
                     content: item.value,
-                    model: chat?.model!,
+                    model: chat?.model ?? 'meta-llama/llama-3.3-70b-instruct',
                   })
-                  sendChat(activeId, chat?.model!)
+                  sendChat(activeId, chat?.model ?? 'meta-llama/llama-3.3-70b-instruct')
                 }}
               >
                 {item.label}

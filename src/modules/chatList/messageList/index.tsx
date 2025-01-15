@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
-import { Virtuoso, VirtuosoHandle } from 'react-virtuoso'
-import Image from 'next/image'
 import type { ChatItem } from '@/store/chat'
+import Image from 'next/image'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { Virtuoso, VirtuosoHandle } from 'react-virtuoso'
 
 import { FileListDialog } from '@/components/fileListDialog'
 import {
@@ -66,14 +66,14 @@ export function MessageList() {
     return findModel?.icon
   }
 
-  const onScrollToEnd = () => {
+  const onScrollToEnd = useCallback(() => {
     if (virtuosoRef.current) {
       virtuosoRef.current.scrollToIndex({
         index: list.length - 1,
         behavior: 'smooth',
       })
     }
-  }
+  }, [list.length])
 
   useEffect(() => {
     setVirtuosoLoaded(false)
@@ -86,7 +86,7 @@ export function MessageList() {
     if (virtuosoLoaded) {
       onScrollToEnd()
     }
-  }, [list, virtuosoLoaded])
+  }, [list, virtuosoLoaded, onScrollToEnd])
 
   return (
     <TooltipProvider>
