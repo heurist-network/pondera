@@ -7,8 +7,8 @@ load_dotenv()
 
 class Config:
     # https://python.langchain.com/api_reference/_modules/langchain_community/embeddings/deepinfra.html#DeepInfraEmbeddings
-    # max batch size is 1024
     BATCH_SIZE = 1024
+    WORKSPACE_TTL_HOURS = 12  # time in hours after which a workspace should be deleted
     ALLOWED_EXTENSIONS = {"pdf", "txt"}
     PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
     PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")

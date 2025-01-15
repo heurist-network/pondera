@@ -9,20 +9,24 @@ from .logger import logger
 
 
 class S3Client:
-    def __init__(self):
-        s3_config = {
-            "endpoint_url": AppConfig.S3_ENDPOINT,
-            "aws_access_key_id": AppConfig.S3_ACCESS_KEY,
-            "aws_secret_access_key": AppConfig.S3_SECRET_KEY,
-            "region_name": AppConfig.S3_REGION,
-        }
+    _instance = None
 
-        self.s3 = boto3.client("s3", **s3_config)
-        self.bucket_name = AppConfig.S3_BUCKET
-        if not self.bucket_name:
-            logger.error("AWS_BUCKET_NAME environment variable is required")
-            raise ValueError("AWS_BUCKET_NAME environment variable is required")
-        logger.info(f"Connected to S3 bucket: {self.bucket_name}")
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(S3Client, cls).__new__(cls)
+            s3_config = {
+                "endpoint_url": AppConfig.S3_ENDPOINT,
+                "aws_access_key_id": AppConfig.S3_ACCESS_KEY,
+                "aws_secret_access_key": AppConfig.S3_SECRET_KEY,
+                "region_name": AppConfig.S3_REGION,
+            }
+            cls._instance.s3 = boto3.client("s3", **s3_config)
+            cls._instance.bucket_name = AppConfig.S3_BUCKET
+            if not cls._instance.bucket_name:
+                logger.error("AWS_BUCKET_NAME environment variable is required")
+                raise ValueError("AWS_BUCKET_NAME environment variable is required")
+            logger.info(f"Connected to S3 bucket: {cls._instance.bucket_name}")
+        return cls._instance
 
     def upload_file(self, file_data: bytes, file_key: str, content_type: str) -> str:
         try:
@@ -46,7 +50,8 @@ class S3Client:
             logger.error(f"Error deleting file from S3: {str(e)}")
             raise
 
-    def list_files(self, prefix: str) -> List[Dict[str, Any]]:
+    # this is for workspace cleanup, so we don't need the urls
+    def list_files_without_urls(self, prefix: str) -> List[Dict[str, Any]]:
         try:
             response = self.s3.list_objects_v2(Bucket=self.bucket_name, Prefix=prefix)
 
@@ -58,14 +63,18 @@ class S3Client:
                             "key": obj["Key"],
                             "size": obj["Size"],
                             "last_modified": obj["LastModified"].isoformat(),
-                            "url": self.get_file_url(obj["Key"]),
                         }
                     )
-            logger.info(f"Listed {len(files)} files from S3 with prefix: {prefix}")
             return files
         except ClientError as e:
             logger.error(f"Error listing files in S3: {str(e)}")
             raise
+
+    def list_files(self, prefix: str) -> List[Dict[str, Any]]:
+        files = self.list_files_without_urls(prefix)
+        for file in files:
+            file["url"] = self.get_file_url(file["key"])
+        return files
 
     def get_file_url(
         self, file_key: str, expires_in: int = 21600

@@ -19,19 +19,21 @@ const WorkspaceFilesManager = {
   },
 
   async fetchFiles(namespaceId: string) {
-    if (this.loading || this.currentNamespace === namespaceId) return
+    if (this.loading) return
 
     this.loading = true
+    this.notify()
     this.currentNamespace = namespaceId
 
     try {
       const files = await api.listFiles(namespaceId)
       this.files = files
-      this.notify()
     } catch (err) {
       console.error('Failed to fetch files:', err)
+      this.files = []
     } finally {
       this.loading = false
+      this.notify()
     }
   },
 }

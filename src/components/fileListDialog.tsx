@@ -5,7 +5,6 @@ import { useState } from 'react'
 import {
   AlertDialog,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
@@ -45,9 +44,6 @@ export function FileListDialog({
                 <AlertDialogTitle className="text-xl">
                   Workspace Files
                 </AlertDialogTitle>
-                <AlertDialogDescription className="mt-1.5">
-                  Files uploaded to this workspace that you can chat with
-                </AlertDialogDescription>
               </div>
               <button
                 onClick={() => onOpenChange(false)}
@@ -64,8 +60,10 @@ export function FileListDialog({
                 </div>
                 <div>
                   <div className="text-sm font-medium">Current workspace</div>
-                  <div className="text-xs text-gray-500">
-                    {fileCount} of 5 files uploaded
+                  <div className="flex items-center gap-2 text-xs text-gray-500">
+                    <span>{fileCount} of 5 files uploaded</span>
+                    <span className="h-1 w-1 rounded-full bg-gray-300" />
+                    <span>12h lifetime</span>
                   </div>
                 </div>
               </div>
@@ -107,7 +105,7 @@ export function FileListDialog({
                                 href={file.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="hover:text-[#4ae3f5] transition-all"
+                                className="transition-all hover:text-[#4ae3f5]"
                               >
                                 {file.filename}
                               </a>

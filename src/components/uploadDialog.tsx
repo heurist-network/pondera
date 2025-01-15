@@ -7,7 +7,6 @@ import {
   AlertDialog,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -130,10 +129,11 @@ export function UploadDialog({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Upload Documents</AlertDialogTitle>
-          <AlertDialogDescription>
-            Upload PDF or text files to chat with. The files will be processed
-            and you can then chat with their contents.
-          </AlertDialogDescription>
+          <div className="mt-2 flex items-center gap-2 text-sm text-gray-500">
+            <span>PDF and TXT files</span>
+            <span className="h-1 w-1 rounded-full bg-gray-300" />
+            <span>12h lifetime</span>
+          </div>
         </AlertDialogHeader>
 
         <div className="flex flex-col items-center gap-4">
@@ -165,20 +165,16 @@ export function UploadDialog({
             <div className="flex flex-col items-center gap-2 text-sm text-gray-500">
               <span className="i-mingcute-upload-2-line h-6 w-6" />
               <span>Click to upload or drag and drop</span>
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs">PDF, TXT</span>
-                <span className="h-1 w-1 rounded-full bg-gray-300" />
-                <span
-                  className={cn(
-                    'text-xs font-medium',
-                    existingFileCount + files.length >= 5
-                      ? 'text-red-500'
-                      : 'text-[#4ae3f5]',
-                  )}
-                >
-                  {existingFileCount + files.length}/5 files
-                </span>
-              </div>
+              <span
+                className={cn(
+                  'text-xs font-medium',
+                  existingFileCount + files.length >= 5
+                    ? 'text-red-500'
+                    : 'text-[#4ae3f5]',
+                )}
+              >
+                {existingFileCount + files.length}/5 files
+              </span>
             </div>
           </div>
 
