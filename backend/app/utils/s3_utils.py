@@ -1,3 +1,4 @@
+import time
 from typing import Any, Dict, List
 
 import boto3
@@ -22,6 +23,7 @@ class S3Client:
             }
             cls._instance.s3 = boto3.client("s3", **s3_config)
             cls._instance.bucket_name = AppConfig.S3_BUCKET
+            cls._instance._url_cache = {}  # {file_key: (url, expiry_timestamp)}
             if not cls._instance.bucket_name:
                 logger.error("AWS_BUCKET_NAME environment variable is required")
                 raise ValueError("AWS_BUCKET_NAME environment variable is required")
@@ -76,16 +78,25 @@ class S3Client:
             file["url"] = self.get_file_url(file["key"])
         return files
 
-    def get_file_url(
-        self, file_key: str, expires_in: int = 21600
-    ) -> str:  # 6 hours expiry, TODO: implement ttl for workspace as a whole
+    # expires in 6 hours
+    def get_file_url(self, file_key: str, expires_in: int = 21600) -> str:
+        current_time = time.time()
+
+        # check if url is cached and still valid
+        if file_key in self._url_cache:
+            url, expiry = self._url_cache[file_key]
+            if current_time < expiry - 1200:  # 20 min buffer
+                return url
+
         try:
             url = self.s3.generate_presigned_url(
                 "get_object",
                 Params={"Bucket": self.bucket_name, "Key": file_key},
                 ExpiresIn=expires_in,
             )
-            logger.info(f"Generated presigned URL for file: {file_key}")
+            # cache the url with its expiration time
+            self._url_cache[file_key] = (url, current_time + expires_in)
+            logger.info(f"Generated and cached presigned URL for file: {file_key}")
             return url
         except ClientError as e:
             logger.error(f"Error generating presigned URL: {str(e)}")
