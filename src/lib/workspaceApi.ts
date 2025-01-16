@@ -5,6 +5,8 @@ const API_BASE = env.NEXT_PUBLIC_BACKEND_URL
 export type UploadResponse = {
   message: string
   namespace_id: string
+  code?: string
+  description?: string
   document_responses: Array<{
     document: {
       document_id: string
@@ -54,12 +56,20 @@ export const api = {
       body: formData,
     })
 
+    const data = await response.json()
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.message || 'Failed to upload documents')
+      if (data.code === 'WORKSPACE_LIMIT_REACHED') {
+        throw new Error(data.message, {
+          cause: {
+            code: data.code,
+            description: data.description,
+          },
+        })
+      }
+      throw new Error(data.message || 'Failed to upload documents')
     }
 
-    return response.json()
+    return data
   },
 
   listFiles: async (namespaceId: string): Promise<FileInfo[]> => {

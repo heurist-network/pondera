@@ -115,8 +115,14 @@ export function UploadDialog({
       toast.success('Files uploaded successfully')
       onOpenChange(false)
     } catch (error) {
+      const err = error as { cause?: { code: string; description: string } }
       toast.error(
-        error instanceof Error ? error.message : 'Failed to upload files',
+        err.cause?.code === 'WORKSPACE_LIMIT_REACHED'
+          ? String(error)
+          : 'Failed to upload files',
+        err.cause?.code === 'WORKSPACE_LIMIT_REACHED'
+          ? { description: err.cause.description, duration: 5000 }
+          : undefined,
       )
     } finally {
       setUploading(false)

@@ -8,11 +8,13 @@ from ..utils.document_processor import DocumentProcessor
 from ..utils.logger import logger
 from ..utils.pinecone_utils import PineconeClient
 from ..utils.s3_utils import S3Client
+from ..utils.workspace_cleanup import WorkspaceCleanup
 
 document_routes = Blueprint("document_routes", __name__)
 document_processor = DocumentProcessor()
 pinecone_client = PineconeClient()
 s3_client = S3Client()
+workspace_cleanup = WorkspaceCleanup()
 
 
 def allowed_file(filename):
@@ -27,6 +29,24 @@ def add_documents():
     namespace_id = request.args.get("namespace_id")
 
     if not namespace_id:
+        active_workspaces = workspace_cleanup.get_active_workspaces()
+        if len(active_workspaces) >= Config.MAX_WORKSPACES:
+            logger.warning(f"Workspace limit of {Config.MAX_WORKSPACES} reached")
+            workspace_cleanup.cleanup_expired_workspaces()
+
+            active_workspaces = workspace_cleanup.get_active_workspaces()
+            if len(active_workspaces) >= Config.MAX_WORKSPACES:
+                return (
+                    jsonify(
+                        {
+                            "message": "Global workspace limit reached. Try again in a few minutes.",
+                            "code": "WORKSPACE_LIMIT_REACHED",
+                            "description": "Please reach out to us on Discord if this persists.",
+                        }
+                    ),
+                    400,
+                )
+
         namespace_id = str(uuid.uuid4())
         logger.info(f"Created new namespace: {namespace_id}")
 
