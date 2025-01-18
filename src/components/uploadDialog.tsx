@@ -138,6 +138,8 @@ export function UploadDialog({
           <div className="mt-2 flex items-center gap-2 text-sm text-gray-500">
             <span>PDF and TXT files</span>
             <span className="h-1 w-1 rounded-full bg-gray-300" />
+            <span>10MB limit</span>
+            <span className="h-1 w-1 rounded-full bg-gray-300" />
             <span>12h lifetime</span>
           </div>
         </AlertDialogHeader>

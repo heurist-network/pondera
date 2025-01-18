@@ -32,19 +32,19 @@ export async function POST(req: Request) {
 
         // Add context to system message
         if (chunks.length > 0) {
-          const context = `Here are relevant excerpts from the documents:\n\n${chunks
-            .map(
-              (chunk, i) =>
-                `[${i + 1}] ${chunk.metadata.text}${
-                  chunk.metadata.source
-                    ? ` (Source: ${chunk.metadata.source})`
-                    : ''
-                }`,
-            )
-            .join(
-              '\n\n',
-            )}\n\nUse ONLY this information to answer the question. If you cannot find the answer in these excerpts, say so clearly.`
+          const context = `Here are relevant excerpts from the documents:
 
+${chunks
+  .map((chunk, index) => `[Excerpt ${index + 1}]\n${chunk.metadata.text}`)
+  .join('\n\n')}
+
+Instructions:
+1. Use ONLY the information from these excerpts to answer the question
+2. If the answer cannot be found in these excerpts, clearly state that
+3. For numerical data or specific quotes, cite the excerpt number
+4. Consider all excerpts and synthesize a complete answer using the available information`
+
+          console.log('context', context)
           promptMessages = [
             ...messages.slice(0, -1),
             {
