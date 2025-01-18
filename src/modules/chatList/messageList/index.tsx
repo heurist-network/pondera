@@ -1,7 +1,7 @@
-import type { ChatItem } from '@/store/chat'
-import Image from 'next/image'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Virtuoso, VirtuosoHandle } from 'react-virtuoso'
+import Image from 'next/image'
+import type { ChatItem } from '@/store/chat'
 
 import { FileListDialog } from '@/components/fileListDialog'
 import {
@@ -290,19 +290,33 @@ export function MessageList() {
                           height={20}
                         />
                       )}
-                      Model
+                      <span className="hidden md:inline">Model</span>
                       <span className="i-mingcute-up-fill rotate-90" />
                     </div>
                   </ChatModel>
                   <Prompt>
-                    <Button className="h-9 rounded-[10px]" variant="outline">
-                      Advanced
+                    <Button
+                      className="h-9 w-9 rounded-[10px] md:w-auto"
+                      variant="outline"
+                    >
+                      <span className="i-mingcute-settings-2-line px-2 h-4 w-4 md:hidden" />
+                      <span className="hidden md:inline">Advanced</span>
                     </Button>
                   </Prompt>
                 </div>
 
                 <div className="flex gap-2">
-                  <ShareChat />
+                  <div className="hidden md:block">
+                    <ShareChat />
+                  </div>
+                  <div className="md:hidden">
+                    <Button
+                      variant="outline"
+                      className="h-9 w-9 rounded-[10px]"
+                    >
+                      <span className="i-mingcute-share-forward-line px-2 h-4 w-4" />
+                    </Button>
+                  </div>
                   <UploadDialog
                     open={uploadOpen}
                     onOpenChange={setUploadOpen}
@@ -312,10 +326,10 @@ export function MessageList() {
                     onOpenChange={setFileListOpen}
                   />
                   {chat?.hasDocument && (
-                    <>
+                    <div className="flex gap-2">
                       <Button
                         variant="outline"
-                        className="h-9 gap-1 rounded-[10px] px-2"
+                        className="hidden h-9 gap-1 rounded-[10px] px-2 md:flex"
                         onClick={() => setUploadOpen(true)}
                       >
                         <div>Upload</div>
@@ -323,13 +337,28 @@ export function MessageList() {
                       </Button>
                       <Button
                         variant="outline"
-                        className="h-9 gap-1 rounded-[10px] px-2"
+                        className="h-9 w-9 gap-1 rounded-[10px] px-2 md:hidden md:w-auto"
+                        onClick={() => setUploadOpen(true)}
+                      >
+                        <span className="i-mingcute-upload-2-line h-4 w-4" />
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        className="hidden h-9 gap-1 rounded-[10px] px-2 md:flex"
                         onClick={() => setFileListOpen(true)}
                       >
                         <div>Files</div>
                         <span className="i-mingcute-folder-open-line h-4 w-4" />
                       </Button>
-                    </>
+                      <Button
+                        variant="outline"
+                        className="h-9 w-9 gap-1 rounded-[10px] px-2 md:hidden md:w-auto"
+                        onClick={() => setFileListOpen(true)}
+                      >
+                        <span className="i-mingcute-folder-open-line h-4 w-4" />
+                      </Button>
+                    </div>
                   )}
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
