@@ -39,10 +39,9 @@ ${chunks
   .join('\n\n')}
 
 Instructions:
-1. Use ONLY the information from these excerpts to answer the question
-2. If the answer cannot be found in these excerpts, clearly state that
-3. For numerical data or specific quotes, cite the excerpt number
-4. Consider all excerpts and synthesize a complete answer using the available information`
+1. Use ONLY the information from these excerpts to answer the question.
+2. If the answer cannot be found in these excerpts, clearly state so. DO NOT make up an answer.
+3. Consider all excerpts and synthesize a complete answer using the available information.`
 
           console.log('context', context)
           promptMessages = [

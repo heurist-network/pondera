@@ -18,14 +18,22 @@ class WorkspaceCleanup:
         workspaces = {}
 
         for file in all_files:
-            workspace_id = file["key"].split("/")[0]
-            last_modified = datetime.fromisoformat(file["last_modified"])
+            parts = file["key"].split("/")
+            if len(parts) >= 3:
+                workspace_id = parts[0]
+                last_modified = datetime.fromisoformat(file["last_modified"])
 
-            if (
-                workspace_id not in workspaces
-                or last_modified > workspaces[workspace_id]
-            ):
-                workspaces[workspace_id] = last_modified
+                if (
+                    workspace_id not in workspaces
+                    or last_modified > workspaces[workspace_id]
+                ):
+                    workspaces[workspace_id] = last_modified
+            else:
+                logger.info(f"Deleting stray file: {file['key']}")
+                try:
+                    self.s3_client.delete_file(file["key"])
+                except Exception as e:
+                    logger.error(f"Error deleting stray file {file['key']}: {str(e)}")
 
         return workspaces
 
@@ -53,7 +61,8 @@ class WorkspaceCleanup:
                         f"{workspace_id}/"
                     )
                     for file in workspace_files:
-                        self.s3_client.delete_file(file["key"])
+                        if "/" in file["key"]:
+                            self.s3_client.delete_file(file["key"])
 
                     self.pinecone_client.delete_namespace(workspace_id)
                     logger.info(f"Successfully cleaned up workspace {workspace_id}")

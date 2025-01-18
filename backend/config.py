@@ -21,3 +21,4 @@ class Config:
     S3_SECRET_KEY = os.getenv("S3_SECRET_KEY")
     S3_BUCKET = os.getenv("S3_BUCKET")
     S3_REGION = os.getenv("S3_REGION", "us-east-1")
+    S3_FOLDER = os.getenv("S3_FOLDER")
