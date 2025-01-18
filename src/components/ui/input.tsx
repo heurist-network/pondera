@@ -60,14 +60,14 @@ const Input = React.forwardRef<HTMLTextAreaElement, InputProps>(
             `dark:placeholder-text-neutral-600 duration-400 flex h-12 min-h-[80px] w-full rounded-md border-none bg-gray-50 px-3 py-2 text-sm text-black transition file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-800 dark:text-white`,
             'shadow-input group-hover/input:shadow-none dark:shadow-[0px_0px_1px_1px_var(--neutral-700)]',
             'focus-visible:ring-[2px] focus-visible:ring-gray-950 dark:focus-visible:ring-neutral-600',
-            'pr-28',
+            'pr-40',
             className,
           )}
           ref={ref}
           {...props}
         />
         {chainOfThoughtSlot && (
-          <div className="absolute right-28 top-[15px] flex h-[22px] items-center px-1">
+          <div className="absolute right-24 top-[15px] flex h-[22px] items-center px-1">
             {chainOfThoughtSlot}
           </div>
         )}

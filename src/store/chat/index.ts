@@ -6,6 +6,7 @@ import { persist } from 'zustand/middleware'
 
 import { GENERATE_CHAT_NAME_PROMPT } from '@/lib/constant'
 import { clone } from '@/lib/utils'
+import { api } from '@/lib/workspaceApi'
 import { fetchEventSource } from '@fortaine/fetch-event-source'
 
 export type ChatRole = 'user' | 'assistant' | 'system'
@@ -32,12 +33,14 @@ export type ChatItem = {
   updatedAt: number | null
 }
 
-export type ChatListItem = {
+export interface ChatListItem {
   id: string
   title: string
   model: string
   prompt: string
   chainOfThought: boolean
+  hasDocument: boolean
+  namespaceId?: string
   list: ChatItem[]
   state: CHAT_STATE
   createdAt: number | null
@@ -56,20 +59,7 @@ export type ChatStore = {
   addChat: () => void
   toggleChat: (id: string) => void
   deleteChat: (id: string) => void
-  updateChat: (
-    id: string,
-    {
-      title,
-      model,
-      prompt,
-      chainOfThought,
-    }: {
-      title?: string
-      model?: string
-      prompt?: string
-      chainOfThought?: boolean
-    },
-  ) => void
+  updateChat: (id: string, payload: ChatUpdatePayload) => void
   clearChat: () => void
 
   // Chat Actions
@@ -77,6 +67,7 @@ export type ChatStore = {
   cancelChat: (id: string) => void
   regenerateChat: (id: string, message_id: string) => void
   generateTitle: (id: string) => void
+  addFilesUploadedMessage: (id: string) => void
 
   // Message Handlers
   addMessage: ({
@@ -120,11 +111,21 @@ export const initChatItem: ChatListItem = {
   model: 'meta-llama/llama-3.3-70b-instruct',
   prompt: 'You are a helpful AI assistant.',
   chainOfThought: false,
+  hasDocument: false,
   list: [],
   state: CHAT_STATE.NONE,
   createdAt: Date.now(),
   updatedAt: Date.now(),
 }
+
+type ChatUpdatePayload = Partial<{
+  title: string
+  model: string
+  prompt: string
+  chainOfThought: boolean
+  hasDocument: boolean
+  namespaceId: string
+}>
 
 export const useChatStore = create<ChatStore>()(
   persist(
@@ -168,6 +169,14 @@ export const useChatStore = create<ChatStore>()(
       },
       deleteChat: (id) => {
         const { list, activeId } = get()
+        const chat = list.find((item) => item.id === id)
+
+        if (chat?.hasDocument && chat?.namespaceId) {
+          api.deleteWorkspace(chat.namespaceId).catch((error) => {
+            console.error('Failed to delete workspace:', error)
+          })
+        }
+
         const newList = list.filter((item) => item.id !== id)
 
         if (newList.length <= 1) {
@@ -188,27 +197,25 @@ export const useChatStore = create<ChatStore>()(
           set({ list: newList })
         }
       },
-      updateChat: (id, { title, model, prompt, chainOfThought }) => {
-        const localPrompt = localStorage.getItem('custom_prompt')
+      updateChat: (id: string, payload: ChatUpdatePayload) => {
+        set((state) => {
+          const chat = state.list.find((chat) => chat.id === id)
+          if (!chat) return state
 
-        const { list } = get()
-        const newList = list.map((item) => {
-          if (item.id === id) {
-            const newItem = { ...item, updatedAt: Date.now() }
-            if (title !== undefined) newItem.title = title
+          const localPrompt = localStorage.getItem('custom_prompt')
+          const newPayload = { ...payload }
 
-            if (model !== undefined) newItem.model = model
-            if (chainOfThought !== undefined)
-              newItem.chainOfThought = chainOfThought
+          // Handle prompt updates
+          if (localPrompt) {
+            newPayload.prompt = localPrompt
+          } else if (payload.prompt !== undefined) {
+            newPayload.prompt =
+              payload.prompt || 'You are a helpful AI assistant.'
+          }
 
-            if (localPrompt) {
-              newItem.prompt = localPrompt
-            } else if (prompt !== undefined) {
-              newItem.prompt = prompt || 'You are a helpful AI assistant.'
-            }
-
-            if (chainOfThought) {
-              newItem.prompt = `${newItem.prompt}
+          // Handle chain of thought prompt
+          if (payload.chainOfThought) {
+            newPayload.prompt = `${newPayload.prompt || chat.prompt}
 
 For EVERY response, you must structure your thinking and answer using these tags:
 
@@ -236,13 +243,20 @@ Provide your final response here:
 </answer>
 
 CRITICAL: NEVER skip the thinking process. ALWAYS use these tags.`
-            }
-
-            return newItem
           }
-          return item
+
+          return {
+            list: state.list.map((chat) =>
+              chat.id === id
+                ? {
+                    ...chat,
+                    ...newPayload,
+                    updatedAt: Date.now(),
+                  }
+                : chat,
+            ),
+          }
         })
-        set({ list: newList })
       },
       clearChat: () => {
         const localPrompt = localStorage.getItem('custom_prompt')
@@ -298,6 +312,8 @@ CRITICAL: NEVER skip the thinking process. ALWAYS use these tags.`
             ],
             modelId: item.model,
             stream: true,
+            hasDocument: item.hasDocument,
+            namespaceId: item.namespaceId,
           }),
           onopen: async (res) => {
             if (!res.ok || res.status !== 200 || !res.body) {
@@ -317,6 +333,8 @@ CRITICAL: NEVER skip the thinking process. ALWAYS use these tags.`
             try {
               // skip [DONE] messages
               if (res.data === '[DONE]') {
+                item.state = CHAT_STATE.NONE
+                set({ list: [...list] })
                 if (!item.title && item.list.length > 0) {
                   // generate title only when response is complete
                   get().generateTitle(id)
@@ -356,7 +374,10 @@ CRITICAL: NEVER skip the thinking process. ALWAYS use these tags.`
             item.state = CHAT_STATE.NONE
             set({ list: [...list] })
           },
-          onclose: () => {},
+          onclose: () => {
+            item.state = CHAT_STATE.NONE
+            set({ list: [...list] })
+          },
         })
       },
       cancelChat: (id) => {
@@ -430,6 +451,32 @@ CRITICAL: NEVER skip the thinking process. ALWAYS use these tags.`
           onerror: () => {},
           onclose: () => {},
         })
+      },
+      addFilesUploadedMessage: (id) => {
+        const { list } = get()
+        const newList = list.map((item) => {
+          if (item.id === id) {
+            return {
+              ...item,
+              list: [
+                {
+                  id: `message-${nanoid()}`,
+                  role: 'system' as ChatRole,
+                  content:
+                    'Files have been uploaded. You can now ask questions about their content.',
+                  model: item.model,
+                  isEdit: false,
+                  createdAt: Date.now(),
+                  updatedAt: Date.now(),
+                },
+                ...item.list,
+              ],
+              updatedAt: Date.now(),
+            }
+          }
+          return item
+        })
+        set({ list: newList })
       },
 
       // Message Handlers
