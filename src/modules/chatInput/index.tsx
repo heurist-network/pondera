@@ -4,6 +4,13 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 
 import { Input } from '@/components/ui/input'
+import { Switch } from '@/components/ui/switch'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { CHAT_STATE, useChatStore } from '@/store/chat'
 
 export function ChatInput({
@@ -13,10 +20,19 @@ export function ChatInput({
   onMessageResponse?: () => void
   onHeightChange?: (height: number) => void
 }) {
-  const { addMessage, activeId, sendChat, getActiveChat, cancelChat } =
-    useChatStore()
+  const {
+    addMessage,
+    activeId,
+    sendChat,
+    getActiveChat,
+    cancelChat,
+    updateChat,
+    getActiveList,
+  } = useChatStore()
 
   const chat = getActiveChat(activeId)
+  const list = getActiveList(activeId)
+  const isWelcomePage = list.length === 0
 
   const onHandleMessageResponse = () => {
     onMessageResponse?.()
@@ -74,6 +90,58 @@ export function ChatInput({
     }
   }, [])
 
+  const chainOfThoughtSlot = isWelcomePage ? (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
+              <Switch
+                id="chain-of-thought"
+                checked={chat?.chainOfThought}
+                disabled={
+                  ![
+                    'nvidia/llama-3.1-nemotron-70b-instruct',
+                    'meta-llama/llama-3.3-70b-instruct',
+                  ].includes(chat?.model || '')
+                }
+                onCheckedChange={(checked) =>
+                  updateChat(activeId, { chainOfThought: checked })
+                }
+                className="scale-75"
+              />
+              <span className="text-xs text-gray-400">CoT</span>
+            </div>
+            {![
+              'nvidia/llama-3.1-nemotron-70b-instruct',
+              'meta-llama/llama-3.3-70b-instruct',
+            ].includes(chat?.model || '') && (
+              <span className="i-mingcute-information-line h-4 w-4 text-gray-400" />
+            )}
+          </div>
+        </TooltipTrigger>
+        {![
+          'nvidia/llama-3.1-nemotron-70b-instruct',
+          'meta-llama/llama-3.3-70b-instruct',
+        ].includes(chat?.model || '') ? (
+          <TooltipContent>
+            <p>Chain of Thought is only available for Llama 3 models</p>
+          </TooltipContent>
+        ) : (
+          <TooltipContent>
+            <div className="max-w-[200px]">
+              <p className="font-medium">Chain of Thought</p>
+              <p className="mt-1 text-xs text-gray-400">
+                Show AI&apos;s reasoning process. This setting cannot be changed
+                once the conversation starts.
+              </p>
+            </div>
+          </TooltipContent>
+        )}
+      </Tooltip>
+    </TooltipProvider>
+  ) : null
+
   return (
     <Input
       ref={inputRef}
@@ -87,6 +155,7 @@ export function ChatInput({
       onCompositionStart={() => setIsComposing(true)}
       onCompositionEnd={() => setIsComposing(false)}
       onInput={onResize}
+      chainOfThoughtSlot={chainOfThoughtSlot}
       onKeyDown={(e) => {
         if (e.key === 'Enter') {
           if (e.shiftKey) {

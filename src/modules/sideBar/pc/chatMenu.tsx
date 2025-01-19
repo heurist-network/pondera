@@ -14,7 +14,6 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { clone } from '@/lib/utils'
 import { ChatListItem, useChatStore } from '@/store/chat'
 
 import { MenuItem } from './menuItem'
@@ -82,6 +81,29 @@ export function ChatMenu() {
     return groups
   }, [list])
 
+  const renderChatList = () => {
+    if (!list.length) return null
+
+    // separate workspace and regular chats
+    const workspace = list.find((chat) => chat.hasDocument)
+    const regularChats = list
+      .filter((chat) => !chat.hasDocument)
+      .sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))
+
+    return (
+      <>
+        {workspace && (
+          <div className="mb-2">
+            <MenuItem data={workspace} />
+          </div>
+        )}
+        {regularChats.map((chat) => (
+          <MenuItem key={chat.id} data={chat} />
+        ))}
+      </>
+    )
+  }
+
   return (
     <div className="group/menu flex w-full flex-1 flex-col">
       <div
@@ -144,11 +166,7 @@ export function ChatMenu() {
                       {index === 7 && '1 week ago'}
                     </div>
                   </div>
-                  {clone(list)
-                    .sort((x, y) => y.updatedAt! - x.updatedAt!)
-                    .map((item, index) => (
-                      <MenuItem key={index} data={item} />
-                    ))}
+                  {renderChatList()}
                 </div>
               )
             }
