@@ -166,7 +166,7 @@ export function MessageList() {
                       {item.role !== 'user' && (
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <div>
+                            <div className="shrink-0">
                               <Image
                                 src={getModelIcon(item.model)!}
                                 alt="model"
@@ -299,7 +299,7 @@ export function MessageList() {
                       className="h-9 w-9 rounded-[10px] md:w-auto"
                       variant="outline"
                     >
-                      <span className="i-mingcute-settings-2-line px-2 h-4 w-4 md:hidden" />
+                      <span className="i-mingcute-settings-2-line h-4 w-4 px-2 md:hidden" />
                       <span className="hidden md:inline">Advanced</span>
                     </Button>
                   </Prompt>
@@ -314,7 +314,7 @@ export function MessageList() {
                       variant="outline"
                       className="h-9 w-9 rounded-[10px]"
                     >
-                      <span className="i-mingcute-share-forward-line px-2 h-4 w-4" />
+                      <span className="i-mingcute-share-forward-line h-4 w-4 px-2" />
                     </Button>
                   </div>
                   <UploadDialog
