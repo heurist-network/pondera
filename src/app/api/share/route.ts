@@ -22,13 +22,20 @@ export async function POST(request: Request) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ((request as any).ip || request.headers.get('X-Forwarded-For')) + '-share'
 
+    console.log(identifier, 'identifier')
+
     // ip rate limits
     const { success } = await ratelimit.limit(identifier)
+
+    console.log(success, 'success')
+
     if (!success) {
       return new Response('Too Many Requests', {
         status: 429,
       })
     }
+
+    console.log(list, 'list')
 
     if (!list?.length) {
       return NextResponse.json(
