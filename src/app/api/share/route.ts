@@ -6,7 +6,7 @@ import { share } from '@/db/schema'
 import { redis } from '@/lib/redis'
 import { Ratelimit } from '@upstash/ratelimit'
 
-export const runtime = 'edge'
+// export const runtime = 'edge'
 
 const ratelimit = new Ratelimit({
   redis,
