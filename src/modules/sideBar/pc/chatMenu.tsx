@@ -84,23 +84,44 @@ export function ChatMenu() {
   const renderChatList = () => {
     if (!list.length) return null
 
-    // separate workspace and regular chats
+    // separate workspace chat
     const workspace = list.find((chat) => chat.hasDocument)
-    const regularChats = list
-      .filter((chat) => !chat.hasDocument)
-      .sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))
 
     return (
-      <>
-        {workspace && (
-          <div className="mb-2">
-            <MenuItem data={workspace} />
-          </div>
-        )}
-        {regularChats.map((chat) => (
-          <MenuItem key={chat.id} data={chat} />
-        ))}
-      </>
+      <div className="flex flex-col">
+        {/* workspace chat always at top */}
+        {workspace && <MenuItem data={workspace} />}
+
+        {/* day-grouped regular chats below */}
+        {Object.entries(calcList).map(([key, chats]) => {
+          if (chats.length === 0) return null
+
+          const dayLabel =
+            key === '0'
+              ? 'Today'
+              : key === '1'
+                ? 'Yesterday'
+                : key === '7'
+                  ? '1 week ago'
+                  : `${key} days ago`
+
+          const filteredChats = chats.filter((chat) => !chat.hasDocument)
+          if (filteredChats.length === 0) return null
+
+          return (
+            <div key={key}>
+              <div className="flex h-12 items-center gap-2.5 px-3 text-xs font-semibold text-[rgba(255,255,255,0.35)]">
+                {dayLabel}
+              </div>
+              {filteredChats
+                .sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))
+                .map((chat) => (
+                  <MenuItem key={chat.id} data={chat} />
+                ))}
+            </div>
+          )
+        })}
+      </div>
     )
   }
 
@@ -148,32 +169,7 @@ export function ChatMenu() {
         className="h-[calc(100dvh-302px)] w-full px-3 text-white"
         scrollHideDelay={0}
       >
-        <div className="flex w-full flex-col">
-          {Object.keys(calcList).map((key, index) => {
-            const list = calcList[key as keyof typeof calcList]
-            if (list.length) {
-              return (
-                <div key={index}>
-                  <div className="flex h-12 items-center gap-2.5 px-3 text-xs font-semibold text-[rgba(255,255,255,0.35)]">
-                    <div>
-                      {index === 0 && 'Day'}
-                      {index === 1 && 'Yesterday'}
-                      {index === 2 && '2 days ago'}
-                      {index === 3 && '3 days ago'}
-                      {index === 4 && '4 days ago'}
-                      {index === 5 && '5 days ago'}
-                      {index === 6 && '6 days ago'}
-                      {index === 7 && '1 week ago'}
-                    </div>
-                  </div>
-                  {renderChatList()}
-                </div>
-              )
-            }
-
-            return null
-          })}
-        </div>
+        <div className="flex w-full flex-col">{renderChatList()}</div>
       </ScrollArea>
     </div>
   )
