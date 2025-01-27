@@ -441,7 +441,7 @@ CRITICAL: NEVER skip the thinking process. ALWAYS use these tags.`
               ...messages,
               { role: 'user', content: GENERATE_CHAT_NAME_PROMPT },
             ],
-            modelId: item.model,
+            modelId: "hermes-3-llama3.1-8b",
             stream: true,
           }),
           onopen: async () => {},
