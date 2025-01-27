@@ -213,8 +213,17 @@ export const useChatStore = create<ChatStore>()(
               payload.prompt || 'You are a helpful AI assistant.'
           }
 
+          // Update model and chainOfThought immediately
+          if (payload.model) {
+            chat.model = payload.model
+          }
+          if (payload.chainOfThought !== undefined) {
+            chat.chainOfThought = payload.chainOfThought
+          }
+
           // Handle chain of thought prompt
-          if (payload.chainOfThought) {
+          if (payload.chainOfThought && !chat.model?.includes('deepseek-r1')) {
+            console.log('chain of thought')
             newPayload.prompt = `${newPayload.prompt || chat.prompt}
 
 For EVERY response, you must structure your thinking and answer using these tags:

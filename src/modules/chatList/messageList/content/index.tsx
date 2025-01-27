@@ -52,7 +52,7 @@ export function Content({ data }: { data: ChatItem }) {
       </div>
       <div ref={contentRef}>
         {shouldShowThinkingDropdown ? (
-          <ThinkingDropdown content={data.content} />
+          <ThinkingDropdown content={data.content} model={data.model} />
         ) : (
           <div className="prose max-w-none">
             <ReactMarkdown

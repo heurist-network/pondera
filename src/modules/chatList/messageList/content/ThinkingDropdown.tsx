@@ -14,6 +14,8 @@ const TAGS = {
   THINKING: {
     START: '<thinking>',
     END: '</thinking>',
+    ALT_START: '<think>',
+    ALT_END: '</think>',
   },
   ANSWER: {
     START: '<answer>',
@@ -23,9 +25,10 @@ const TAGS = {
 
 interface Props {
   content: string
+  model?: string
 }
 
-export function ThinkingDropdown({ content }: Props) {
+export function ThinkingDropdown({ content, model }: Props) {
   const [thinkingContent, setThinkingContent] = useState('')
   const [answerContent, setAnswerContent] = useState('')
   const [isOpen, setIsOpen] = useState(true)
@@ -40,8 +43,13 @@ export function ThinkingDropdown({ content }: Props) {
       return
     }
 
-    const thinkingStart = content.indexOf(TAGS.THINKING.START)
-    const thinkingEnd = content.indexOf(TAGS.THINKING.END)
+    const isDeepseekR1 = model?.includes('deepseek-r1')
+    const thinkingStart = content.indexOf(
+      isDeepseekR1 ? TAGS.THINKING.ALT_START : TAGS.THINKING.START,
+    )
+    const thinkingEnd = content.indexOf(
+      isDeepseekR1 ? TAGS.THINKING.ALT_END : TAGS.THINKING.END,
+    )
     const answerStart = content.indexOf(TAGS.ANSWER.START)
     const answerEnd = content.indexOf(TAGS.ANSWER.END)
 
@@ -58,7 +66,11 @@ export function ThinkingDropdown({ content }: Props) {
 
     // update thinking content if we have a start tag
     if (thinkingStart !== -1) {
-      const startIndex = thinkingStart + TAGS.THINKING.START.length
+      const startIndex =
+        thinkingStart +
+        (isDeepseekR1
+          ? TAGS.THINKING.ALT_START.length
+          : TAGS.THINKING.START.length)
       const currentThinking =
         thinkingEnd === -1
           ? content.slice(startIndex)
@@ -66,17 +78,24 @@ export function ThinkingDropdown({ content }: Props) {
       setThinkingContent(currentThinking.trim())
     }
 
-    // update answer content if we have a start tag
-    if (answerStart !== -1) {
+    // update answer content based on model type
+    if (isDeepseekR1) {
+      if (thinkingEnd !== -1) {
+        const startIndex = thinkingEnd + TAGS.THINKING.ALT_END.length
+        const currentAnswer = content.slice(startIndex)
+        setAnswerContent(currentAnswer.trim())
+        setIsOpen(false)
+      }
+    } else if (answerStart !== -1) {
       const startIndex = answerStart + TAGS.ANSWER.START.length
       const currentAnswer =
         answerEnd === -1
           ? content.slice(startIndex)
           : content.slice(startIndex, answerEnd)
       setAnswerContent(currentAnswer.trim())
-      setIsOpen(false) // auto-collapse thinking when answer starts
+      setIsOpen(false)
     }
-  }, [content])
+  }, [content, model])
 
   return (
     <div className="flex flex-col gap-4">
