@@ -86,6 +86,9 @@ export default async function Share(props: { params: Props }) {
     if (model.includes('llama')) {
       icon = '/model/llama.jpeg'
     }
+    if (model.includes('deepseek')) {
+      icon = '/model/deepseek.png'
+    }
     if (model.includes('-yi-')) {
       icon = '/model/yi.svg'
     }

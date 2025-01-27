@@ -569,6 +569,9 @@ CRITICAL: NEVER skip the thinking process. ALWAYS use these tags.`
                 ) {
                   icon = '/model/mistral.svg'
                 }
+                if (item.name.includes('deepseek')) {
+                  icon = '/model/deepseek.png'
+                }
                 if (item.name.includes('llama')) {
                   icon = '/model/llama.jpeg'
                 }
