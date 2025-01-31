@@ -108,7 +108,7 @@ export type ChatStore = {
 export const initChatItem: ChatListItem = {
   id: nanoid(),
   title: '',
-  model: 'meta-llama/llama-3.3-70b-instruct',
+  model: 'mistralai/mistral-small-24b-instruct',
   prompt: 'You are a helpful AI assistant.',
   chainOfThought: false,
   hasDocument: false,

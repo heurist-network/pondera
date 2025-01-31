@@ -124,9 +124,9 @@ export function Welcome() {
                     id: activeId,
                     role: 'user',
                     content: item.value,
-                    model: chat?.model ?? 'meta-llama/llama-3.3-70b-instruct',
+                    model: chat?.model ?? 'mistralai/mistral-small-24b-instruct',
                   })
-                  sendChat(activeId, chat?.model ?? 'meta-llama/llama-3.3-70b-instruct')
+                  sendChat(activeId, chat?.model ?? 'mistralai/mistral-small-24b-instruct')
                 }}
               >
                 {item.label}
