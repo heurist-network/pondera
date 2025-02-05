@@ -578,17 +578,17 @@ CRITICAL: NEVER skip the thinking process. ALWAYS use these tags.`
                 ) {
                   icon = '/model/mistral.svg'
                 }
-                if (item.name.includes('deepseek')) {
-                  icon = '/model/deepseek.png'
-                }
-                if (item.name.includes('llama')) {
+                if (item.name.includes('llama') || item.name.includes('Llama')) {
                   icon = '/model/llama.jpeg'
-                }
-                if (item.name.includes('-yi-')) {
-                  icon = '/model/yi.svg'
                 }
                 if (item.name.startsWith('qwen')) {
                   icon = '/model/qwen.svg'
+                }
+                if (item.name.includes('deepseek')) {
+                  icon = '/model/deepseek.png'
+                }
+                if (item.name.includes('-yi-')) {
+                  icon = '/model/yi.svg'
                 }
 
                 return { ...item, icon }
