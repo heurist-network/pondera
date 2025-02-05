@@ -222,7 +222,7 @@ export const useChatStore = create<ChatStore>()(
           }
 
           // Handle chain of thought prompt
-          if (payload.chainOfThought && !chat.model?.includes('deepseek-r1')) {
+          if (payload.chainOfThought && chat?.model !== 'deepseek/deepseek-r1') {
             console.log('chain of thought')
             newPayload.prompt = `${newPayload.prompt || chat.prompt}
 

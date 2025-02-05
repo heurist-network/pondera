@@ -83,11 +83,11 @@ export default async function Share(props: { params: Props }) {
     if (model.startsWith('mistralai') || model.startsWith('openhermes')) {
       icon = '/model/mistral.svg'
     }
-    if (model.includes('llama')) {
-      icon = '/model/llama.jpeg'
-    }
     if (model.includes('deepseek')) {
       icon = '/model/deepseek.png'
+    }
+    if (model.includes('llama') || model.includes('Llama')) {
+      icon = '/model/llama.jpeg'
     }
     if (model.includes('-yi-')) {
       icon = '/model/yi.svg'

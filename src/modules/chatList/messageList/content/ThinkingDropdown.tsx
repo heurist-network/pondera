@@ -43,7 +43,7 @@ export function ThinkingDropdown({ content, model }: Props) {
       return
     }
 
-    const isDeepseekR1 = model?.includes('deepseek-r1')
+    const isDeepseekR1 = model === 'deepseek/deepseek-r1'
     const thinkingStart = content.indexOf(
       isDeepseekR1 ? TAGS.THINKING.ALT_START : TAGS.THINKING.START,
     )

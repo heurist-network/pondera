@@ -25,7 +25,7 @@ export function ChatModel({ children }: { children: React.ReactNode }) {
   const onChangeModel = (model: string) => {
     const findModel = models.find((item) => item.name === model)
     const prompt = findModel?.system_prompt || 'You are a helpful AI assistant.'
-    const isDeepseekR1 = model.includes('deepseek-r1')
+    const isDeepseekR1 = model === 'deepseek/deepseek-r1'
 
     updateChat(activeId, {
       model,

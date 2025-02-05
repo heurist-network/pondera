@@ -99,17 +99,17 @@ export function ChatInput({
               <Switch
                 id="chain-of-thought"
                 checked={
-                  chat?.chainOfThought || chat?.model?.includes('deepseek-r1')
+                  chat?.chainOfThought || chat?.model === 'deepseek/deepseek-r1'
                 }
                 disabled={
                   ![
                     'nvidia/llama-3.1-nemotron-70b-instruct',
                     'meta-llama/llama-3.3-70b-instruct',
                   ].includes(chat?.model || '') &&
-                  !chat?.model?.includes('deepseek-r1')
+                  chat?.model !== 'deepseek/deepseek-r1'
                 }
                 onCheckedChange={(checked) => {
-                  if (!chat?.model?.includes('deepseek-r1')) {
+                  if (chat?.model !== 'deepseek/deepseek-r1') {
                     updateChat(activeId, { chainOfThought: checked })
                   }
                 }}
@@ -121,7 +121,7 @@ export function ChatInput({
               'nvidia/llama-3.1-nemotron-70b-instruct',
               'meta-llama/llama-3.3-70b-instruct',
             ].includes(chat?.model || '') &&
-              !chat?.model?.includes('deepseek-r1') && (
+              chat?.model !== 'deepseek/deepseek-r1' && (
                 <span className="i-mingcute-information-line h-4 w-4 text-gray-400" />
               )}
           </div>
@@ -130,7 +130,7 @@ export function ChatInput({
           'nvidia/llama-3.1-nemotron-70b-instruct',
           'meta-llama/llama-3.3-70b-instruct',
         ].includes(chat?.model || '') &&
-        !chat?.model?.includes('deepseek-r1') ? (
+        chat?.model !== 'deepseek/deepseek-r1' ? (
           <TooltipContent>
             <p>
               Chain of Thought is only available for Llama 3 and Deepseek R1
@@ -142,7 +142,7 @@ export function ChatInput({
             <div className="max-w-[200px]">
               <p className="font-medium">Chain of Thought</p>
               <p className="mt-1 text-xs text-gray-400">
-                {chat?.model?.includes('deepseek-r1')
+                {chat?.model === 'deepseek/deepseek-r1'
                   ? 'Chain of Thought is always enabled for Deepseek R1 model'
                   : "Show AI's reasoning process. This setting cannot be changed once the conversation starts."}
               </p>
