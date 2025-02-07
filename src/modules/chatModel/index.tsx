@@ -25,12 +25,15 @@ export function ChatModel({ children }: { children: React.ReactNode }) {
   const onChangeModel = (model: string) => {
     const findModel = models.find((item) => item.name === model)
     const prompt = findModel?.system_prompt || 'You are a helpful AI assistant.'
-    const isDeepseekR1 = model === 'deepseek/deepseek-r1'
+    const isDeepseekR1Model =
+      model === 'deepseek/deepseek-r1' ||
+      model === 'NaniDAO/deepseek-r1-qwen-2.5-32B-ablated' ||
+      model === 'deepseek/deepseek-r1-distill-llama-70b'
 
     updateChat(activeId, {
       model,
       prompt,
-      chainOfThought: isDeepseekR1 ? true : activeChat?.chainOfThought,
+      chainOfThought: isDeepseekR1Model ? true : activeChat?.chainOfThought,
     })
 
     if (!activeChat?.list.length) return

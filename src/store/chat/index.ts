@@ -222,8 +222,13 @@ export const useChatStore = create<ChatStore>()(
           }
 
           // Handle chain of thought prompt
-          if (payload.chainOfThought && chat?.model !== 'deepseek/deepseek-r1') {
-            console.log('chain of thought')
+          if (
+            payload.chainOfThought &&
+            chat?.model !== 'deepseek/deepseek-r1' &&
+            chat?.model !== 'NaniDAO/deepseek-r1-qwen-2.5-32B-ablated' &&
+            chat?.model !== 'deepseek/deepseek-r1-distill-llama-70b'
+          ) {
+            console.log('custom cot prompt')
             newPayload.prompt = `${newPayload.prompt || chat.prompt}
 
 For EVERY response, you must structure your thinking and answer using these tags:

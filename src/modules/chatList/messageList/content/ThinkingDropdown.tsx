@@ -43,12 +43,16 @@ export function ThinkingDropdown({ content, model }: Props) {
       return
     }
 
-    const isDeepseekR1 = model === 'deepseek/deepseek-r1'
+    const isDeepseekR1Model =
+      model === 'deepseek/deepseek-r1' ||
+      model === 'NaniDAO/deepseek-r1-qwen-2.5-32B-ablated' ||
+      model === 'deepseek/deepseek-r1-distill-llama-70b'
+
     const thinkingStart = content.indexOf(
-      isDeepseekR1 ? TAGS.THINKING.ALT_START : TAGS.THINKING.START,
+      isDeepseekR1Model ? TAGS.THINKING.ALT_START : TAGS.THINKING.START,
     )
     const thinkingEnd = content.indexOf(
-      isDeepseekR1 ? TAGS.THINKING.ALT_END : TAGS.THINKING.END,
+      isDeepseekR1Model ? TAGS.THINKING.ALT_END : TAGS.THINKING.END,
     )
     const answerStart = content.indexOf(TAGS.ANSWER.START)
     const answerEnd = content.indexOf(TAGS.ANSWER.END)
@@ -68,7 +72,7 @@ export function ThinkingDropdown({ content, model }: Props) {
     if (thinkingStart !== -1) {
       const startIndex =
         thinkingStart +
-        (isDeepseekR1
+        (isDeepseekR1Model
           ? TAGS.THINKING.ALT_START.length
           : TAGS.THINKING.START.length)
       const currentThinking =
@@ -79,7 +83,7 @@ export function ThinkingDropdown({ content, model }: Props) {
     }
 
     // update answer content based on model type
-    if (isDeepseekR1) {
+    if (isDeepseekR1Model) {
       if (thinkingEnd !== -1) {
         const startIndex = thinkingEnd + TAGS.THINKING.ALT_END.length
         const currentAnswer = content.slice(startIndex)

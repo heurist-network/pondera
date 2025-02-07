@@ -99,17 +99,27 @@ export function ChatInput({
               <Switch
                 id="chain-of-thought"
                 checked={
-                  chat?.chainOfThought || chat?.model === 'deepseek/deepseek-r1'
+                  chat?.chainOfThought ||
+                  chat?.model === 'deepseek/deepseek-r1' ||
+                  chat?.model === 'NaniDAO/deepseek-r1-qwen-2.5-32B-ablated' ||
+                  chat?.model === 'deepseek/deepseek-r1-distill-llama-70b'
                 }
                 disabled={
                   ![
-                    'nvidia/llama-3.1-nemotron-70b-instruct',
+                    'mistralai/mistral-small-24b-instruct',
                     'meta-llama/llama-3.3-70b-instruct',
                   ].includes(chat?.model || '') &&
-                  chat?.model !== 'deepseek/deepseek-r1'
+                  chat?.model !== 'deepseek/deepseek-r1' &&
+                  chat?.model !== 'NaniDAO/deepseek-r1-qwen-2.5-32B-ablated' &&
+                  chat?.model !== 'deepseek/deepseek-r1-distill-llama-70b'
                 }
                 onCheckedChange={(checked) => {
-                  if (chat?.model !== 'deepseek/deepseek-r1') {
+                  if (
+                    chat?.model !== 'deepseek/deepseek-r1' &&
+                    chat?.model !==
+                      'NaniDAO/deepseek-r1-qwen-2.5-32B-ablated' &&
+                    chat?.model !== 'deepseek/deepseek-r1-distill-llama-70b'
+                  ) {
                     updateChat(activeId, { chainOfThought: checked })
                   }
                 }}
@@ -118,23 +128,27 @@ export function ChatInput({
               <span className="text-xs text-gray-400">CoT</span>
             </div>
             {![
-              'nvidia/llama-3.1-nemotron-70b-instruct',
+              'mistralai/mistral-small-24b-instruct',
               'meta-llama/llama-3.3-70b-instruct',
             ].includes(chat?.model || '') &&
-              chat?.model !== 'deepseek/deepseek-r1' && (
+              chat?.model !== 'deepseek/deepseek-r1' &&
+              chat?.model !== 'NaniDAO/deepseek-r1-qwen-2.5-32B-ablated' &&
+              chat?.model !== 'deepseek/deepseek-r1-distill-llama-70b' && (
                 <span className="i-mingcute-information-line h-4 w-4 text-gray-400" />
               )}
           </div>
         </TooltipTrigger>
         {![
-          'nvidia/llama-3.1-nemotron-70b-instruct',
+          'mistralai/mistral-small-24b-instruct',
           'meta-llama/llama-3.3-70b-instruct',
         ].includes(chat?.model || '') &&
-        chat?.model !== 'deepseek/deepseek-r1' ? (
+        chat?.model !== 'deepseek/deepseek-r1' &&
+        chat?.model !== 'NaniDAO/deepseek-r1-qwen-2.5-32B-ablated' &&
+        chat?.model !== 'deepseek/deepseek-r1-distill-llama-70b' ? (
           <TooltipContent>
             <p>
-              Chain of Thought is only available for Llama 3 and Deepseek R1
-              models
+              Chain of Thought (custom system prompt) is only available for
+              Llama 3 and Mistral Small. Always enabled for Deepseek R1 models.
             </p>
           </TooltipContent>
         ) : (
@@ -144,7 +158,7 @@ export function ChatInput({
               <p className="mt-1 text-xs text-gray-400">
                 {chat?.model === 'deepseek/deepseek-r1'
                   ? 'Chain of Thought is always enabled for Deepseek R1 model'
-                  : "Show AI's reasoning process. This setting cannot be changed once the conversation starts."}
+                  : "Show AI's reasoning process using a custom system prompt. This setting cannot be changed once the conversation starts."}
               </p>
             </div>
           </TooltipContent>
