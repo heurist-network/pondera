@@ -231,32 +231,32 @@ export const useChatStore = create<ChatStore>()(
             console.log('custom cot prompt')
             newPayload.prompt = `${newPayload.prompt || chat.prompt}
 
-For EVERY response, you must structure your thinking and answer using these tags:
+              For EVERY response, you must structure your thinking and answer using these tags:
 
-<thinking>
-Demonstrate thorough reasoning by:
-- Breaking down the problem into components
-- Analyzing from multiple angles
-- Challenging your assumptions
-- Showing authentic curiosity
-- Considering edge cases and potential issues
-- Developing your understanding progressively
-- Verifying your logic and conclusions
+              <thinking>
+              Demonstrate thorough reasoning by:
+              - Breaking down the problem into components
+              - Analyzing from multiple angles
+              - Challenging your assumptions
+              - Showing authentic curiosity
+              - Considering edge cases and potential issues
+              - Developing your understanding progressively
+              - Verifying your logic and conclusions
 
-Use natural, flowing thoughts - no rigid structure.
-</thinking>
+              Use natural, flowing thoughts - no rigid structure.
+              </thinking>
 
-<answer>
-Provide your final response here:
-- Clear and concise
-- Directly addresses the question/task
-- Implements insights from thinking process
-- Uses appropriate formatting (code blocks, lists, etc.)
-- Includes examples or references if relevant
-- Highlights key points or takeaways
-</answer>
+              <answer>
+              Provide your final response here:
+              - Clear and concise
+              - Directly addresses the question/task
+              - Implements insights from thinking process
+              - Uses appropriate formatting (code blocks, lists, etc.)
+              - Includes examples or references if relevant
+              - Highlights key points or takeaways
+              </answer>
 
-CRITICAL: NEVER skip the thinking process. ALWAYS use these tags.`
+              CRITICAL: NEVER skip the thinking process. ALWAYS use these tags.`
           }
 
           return {
@@ -458,8 +458,15 @@ CRITICAL: NEVER skip the thinking process. ALWAYS use these tags.`
               const content = data.delta.content
               if (!content) return
 
-              item.title += content
-              set({ list: [...list] })
+              const { list } = get()
+              set({
+                list: list.map((item) => {
+                  if (item.id === id) {
+                    return { ...item, title: item.title + content }
+                  }
+                  return item
+                }),
+              })
             } catch {}
           },
           onerror: () => {},
@@ -583,7 +590,10 @@ CRITICAL: NEVER skip the thinking process. ALWAYS use these tags.`
                 ) {
                   icon = '/model/mistral.svg'
                 }
-                if (item.name.includes('llama') || item.name.includes('Llama')) {
+                if (
+                  item.name.includes('llama') ||
+                  item.name.includes('Llama')
+                ) {
                   icon = '/model/llama.jpeg'
                 }
                 if (item.name.startsWith('qwen')) {
