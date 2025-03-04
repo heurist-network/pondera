@@ -69,7 +69,7 @@ Instructions:
     })
 
     const response = await fetch(
-      `${env.HEURIST_GATEWAY_URL}/v1/chat/completions`,
+      `${env.HEURIST_GATEWAY_URL}/chat/completions`,
       {
         method: 'POST',
         headers: {
