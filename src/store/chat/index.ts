@@ -605,6 +605,9 @@ export const useChatStore = create<ChatStore>()(
                 if (item.name.includes('-yi-')) {
                   icon = '/model/yi.svg'
                 }
+                if (item.name.includes('ASI')) {
+                  icon = '/model/asi.jpg'
+                }
 
                 return { ...item, icon }
               }),

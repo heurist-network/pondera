@@ -92,6 +92,9 @@ export default async function Share(props: { params: Props }) {
     if (model.includes('-yi-')) {
       icon = '/model/yi.svg'
     }
+    if (model.includes('ASI')) {
+      icon = '/model/asi.jpg'
+    }
 
     return icon
   }
