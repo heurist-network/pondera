@@ -24,13 +24,17 @@ services:
 
   nginx:
     container_name: pondera-nginx
-    image: nginx:alpine
+    image: jonasal/nginx-certbot:latest
     ports:
       - '8080:80'
       - '443:443'
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./ssl:/etc/nginx/ssl
+      - ./cloudflare.ini:/etc/letsencrypt/cloudflare.ini:ro
+      - ./user_conf.d:/etc/nginx/user_conf.d:ro
+      - nginx_secrets:/etc/letsencrypt
+    environment:
+      - CERTBOT_EMAIL=team@heurist.xyz
+      - CERTBOT_AUTHENTICATOR=dns-cloudflare
     depends_on:
       - backend
     restart: unless-stopped
@@ -40,3 +44,6 @@ services:
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  nginx_secrets:

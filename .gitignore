@@ -43,3 +43,6 @@ uploads/
 # ssl
 ssl/
 *.pem
+
+# certbot
+cloudflare.ini
