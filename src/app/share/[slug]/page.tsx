@@ -89,6 +89,9 @@ export default async function Share(props: { params: Props }) {
     if (model.includes('llama') || model.includes('Llama')) {
       icon = '/model/llama.jpeg'
     }
+    if (model.includes('LatitudeGames') || model.includes('LatitudeGames')) {
+      icon = '/model/latitudegames.jpg'
+    }
     if (model.includes('-yi-')) {
       icon = '/model/yi.svg'
     }
