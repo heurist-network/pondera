@@ -608,6 +608,9 @@ export const useChatStore = create<ChatStore>()(
                 if (item.name.includes('asi')) {
                   icon = '/model/asi.jpg'
                 }
+                if (item.name.includes('gpt')) {
+                  icon = '/model/openai.svg'
+                }
 
                 return { ...item, icon }
               }),

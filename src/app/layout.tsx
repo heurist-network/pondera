@@ -12,9 +12,36 @@ import { cn } from '@/lib/utils'
 const inter = Inter({ subsets: ['latin'], display: 'swap' })
 
 export const metadata: Metadata = {
-  title: 'Pondera | Open-source AI Chat',
+  title: 'Pondera by Heurist - Free AI Chat with Advanced Language Models',
   description:
-    'Pondera is an open-source conversational AI assistant that makes the best language models available to everyone. Powered by Heurist.',
+    'Chat with cutting-edge AI models including GPT, Claude, DeepSeek R1, and 30+ more through Heurist\'s infrastructure. Experience the power of Heurist Cloud with serverless AI inference for coding, reasoning, and creative tasks. Free and open-source.',
+  keywords: 'Pondera, Heurist, AI chat, Heurist Cloud, AI infrastructure, language models, GPT OSS 20B, GPT OSS 120B, OpenAI open source, DeepSeek R1, Claude, Llama 3.3, serverless AI, AI economy, Qwen Coder, Mixtral, open source AI, free chatbot, AI assistant, coding AI',
+  openGraph: {
+    title: 'Pondera - AI Chat Platform by Heurist',
+    description: 'Experience Heurist\'s AI infrastructure through Pondera. Chat with OpenAI\'s open-weight GPT, DeepSeek R1, Claude, and 30+ models via Heurist Cloud\'s serverless inference.',
+    url: 'https://pondera.heurist.ai',
+    siteName: 'Pondera by Heurist',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Pondera - Heurist\'s AI Chat Interface',
+    description: 'Access GPT, Claude, DeepSeek, and dozens of AI models through Heurist\'s full-stack infrastructure for the AI economy.',
+  },
+  alternates: {
+    canonical: 'https://pondera.heurist.ai',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 }
 
 export const viewport: Viewport = {

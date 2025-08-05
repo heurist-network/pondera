@@ -58,12 +58,12 @@ export function ChatModel({ children }: { children: React.ReactNode }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
-      <DropdownMenuContent align="start">
+      <DropdownMenuContent align="start" className="max-h-[400px] overflow-y-auto">
         <DropdownMenuRadioGroup
           value={activeChat?.model}
           onValueChange={onChangeModel}
         >
-          {models.map((model) => (
+          {models.slice().reverse().map((model) => (
             <DropdownMenuRadioItem key={model.name} value={model.name}>
               <Image
                 className="mr-2 rounded-md"

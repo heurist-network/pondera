@@ -1,4 +1,26 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pondera - AI Chat Platform
+
+Pondera is an AI chat platform that supports multiple AI models. Access it at [pondera.heurist.ai](https://pondera.heurist.ai).
+
+## Features
+
+### Direct Model Access via URL
+
+You can directly open Pondera with a specific AI model pre-selected by using the `model` parameter in the URL:
+
+```
+https://pondera.heurist.ai/?model=MODEL_ID
+```
+
+**Example - Open with GPT model:**
+```
+https://pondera.heurist.ai/?model=openai/gpt-4o
+```
+
+This feature is useful for:
+- Sharing links that open with a specific model
+- Creating bookmarks for frequently used models
+- Deep linking from documentation or other applications
 
 ## Getting Started
 

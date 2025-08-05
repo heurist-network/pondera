@@ -95,6 +95,9 @@ export default async function Share(props: { params: Props }) {
     if (model.includes('asi')) {
       icon = '/model/asi.jpg'
     }
+    if (model.includes('gpt')) {
+      icon = '/model/openai.svg'
+    }
 
     return icon
   }
