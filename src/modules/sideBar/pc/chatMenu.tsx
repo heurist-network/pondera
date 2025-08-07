@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useRef } from 'react'
+import { useLocalStorage } from 'usehooks-ts'
 
 import {
   AlertDialog,
@@ -13,6 +14,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
+import { cn } from '@/lib/utils'
+
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ChatListItem, useChatStore } from '@/store/chat'
 
@@ -21,6 +24,7 @@ import { MenuItem } from './menuItem'
 export function ChatMenu() {
   const { list, addChat, clearChat } = useChatStore()
   const viewportRef = useRef<HTMLDivElement>(null)
+  const [isCollapse] = useLocalStorage('isCollapse', false)
 
   const calcList = useMemo(() => {
     const today = new Date()
@@ -126,7 +130,12 @@ export function ChatMenu() {
   }
 
   return (
-    <div className="group/menu flex w-full flex-1 flex-col">
+    <div 
+      className={cn(
+        'group/menu flex w-full flex-1 flex-col',
+        isCollapse ? 'md:hidden' : 'md:flex'
+      )}
+    >
       <div
         className="mx-3 mb-4 flex h-12 flex-shrink-0 cursor-pointer items-center gap-1.5 rounded-xl bg-[#01E3F5] px-3 text-sm font-medium text-gray-950 transition-colors hover:bg-[#01E3F5]/90"
         onClick={() => {
@@ -166,7 +175,7 @@ export function ChatMenu() {
       </div>
       <ScrollArea
         viewportRef={viewportRef}
-        className="h-[calc(100dvh-302px)] w-full px-3 text-white"
+        className='md:h-[calc(100dvh-334px)] h-[calc(100dvh-302px)] w-full px-3 text-white'
         scrollHideDelay={0}
       >
         <div className="flex w-full flex-col">{renderChatList()}</div>

@@ -15,7 +15,7 @@ export function SideBar() {
         </SheetTrigger>
         <SheetContent
           side="left"
-          className="relative border-r-0 bg-[#1D1D1B] p-0"
+          className="relative border-r-0 bg-[#1D1D1B] p-0 md:hidden"
           closeClassName="text-white"
         >
           <PcSideBar className="flex w-full" />

@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import { useLocalStorage } from 'usehooks-ts'
 
 import {
   AlertDialog,
@@ -30,6 +31,7 @@ function Mask() {
 
 export function SideBar({ className }: { className?: string }) {
   const { addChat } = useChatStore()
+  const [isCollapse, setIsCollapse] = useLocalStorage('isCollapse', false)
 
   const onReset = () => {
     localStorage.clear()
@@ -41,25 +43,36 @@ export function SideBar({ className }: { className?: string }) {
       <Mask />
       <div
         className={cn(
-          'relative hidden w-[280px] flex-col items-center gap-4 py-4 md:flex',
+          'relative hidden flex-col items-center gap-4 py-4 md:flex transition-all',
+          isCollapse ? 'w-[52px]' : 'w-[280px]',
           className,
         )}
       >
-        <div
-          className="flex h-[110px] w-64 flex-shrink-0 cursor-pointer items-center justify-center"
-          onClick={addChat}
-        >
-          <Image
-            src="/logo.svg"
-            alt="logo"
-            priority
-            width={196}
-            height={38}
-            style={{ width: '196px', height: '38px' }}
-          />
+        <div>
+          <div className='md:flex hidden justify-end'>
+            <div className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-[rgba(255,255,255,0.15)]" onClick={() => setIsCollapse(!isCollapse)}>
+              <Image src="/icon/collapse.svg" alt="copy" width={18} height={18} />
+            </div>
+          </div>
+          <div
+            className={cn(
+              'h-[110px] w-64 flex-shrink-0 cursor-pointer items-center justify-center',
+              isCollapse ? 'flex md:hidden' : 'flex'
+            )}
+            onClick={addChat}
+          >
+            <Image
+              src="/logo.svg"
+              alt="logo"
+              priority
+              width={196}
+              height={38}
+              style={{ width: '196px', height: '38px' }}
+            />
+          </div>
         </div>
         <ChatMenu />
-        <div className="flex w-full flex-shrink-0 gap-2.5 px-3 text-white">
+        <div className={cn('flex w-full flex-shrink-0 gap-2.5 px-3 text-white', isCollapse ? 'md:hidden' : 'md:flex')}>
           <Link
             className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-[rgba(255,255,255,0.15)]"
             href="https://www.heurist.ai"
