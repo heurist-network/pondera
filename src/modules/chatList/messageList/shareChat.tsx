@@ -73,7 +73,7 @@ export function ShareChat() {
         <DialogHeader>
           <DialogTitle>Share Chat</DialogTitle>
           <DialogDescription className="text-left">
-            A snapshot of the current chat will be stored on Pondera server in
+            A snapshot of the current chat will be stored on Heurist server in
             order to share with other people.
           </DialogDescription>
         </DialogHeader>
