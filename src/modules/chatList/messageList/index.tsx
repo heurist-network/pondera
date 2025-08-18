@@ -68,9 +68,10 @@ export function MessageList() {
 
   const onScrollToEnd = useCallback(() => {
     if (virtuosoRef.current) {
-      virtuosoRef.current.scrollToIndex({
-        index: list.length - 1,
-        behavior: 'smooth',
+      requestAnimationFrame(() => {
+        virtuosoRef.current?.scrollTo({
+          top: 9999999,
+        })
       })
     }
   }, [list.length])
