@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import ReactMarkdown from 'react-markdown'
 import Image from 'next/image'
 import RehypeKatex from 'rehype-katex'
+import 'katex/dist/katex.min.css'
 import RemarkGfm from 'remark-gfm'
 import RemarkMath from 'remark-math'
 import type { ChatItem } from '@/store/chat'
@@ -53,7 +54,7 @@ export function Content({ data }: { data: ChatItem }) {
       <div ref={contentRef}>
         {shouldShowThinkingDropdown ? (
           <ThinkingDropdown content={data.content} model={data.model} />
-        ) : (
+        ) : data.role === 'assistant' ? (
           <div className="prose max-w-none">
             <ReactMarkdown
               remarkPlugins={[RemarkGfm, RemarkMath]}
@@ -62,7 +63,7 @@ export function Content({ data }: { data: ChatItem }) {
               {data.content}
             </ReactMarkdown>
           </div>
-        )}
+        ) : <div className='prose max-w-none break-all'>{data.content}</div>}
       </div>
     </div>
   )
