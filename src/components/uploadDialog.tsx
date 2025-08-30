@@ -27,6 +27,7 @@ export function UploadDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  return null
   const [files, setFiles] = useState<File[]>([])
   const [uploading, setUploading] = useState(false)
   const { updateChat, getActiveChat, activeId } = useChatStore()

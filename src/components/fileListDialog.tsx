@@ -71,7 +71,8 @@ export function FileListDialog({
                 variant="outline"
                 size="sm"
                 className="h-8 gap-1.5 text-xs"
-                onClick={handleUploadClick}
+                onClick={(e) => e.preventDefault()}
+                disabled
               >
                 <span className="i-mingcute-add-line h-4 w-4" />
                 Add files

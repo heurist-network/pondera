@@ -84,7 +84,7 @@ export function Welcome() {
                     Advanced
                   </Button>
                 </Prompt>
-                <TooltipProvider>
+				{/* <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div>
@@ -107,7 +107,7 @@ export function Welcome() {
                       </TooltipContent>
                     )}
                   </Tooltip>
-                </TooltipProvider>
+                </TooltipProvider> */}
               </div>
             </div>
           </div>
@@ -135,7 +135,7 @@ export function Welcome() {
           </div>
         </div>
       </div>
-      <UploadDialog open={uploadOpen} onOpenChange={setUploadOpen} />
+      <UploadDialog open={false} onOpenChange={() => {}} />
     </div>
   )
 }

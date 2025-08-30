@@ -319,19 +319,19 @@ export function MessageList() {
                     </Button>
                   </div>
                   <UploadDialog
-                    open={uploadOpen}
-                    onOpenChange={setUploadOpen}
+                    open={false}
+                    onOpenChange={() => {}}
                   />
                   <FileListDialog
                     open={fileListOpen}
                     onOpenChange={setFileListOpen}
                   />
-                  {chat?.hasDocument && (
+                  {false && chat?.hasDocument && (
                     <div className="flex gap-2">
                       <Button
                         variant="outline"
                         className="hidden h-9 gap-1 rounded-[10px] px-2 md:flex"
-                        onClick={() => setUploadOpen(true)}
+                        disabled
                       >
                         <div>Upload</div>
                         <span className="i-mingcute-upload-2-line h-4 w-4" />
@@ -339,7 +339,7 @@ export function MessageList() {
                       <Button
                         variant="outline"
                         className="h-9 w-9 gap-1 rounded-[10px] px-2 md:hidden md:w-auto"
-                        onClick={() => setUploadOpen(true)}
+                        disabled
                       >
                         <span className="i-mingcute-upload-2-line h-4 w-4" />
                       </Button>
