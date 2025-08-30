@@ -49,7 +49,7 @@ export function MessageList() {
 
   const [virtuosoLoaded, setVirtuosoLoaded] = useState(false)
   const [paddingBottom, setPaddingBottom] = useState(0)
-  const [uploadOpen, setUploadOpen] = useState(false)
+  // const [uploadOpen, setUploadOpen] = useState(false)
   const [fileListOpen, setFileListOpen] = useState(false)
 
   const list = getActiveList(activeId)
@@ -74,6 +74,7 @@ export function MessageList() {
         })
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [list.length])
 
   useEffect(() => {

@@ -29,10 +29,10 @@ export function FileListDialog({
   const fileCount = files?.length || 0
   const [uploadOpen, setUploadOpen] = useState(false)
 
-  const handleUploadClick = () => {
-    onOpenChange(false)
-    setUploadOpen(true)
-  }
+  // const handleUploadClick = () => {
+  //   onOpenChange(false)
+  //   setUploadOpen(true)
+  // }
 
   return (
     <>

@@ -1,15 +1,15 @@
 'use client'
 
 import Image from 'next/image'
-import { useState } from 'react'
+// import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+// import {
+//   Tooltip,
+//   TooltipContent,
+//   TooltipProvider,
+//   TooltipTrigger,
+// } from '@/components/ui/tooltip'
 import { UploadDialog } from '@/components/uploadDialog'
 import { useRandomPrompts } from '@/hooks/useRandomPrompts'
 import { cn } from '@/lib/utils'
@@ -21,13 +21,13 @@ import { useChatStore } from '@/store/chat'
 export function Welcome() {
   const { models, getActiveChat, activeId, sendChat, addMessage } =
     useChatStore()
-  const [uploadOpen, setUploadOpen] = useState(false)
-  const { list } = useChatStore()
+  // const [uploadOpen, setUploadOpen] = useState(false)
+  // const { list } = useChatStore()
 
   const chat = getActiveChat(activeId)
   const findModel = models.find((model) => model.name === chat?.model)
   const randomPrompts = useRandomPrompts()
-  const hasWorkspace = list.some((chat) => chat.hasDocument)
+  // const hasWorkspace = list.some((chat) => chat.hasDocument)
 
   return (
     <div className="flex h-full">
