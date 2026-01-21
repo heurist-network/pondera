@@ -602,6 +602,9 @@ export const useChatStore = create<ChatStore>()(
                 if (item.name.includes('deepseek')) {
                   icon = '/model/deepseek.png'
                 }
+                if (item.name.includes('latitudegames')) {
+                  icon = '/model/latitudegames.jpg'
+                }
                 if (item.name.includes('-yi-')) {
                   icon = '/model/yi.svg'
                 }
