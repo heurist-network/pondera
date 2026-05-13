@@ -20,7 +20,7 @@
     "@radix-ui/react-dropdown-menu": "2.1.2",
     "@radix-ui/react-label": "2.1.0",
     "@radix-ui/react-scroll-area": "1.2.1",
-    "@radix-ui/react-separator": "^1.1.7",
+    "@radix-ui/react-separator": "1.1.7",
     "@radix-ui/react-slot": "1.1.0",
     "@radix-ui/react-switch": "1.1.2",
     "@radix-ui/react-tooltip": "1.1.4",
@@ -30,8 +30,8 @@
     "ai-stream-sdk": "0.0.11",
     "class-variance-authority": "0.7.0",
     "clsx": "2.1.1",
-    "date-fns": "^4.1.0",
-    "drizzle-orm": "^0.36.2",
+    "date-fns": "4.1.0",
+    "drizzle-orm": "0.36.2",
     "framer-motion": "11.11.16",
     "lucide-react": "0.456.0",
     "nanoid": "5.0.8",
@@ -64,6 +64,5 @@
     "prettier": "3.3.3",
     "tailwindcss": "3.4.14",
     "typescript": "5.6.3"
-  },
-  "packageManager": "pnpm@9.10.0+sha512.73a29afa36a0d092ece5271de5177ecbf8318d454ecd701343131b8ebc0c1a91c487da46ab77c8e596d6acf1461e3594ced4becedf8921b074fbd8653ed7051c"
+  }
 }
